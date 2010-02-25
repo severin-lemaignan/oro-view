@@ -1,11 +1,15 @@
 #include <string>
 
+#include "macros.h"
 #include "oroview.h"
+
+#include "graph.h"
 
 using namespace std;
 
 OroView::OroView()
 {
+
     time_scale = 1.0f;
     runtime = 0.0f;
     framecount = 0;
@@ -45,20 +49,21 @@ OroView::OroView()
     beamtex  = texturemanager.grab("beam.png");
 }
 
-void OroView::loadingScreen() {
-    display.mode2D();
+void OroView::init(){
 
-    glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-    glEnable(GL_BLEND);
-    glEnable(GL_TEXTURE_2D);
+    TRACE("*** Initialization ***");
 
-    glColor4f(1.0, 1.0, 1.0, 1.0);
+    Graph& g = *(Graph::getInstance());
 
-    string loading_message("Initializing ORO View...");
-    int width = font.getWidth(loading_message);
 
-    font.print(display.width/2 - width/2, display.height/2 - 10, "%s", loading_message.c_str());
+    Node& a = g.addNode("node1");
+    Node& b = g.addNode("node2");
+    g.addNode("node3");
+    g.addNode("node4");
+
+    TRACE("\t - Graph created and populated");
 }
+
 
 void OroView::setBackground(vec3f background) {
     background_colour = background;
@@ -98,6 +103,13 @@ void OroView::update(float t, float dt) {
 
 void OroView::logic(float t, float dt) {
      if(draw_loading && logic_time > 1000) draw_loading = false;
+     Graph& g = *(Graph::getInstance());
+
+     g.initializeNextStep();
+
+     SDL_Delay(50); //N'allons pas trop vite au début...
+
+     g.step();
 }
 
 void OroView::drawBackground(float dt) {
@@ -106,6 +118,7 @@ void OroView::drawBackground(float dt) {
 }
 
 void OroView::draw(float t, float dt) {
+    Graph& g = *(Graph::getInstance());
 
     display.mode2D();
 
@@ -131,6 +144,8 @@ void OroView::draw(float t, float dt) {
 
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
+
+     g.render();
 
 //    //draw tree
 //    drawTree(frustum, dt);
@@ -206,6 +221,20 @@ void OroView::draw(float t, float dt) {
 //    mouseclicked=false;
 }
 
+void OroView::loadingScreen() {
+    display.mode2D();
+
+    glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    glEnable(GL_BLEND);
+    glEnable(GL_TEXTURE_2D);
+
+    glColor4f(1.0, 1.0, 1.0, 1.0);
+
+    string loading_message("Initializing ORO View...");
+    int width = font.getWidth(loading_message);
+
+    font.print(display.width/2 - width/2, display.height/2 - 10, "%s", loading_message.c_str());
+}
 
 void OroView::updateTime() {
     //display date

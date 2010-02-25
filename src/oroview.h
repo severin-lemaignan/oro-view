@@ -13,6 +13,7 @@
 static const std::string dateFormat("%A, %d %B, %Y %X");
 
 class OroView : public SDLApp {
+
     time_t currtime;
 
     Uint32 draw_time;
@@ -59,6 +60,9 @@ public:
     void setBackground(vec3f background);
     void setCameraMode(bool track_users);
     void toggleCameraMode();
+
+    //Initialisation
+    void init(); //overrides SDLApp::init
 
     //Main routines
     void update(float t, float dt); //overrides SDLApp::update

@@ -1,16 +1,17 @@
 #include <boost/foreach.hpp>
+#include <boost/functional/hash.hpp>
 
 #include "node.h"
 #include "graph.h"
 
 using namespace std;
+using namespace boost;
 
-Node::Node() {
-    throw OroViewException("Default Node constructor called! shouldn't occur! Bug somewhere! (probably access to nodes[] on an element that doesn't exist.");
-}
-Node::Node(string id) : id(id)
+Node::Node(string id) : id(id), renderer(NodeRenderer(hash_value(id)))
 {
     pos = vec2f(0.0, 0.0);
+
+
 
     initializeNextStep();
 }

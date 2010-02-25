@@ -26,7 +26,6 @@ public:
 
     vec2f pos;
 
-    Node(); //should never be called. Throws an exception.
     Node(std::string id);
 
     bool operator< (const Node& node) const;
