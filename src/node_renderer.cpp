@@ -1,4 +1,5 @@
 #include "node_renderer.h"
+#include "macros.h"
 
 NodeRenderer::NodeRenderer(int tagid) : tagid(tagid)
 {
@@ -7,7 +8,9 @@ NodeRenderer::NodeRenderer(int tagid) : tagid(tagid)
 
     size = 8.0;
 
+#ifndef TEXT_ONLY
     icon = texturemanager.grab("file.png");
+#endif
 }
 
 void NodeRenderer::renderAt(const vec2f& pos) {
@@ -31,6 +34,8 @@ void NodeRenderer::renderAt(const vec2f& pos) {
     glPushMatrix();
 	glTranslatef(offsetpos.x, offsetpos.y, 0.0f);
 
+	//TODO: Fix the alpha value...
+	//glColor4f(col.x, col.y, col.z, alpha);
 	glColor4f(col.x, col.y, col.z, 1.0);
 
 	glBegin(GL_QUADS);

@@ -1,11 +1,13 @@
 #ifndef MACROS_H
 #define MACROS_H
 
+#include <iostream>
+
 //Enable debugging
 #define DEBUG
+//#define TEXT_ONLY
 
 #ifdef DEBUG
-#include <iostream>
 #define TRACE(arg) (std::cout << arg << std::endl)
 #else
 #define TRACE(arg) sizeof(std::cout << arg << std::endl)

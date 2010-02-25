@@ -45,8 +45,10 @@ OroView::OroView()
     font.dropShadow(true);
     font.roundCoordinates(true);
 
+#ifndef TEXT_ONLY
     bloomtex = texturemanager.grab("bloom.tga");
     beamtex  = texturemanager.grab("beam.png");
+#endif
 }
 
 void OroView::init(){
@@ -60,6 +62,7 @@ void OroView::init(){
     Node& b = g.addNode("node2");
     g.addNode("node3");
     g.addNode("node4");
+    a.addRelation(b, INSTANCE, "loves");
 
     TRACE("\t - Graph created and populated");
 }
@@ -120,6 +123,8 @@ void OroView::drawBackground(float dt) {
 void OroView::draw(float t, float dt) {
     Graph& g = *(Graph::getInstance());
 
+#ifndef TEXT_ONLY
+
     display.mode2D();
 
     drawBackground(dt);
@@ -145,8 +150,11 @@ void OroView::draw(float t, float dt) {
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
 
+#endif
+
      g.render();
 
+#ifndef TEXT_ONLY
 //    //draw tree
 //    drawTree(frustum, dt);
 //
@@ -219,6 +227,8 @@ void OroView::draw(float t, float dt) {
 
 //    mousemoved=false;
 //    mouseclicked=false;
+#endif
+
 }
 
 void OroView::loadingScreen() {

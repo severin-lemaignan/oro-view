@@ -32,6 +32,8 @@ int main(int argc, char *argv[]) {
 
     SDLAppParseArgs(argc, argv, &width, &height, &fullscreen, &arguments);
 
+#ifndef TEXT_ONLY
+
 	// this causes corruption on some video drivers
     if(multisample) {
 	display.multiSample(4);
@@ -50,6 +52,8 @@ int main(int argc, char *argv[]) {
     }
 
     if(multisample) glEnable(GL_MULTISAMPLE_ARB);
+
+#endif
 
     OroView* oroview = NULL;
 
@@ -74,8 +78,12 @@ int main(int argc, char *argv[]) {
 
     if (oroview != NULL) delete oroview;
 
+#ifndef TEXT_ONLY
+
     //free resources
     display.quit();
+
+#endif
 
     return 0;
 

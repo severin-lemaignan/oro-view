@@ -26,6 +26,7 @@
 */
 
 #include "sdlapp.h"
+#include "../macros.h"
 
 std::string gSDLAppResourceDir;
 std::string gSDLAppConfDir;
@@ -351,8 +352,10 @@ int SDLApp::run() {
 
         update(t, dt);
 
+#ifndef TEXT_ONLY
         //update display
         display.update();
+#endif
         frame_count++;
     }
 

@@ -36,8 +36,8 @@ void Graph::step() {
 
 void Graph::render() {
 
-    BOOST_FOREACH(NodeMap::value_type& n, nodes) {
-	n.second.renderEdges();
+    BOOST_FOREACH(Edge& e, edges) {
+	e.render();
     }
 
     BOOST_FOREACH(NodeMap::value_type& n, nodes) {
@@ -84,6 +84,12 @@ Edge& Graph::addEdge(NodeRelation& rel) {
 
     //The general idea is: several relations between nodes, but only ONE edge.
     //So we want to reuse existing edges.
+
+    //First, check the relation isn't already covered.
+    BOOST_FOREACH(Edge& e, edges) {
+	if (e.coversRelation(rel))
+	    return e;
+    }
 
     bool foundEdge = false;
 

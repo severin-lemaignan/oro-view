@@ -70,12 +70,10 @@ void Node::step(){
 void Node::render(){
 
     if (!renderingDone) {
+#ifndef TEXT_ONLY
 	renderer.renderAt(pos);
+#endif
 	TRACE("Node " << id << " rendered.");
 	renderingDone = true;
     }
-}
-
-void Node::renderEdges(){
-    TRACE("Doing nothing yet to render edges");
 }

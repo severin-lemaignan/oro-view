@@ -49,7 +49,6 @@ public:
     void step();
 
     void render();
-    void renderEdges();
 };
 
 #endif // NODE_H
