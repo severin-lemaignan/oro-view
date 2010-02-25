@@ -9,6 +9,7 @@
 
 #include "macros.h"
 #include "noderelation.h"
+#include "node_renderer.h"
 
 class Node
 {
@@ -18,6 +19,8 @@ class Node
     bool renderingDone;
 
     std::string id;
+
+    NodeRenderer renderer;
 
 public:
 

@@ -15,6 +15,8 @@ OroView::OroView()
 
     currtime = time(NULL);
 
+    srand(currtime);
+
 
     camera = ZoomCamera(vec3f(0,0, -300), vec3f(0.0, 0.0, 0.0), 250.0, 5000.0);
 

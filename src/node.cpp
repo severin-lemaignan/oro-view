@@ -56,7 +56,12 @@ void Node::initializeNextStep(){
 void Node::step(){
 
     if(!stepDone) {
-	TRACE("Step computed for " << id);
+
+	vec2f dpos = vec2f(2.0 * (float)rand()/RAND_MAX - 1.0 , 2.0 * (float)rand()/RAND_MAX - 1.0);
+
+	pos += dpos;
+
+	TRACE("Step computed for " << id << ". Now at (" << pos.x << ", " << pos.y << ").");
 	stepDone = true;
     }
 }
@@ -64,6 +69,7 @@ void Node::step(){
 void Node::render(){
 
     if (!renderingDone) {
+	renderer.renderAt(pos);
 	TRACE("Node " << id << " rendered.");
 	renderingDone = true;
     }
