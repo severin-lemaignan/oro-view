@@ -24,9 +24,11 @@ oroview_SOURCES = \
 	src/core/utf8/utf8.h \
 	src/core/vectors.h \
 	src/node.cpp src/node.h \
+	src/oroview.cpp src/oroview.h \
 	src/main.cpp \
 	src/edge.cpp src/edge.h \
-	src/graph.cpp src/graph.h
+	src/graph.cpp src/graph.h \
+	src/zoomcamera.cpp src/zoomcamera.h
 
 CPPFLAGS = -DSDLAPP_RESOURCE_DIR=\"$(pkgdatadir)\"
 

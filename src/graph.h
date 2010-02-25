@@ -2,9 +2,15 @@
 #ifndef GRAPH_H
 #define GRAPH_H
 
-#include <set>
+#include <map>
+#include <vector>
+
+#include "oroview_exceptions.h"
 
 #include "node.h"
+
+class NodeRelation;
+class Edge;
 
 class Graph
 {
@@ -56,13 +62,6 @@ public:
 
     int nodesCount();
     int edgesCount();
-};
-
-class OroViewException : public std::runtime_error {
-	public:
-		OroViewException() : std::runtime_error("A generic exception has been thrown in oro view.") { }
-		OroViewException(const char* msg) : std::runtime_error(msg) { }
-		OroViewException(const std::string& msg) : std::runtime_error(msg.c_str()) { }
 };
 
 #endif // GRAPH_H

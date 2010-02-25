@@ -1,30 +1,92 @@
-#include <boost/test/minimal.hpp>
+//#include <boost/test/minimal.hpp>
 
 #include "macros.h"
 
 #include "core/sdlapp.h"
+#include "core/display.h"
 
-#include "graph.h"
+//#include "graph.h"
+#include "oroview.h"
 
 using namespace std;
 
-void run() {
-    TRACE("*** Entering main loop ***");
-    while(true) {
-	g.initializeNextStep();
+int main(int argc, char *argv[]) {
+    int width  = 1024;
+    int height = 768;
+    bool fullscreen=false;
+    bool multisample=false;
+    vec3f background = vec3f(0.1, 0.1, 0.1);
 
-	SDL_Delay(200);
+    int video_framerate = 60;
 
-	TRACE("\t - Stepping:");
-	g.step();
+    float start_position = 0.0;
+    float stop_position  = 0.0;
+    bool stop_on_idle = false;
+    bool stop_at_end = false;
 
-	TRACE("\t - Now displaying:");
-	g.render();
+    std::string camera_mode = "overview";
 
-	TRACE("\t - End of loop!");
+    std::vector<std::string> arguments;
+
+    SDLAppInit("ORO View", "oroview");
+
+    SDLAppParseArgs(argc, argv, &width, &height, &fullscreen, &arguments);
+
+	// this causes corruption on some video drivers
+    if(multisample) {
+	display.multiSample(4);
     }
+
+    //enable vsync
+    display.enableVsync(true);
+
+    try {
+
+	display.init("ORO View", width, height, fullscreen);
+
+    } catch(SDLInitException& exception) {
+
+	throw OroViewException(string("SDL initialization failed ") + exception.what());
+    }
+
+    if(multisample) glEnable(GL_MULTISAMPLE_ARB);
+
+    OroView* oroview = NULL;
+
+    try {
+	oroview = new OroView();
+
+	 if(camera_mode == "track") {
+	    oroview->setCameraMode(true);
+	}
+
+	oroview->setBackground(background);
+
+	oroview->run();
+
+    } catch(ResourceException& exception) {
+
+	if (oroview != NULL) delete oroview;
+
+	throw OroViewException(string("failed to load resource ") + exception.what());
+
+    }
+
+    if (oroview != NULL) delete oroview;
+
+    //free resources
+    display.quit();
+
+    return 0;
+
 }
 
+
+/****** UNIT TESTS *********/
+//En attendant d'avoir deux cibles dans le Makefile, on peut activer
+//l'unit testing en decommentant la premiere ligne de ce fichier, et
+//en commentant l'autre main()
+/*
 int test_main(int argc, char *argv[]) {
 
     TRACE("*** Initialization ***");
@@ -58,3 +120,4 @@ int test_main(int argc, char *argv[]) {
     exit(0);
 
 }
+*/
