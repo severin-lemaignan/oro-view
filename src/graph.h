@@ -36,7 +36,7 @@ public:
 
     static Graph* getInstance();
 
-    void step();
+    void step(float dt);
 
     void render();
 

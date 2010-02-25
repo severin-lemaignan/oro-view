@@ -1,6 +1,8 @@
 #include <algorithm>
 #include <boost/functional/hash.hpp>
 
+#include "core/vectors.h"
+
 #include "macros.h"
 #include "oroview_exceptions.h"
 
@@ -16,6 +18,9 @@ Edge::Edge(const NodeRelation& rel) : renderer(EdgeRenderer(
 {
     node1 = NULL;
     node2 = NULL;
+
+    col1 = vec4f(0.3, 0.5, 0.7, 1.0);
+    col1 = vec4f(0.7, 0.5, 0.3, 1.0);
 
     renderingDone = false;
 
@@ -40,12 +45,44 @@ void Edge::addReferenceRelation(const NodeRelation& rel) {
 	}
 }
 
+void Edge::initializeNextStep(){
+    stepDone = false;
+    renderingDone = false;
+}
+
+void Edge::step(float dt){
+
+    if(!stepDone) {
+
+	vec2f& pos1 = node1->pos;
+	vec2f& pos2 = node2->pos;
+
+	//update the spline point
+	vec2f td = (pos2 - pos1) * 0.5;
+
+	vec2f mid = pos1 + td;// - td.perpendicular() * pos.normal();// * 10.0;
+
+	vec2f delta = (mid - spos);
+
+	//dont let spos get more than half the length of the distance behind
+	if(delta.length2() > td.length2()) {
+	    spos += delta.normal() * (delta.length() - td.length());
+	}
+
+	spos += delta * min(1.0, dt * 2.0);
+
+	renderer.updateSpline(pos1, col1, pos2, col2, spos);
+
+	stepDone = true;
+    }
+}
+
 void Edge::render(){
 
     if (!renderingDone) {
 
 #ifndef TEXT_ONLY
-	renderer.renderAt();
+	renderer.render();
 #endif
 	TRACE("Edge between " << node1->getID() << " and " << node2->getID() << " rendered.");
 	renderingDone = true;

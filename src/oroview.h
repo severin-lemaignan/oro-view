@@ -9,8 +9,7 @@
 #include "zoomcamera.h"
 
 #include "oroview_exceptions.h"
-
-static const std::string dateFormat("%A, %d %B, %Y %X");
+#include "constants.h"
 
 class OroView : public SDLApp {
 

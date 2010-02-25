@@ -54,11 +54,11 @@ void Node::initializeNextStep(){
     renderingDone = false;
 }
 
-void Node::step(){
+void Node::step(float dt){
 
     if(!stepDone) {
 
-	vec2f dpos = vec2f(2.0 * (float)rand()/RAND_MAX - 1.0 , 2.0 * (float)rand()/RAND_MAX - 1.0);
+	vec2f dpos = vec2f(5.0 * (float)rand()/RAND_MAX - 2.5 , 5.0 * (float)rand()/RAND_MAX - 2.5);
 
 	pos += dpos;
 

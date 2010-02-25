@@ -3,14 +3,20 @@
 
 #include "core/sdlapp.h"
 
+#include "spline.h"
+
 class EdgeRenderer
 {
     int tagid;
 
+    SplineEdge spline;
+
 public:
     EdgeRenderer(int tagid);
 
-    void renderAt();
+    void render();
+
+    void updateSpline(vec2f pos1, vec4f col1, vec2f pos2, vec4f col2, vec2f spos);
 
 
 };

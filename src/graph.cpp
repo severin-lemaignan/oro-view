@@ -26,11 +26,15 @@ Graph::~Graph() {
     delete _instance;
 }
 
-void Graph::step() {
+void Graph::step(float dt) {
 
     BOOST_FOREACH(NodeMap::value_type& n, nodes) {
 
-	n.second.step();
+	n.second.step(dt);
+    }
+
+    BOOST_FOREACH(Edge& e, edges) {
+	e.step(dt);
     }
 }
 
@@ -49,6 +53,10 @@ void Graph::initializeNextStep() {
 
     BOOST_FOREACH(NodeMap::value_type& n, nodes) {
 	n.second.initializeNextStep();
+    }
+
+    BOOST_FOREACH(Edge& e, edges) {
+	e.initializeNextStep();
     }
 }
 

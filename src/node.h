@@ -46,7 +46,7 @@ public:
     /**
       executes one computation step to compute the position of the node according to other nodes.
       */
-    void step();
+    void step(float dt);
 
     void render();
 };

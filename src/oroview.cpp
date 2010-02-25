@@ -60,9 +60,11 @@ void OroView::init(){
 
     Node& a = g.addNode("node1");
     Node& b = g.addNode("node2");
-    g.addNode("node3");
+    Node& c =  g.addNode("node3");
     g.addNode("node4");
     a.addRelation(b, INSTANCE, "loves");
+    a.addRelation(c, INSTANCE, "hates");
+    b.addRelation(c, INSTANCE, "loves");
 
     TRACE("\t - Graph created and populated");
 }
@@ -112,7 +114,7 @@ void OroView::logic(float t, float dt) {
 
      SDL_Delay(50); //N'allons pas trop vite au début...
 
-     g.step();
+     g.step(dt);
 }
 
 void OroView::drawBackground(float dt) {

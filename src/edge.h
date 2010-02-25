@@ -15,6 +15,12 @@ class Edge
     Node* node1;
     Node* node2;
 
+    vec2f spos;
+
+    vec4f col1;
+    vec4f col2;
+
+    bool stepDone;
     bool renderingDone;
 
     EdgeRenderer renderer;
@@ -26,6 +32,9 @@ public:
 
     bool coversRelation(const NodeRelation& rel);
 
+    void initializeNextStep();
+
+    void step(float dt);
     void render();
 };
 
