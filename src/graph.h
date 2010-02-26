@@ -54,6 +54,11 @@ public:
     Node* getNodeByTagID(int tagid);
 
     /**
+      Returns a random node.
+      */
+    Node& getRandomNode();
+
+    /**
       Adds a new node to the graph (if it doesn't exist yet) and returns a reference to the new node.
       */
     Node& addNode(const std::string& id);

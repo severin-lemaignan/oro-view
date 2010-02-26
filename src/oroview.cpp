@@ -104,6 +104,10 @@ void OroView::keyPress(SDL_KeyboardEvent *e) {
 	}
 
 	if (e->keysym.sym == SDLK_SPACE) {
+	    addRandomNodes(2, 1);
+	}
+
+	if (e->keysym.sym == SDLK_p) {
 	    paused = !paused;
 	}
 
@@ -183,6 +187,7 @@ void OroView::mouseMove(SDL_MouseMotionEvent *e) {
 void OroView::update(float t, float dt) {
 
     SDL_Delay(50); //N'allons pas trop vite au début...
+
     dt = min(dt, max_tick_rate);
 
     dt *= time_scale;
@@ -221,6 +226,10 @@ void OroView::updateTime() {
 void OroView::logic(float t, float dt) {
      if(draw_loading && logic_time > 1000) draw_loading = false;
 
+     Graph& g = *(Graph::getInstance());
+
+     g.initializeNextStep();
+
     //still want to update camera while paused
     if(paused) {
 	updateCamera(dt);
@@ -237,11 +246,7 @@ void OroView::logic(float t, float dt) {
 	}
     }
 
-     Graph& g = *(Graph::getInstance());
-
-     g.initializeNextStep();
-
-     g.step(dt);
+    g.step(dt);
 
      updateCamera(dt);
 }
@@ -635,4 +640,30 @@ void OroView::selectNode(Node* node) {
 
     //select node, lock on camera
     selectedNode->renderer.setSelected(true);
+}
+
+/** Testing */
+void OroView::addRandomNodes(int amount,int nb_rel) {
+
+    const int length = 6; //length of randomly created ID.
+
+    Graph& g = *(Graph::getInstance());
+
+    for (int i = 0; i < amount ; ++i) {
+
+	string newId;
+
+	//Generate a new random id for this node
+	for(int j=0; j<length; ++j)
+	{
+		newId += (char)(rand() % 26 + 97); //ASCII codes of letters starts at 98 for "a"
+	}
+
+	Node& n = g.addNode(newId);
+
+	for(int k=0; k<nb_rel; ++k) {
+
+	    n.addRelation(g.getRandomNode(), SUBCLASS, "test");
+	}
+    }
 }

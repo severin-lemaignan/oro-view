@@ -85,6 +85,11 @@ Node* Graph::getNodeByTagID(int tagid) {
 
 }
 
+Node& Graph::getRandomNode() {
+    NodeMap::iterator it = nodes.begin();
+    advance( it, rand()%nodes.size());
+    return it->second;
+}
 
 
 Node& Graph::addNode(const string& id) {

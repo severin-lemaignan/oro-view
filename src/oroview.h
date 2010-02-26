@@ -16,7 +16,6 @@ class Node;
 class OroView : public SDLApp {
 
     //Time
-
     time_t currtime;
 
     Uint32 draw_time;
@@ -96,6 +95,12 @@ class OroView : public SDLApp {
     void updateCamera(float dt);
     void toggleCameraMode();
     void zoom(bool zoomin);
+
+    //Testing
+    /**
+      Adds (amount) of new nodes to the graph, with (nb_rel) random connections to other nodes
+      */
+    void addRandomNodes(int amount, int nb_rel);
 
 public:
     OroView();
