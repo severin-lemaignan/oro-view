@@ -4,7 +4,7 @@
 #include <iostream>
 
 //Enable debugging
-#define DEBUG
+//#define DEBUG
 //#define TEXT_ONLY
 
 #ifdef DEBUG

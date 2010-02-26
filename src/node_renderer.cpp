@@ -8,6 +8,9 @@ NodeRenderer::NodeRenderer(int tagid) : tagid(tagid)
 
     size = 8.0;
 
+    mouseover = false;
+    selected = false;
+
 #ifndef TEXT_ONLY
     icon = texturemanager.grab("file.png");
 #endif
@@ -55,4 +58,12 @@ void NodeRenderer::renderAt(const vec2f& pos) {
     glPopMatrix();
 
     glLoadName(0);
+}
+
+void NodeRenderer::setMouseOver(bool over) {
+    mouseover = over;
+}
+
+void NodeRenderer::setSelected(bool select) {
+    selected = select;
 }

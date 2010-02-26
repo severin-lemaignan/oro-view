@@ -11,13 +11,19 @@
 #include "oroview_exceptions.h"
 #include "constants.h"
 
+class Node;
+
 class OroView : public SDLApp {
+
+    //Time
 
     time_t currtime;
 
     Uint32 draw_time;
     Uint32 logic_time;
     Uint32 trace_time;
+
+    float idle_time;
 
     float time_scale;
 
@@ -29,16 +35,50 @@ class OroView : public SDLApp {
 
     int date_x_offset;
 
-    ZoomCamera camera;
+    void updateTime();
+
+    //Nodes & users
+
+    Node* hoverNode;
+    Node* selectedNode;
+    void selectNode(Node* node);
+    Bounds2D nodesBounds;
 
     bool track_users;
     void* selectedUser;
 
-    bool backgroundSelected;
+    Bounds2D usersBounds;
 
+    //Mouse
+    GLint mouse_hits;
+
+    bool mousemoved;
+    bool mouseclicked;
+    bool mousedragged;
+
+    float mouse_inactivity;
+
+    vec2f mousepos;
+
+    GLuint selectionDepth;
+
+    //Background
+    vec2f backgroundPos;
+    bool backgroundSelected;
     vec3f background_colour;
 
+    void selectBackground();
+
+    //Loading screen
     bool draw_loading;
+    void loadingScreen();
+
+    /**
+      When true, display in the application debug infos like framerate.
+      */
+    bool debug;
+
+    bool paused;
 
     //Resources
     FXFont font, fontlarge, fontmedium;
@@ -48,25 +88,36 @@ class OroView : public SDLApp {
     //Drawing routines
     void drawBackground(float dt);
 
-    void loadingScreen();
+    //Logic routines
+    void mouseTrace(Frustum& frustum, float dt); //render the mouse and update hovered objects
 
-    //Various helpers
-    void updateTime();
+    //Camera
+    ZoomCamera camera;
+    void updateCamera(float dt);
+    void toggleCameraMode();
+    void zoom(bool zoomin);
 
 public:
     OroView();
 
-    void setBackground(vec3f background);
-    void setCameraMode(bool track_users);
-    void toggleCameraMode();
-
     //Initialisation
     void init(); //overrides SDLApp::init
+
+    //Events
+    void keyPress(SDL_KeyboardEvent *e); //overrides SDLApp::keyPress
+    void mouseClick(SDL_MouseButtonEvent *e); //overrides SDLApp::mouseClick
+    void mouseMove(SDL_MouseMotionEvent *e); //overrides SDLApp::mouseMove
 
     //Main routines
     void update(float t, float dt); //overrides SDLApp::update
     void logic(float t, float dt); //overrides SDLApp::logic
     void draw(float t, float dt); //overrides SDLApp::draw
+
+    //Camera
+    void setCameraMode(bool track_users);
+
+    //Background
+    void setBackground(vec3f background);
 
 };
 

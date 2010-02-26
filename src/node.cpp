@@ -1,15 +1,21 @@
 #include <boost/foreach.hpp>
 #include <boost/functional/hash.hpp>
 
-#include "node.h"
+#include "macros.h"
+
 #include "graph.h"
+#include "node.h"
+#include "noderelation.h"
+
 
 using namespace std;
 using namespace boost;
 
 Node::Node(string id) : id(id), renderer(NodeRenderer(hash_value(id)))
 {
-    pos = vec2f(0.0, 0.0);
+    pos = vec2f(30.0 * (float)rand()/RAND_MAX - 15 , 30 * (float)rand()/RAND_MAX - 15);
+
+    speed = vec2f(40.0 * (float)rand()/RAND_MAX - 20 , 40.0 * (float)rand()/RAND_MAX - 20);
 
 
 
@@ -58,9 +64,10 @@ void Node::step(float dt){
 
     if(!stepDone) {
 
-	vec2f dpos = vec2f(5.0 * (float)rand()/RAND_MAX - 2.5 , 5.0 * (float)rand()/RAND_MAX - 2.5);
+	vec2f acc = vec2f(5 * (float)rand()/RAND_MAX - 2.5 , 5 * (float)rand()/RAND_MAX - 2.5);
+	speed += acc * dt;
 
-	pos += dpos;
+	pos += speed * dt;
 
 	TRACE("Step computed for " << id << ". Now at (" << pos.x << ", " << pos.y << ").");
 	stepDone = true;

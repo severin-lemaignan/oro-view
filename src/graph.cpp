@@ -1,10 +1,13 @@
 #include <boost/foreach.hpp>
+#include <boost/functional/hash.hpp>
 
 #include <iterator>
 #include <utility>
 
 #include "macros.h"
 #include "graph.h"
+#include "edge.h"
+#include "noderelation.h"
 
 using namespace std;
 using namespace boost;
@@ -62,9 +65,7 @@ void Graph::initializeNextStep() {
 
 Node& Graph::getNode(const string& id) {
 
-    map<string,Node>::iterator it;
-
-    it = nodes.find(id);
+    NodeMap::iterator it = nodes.find(hash_value(id));
 
     if (it == nodes.end())
 	throw OroViewException("Node " + id + " not found");
@@ -73,12 +74,23 @@ Node& Graph::getNode(const string& id) {
 
 }
 
+Node* Graph::getNodeByTagID(int tagid) {
+
+    NodeMap::iterator it = nodes.find(tagid);
+
+    if (it == nodes.end())
+	return NULL;
+
+    return &(it->second);
+
+}
+
 
 
 Node& Graph::addNode(const string& id) {
 
     //I'm doing 2 !! copies of Node, here??
-    pair<NodeMap::iterator, bool> res = nodes.insert(make_pair(id,Node(id)));
+    pair<NodeMap::iterator, bool> res = nodes.insert(make_pair(hash_value(id),Node(id)));
 
     if ( ! res.second )
 	TRACE("Didn't add node " << id << " because it already exists.");

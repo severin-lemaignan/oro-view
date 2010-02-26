@@ -5,11 +5,12 @@
 #include <vector>
 #include <string>
 
-#include "core/sdlapp.h"
+#include "core/vectors.h"
 
-#include "macros.h"
-#include "noderelation.h"
+#include "constants.h"
 #include "node_renderer.h"
+
+class NodeRelation;
 
 class Node
 {
@@ -20,15 +21,17 @@ class Node
 
     std::string id;
 
-    NodeRenderer renderer;
+    vec2f speed;
 
 public:
-
-    vec2f pos;
 
     Node(std::string id);
 
     bool operator< (const Node& node) const;
+
+    NodeRenderer renderer;
+
+    vec2f pos;
 
     const std::string& getID() const;
 

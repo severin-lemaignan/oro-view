@@ -18,10 +18,16 @@ class NodeRenderer
 
     TextureResource* getIcon() { return icon; }
 
+    bool mouseover;
+    bool selected;
+
 public:
     NodeRenderer(int tagid);
 
     void renderAt(const vec2f& pos);
+
+    void setMouseOver(bool over);
+    void setSelected(bool selected);
 
 
 };

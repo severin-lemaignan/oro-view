@@ -19,7 +19,7 @@ private:
     /**
       a map of nodes. The key is the node ID.
      */
-    typedef std::map<std::string, Node> NodeMap;
+    typedef std::map<int, Node> NodeMap;
     NodeMap nodes;
 
     typedef std::vector<Edge> EdgeVector;
@@ -46,6 +46,12 @@ public:
       Returns a reference to a node by its id. Throws an exception if the node doesn't exist.
       */
     Node& getNode(const std::string& id);
+
+    /**
+      Returns a reference to a node by its tagid, ie the hash value of its ID. Return a NULL pointer
+      if the node doesn't exists.
+      */
+    Node* getNodeByTagID(int tagid);
 
     /**
       Adds a new node to the graph (if it doesn't exist yet) and returns a reference to the new node.

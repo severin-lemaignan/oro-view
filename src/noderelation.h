@@ -3,11 +3,10 @@
 
 #include <string>
 
+#include "constants.h"
 #include "edge.h"
 
 class Node;
-
-enum relation_type {SUBCLASS, SUPERCLASS, INSTANCE, OBJ_PROPERTY, DATA_PROPERTY};
 
 struct NodeRelation {
 	Node* from;
