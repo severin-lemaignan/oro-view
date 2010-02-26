@@ -3,6 +3,8 @@
 #include "macros.h"
 #include "oroview.h"
 
+#include "noderelation.h"
+
 #include "graph.h"
 
 using namespace std;
@@ -40,7 +42,7 @@ OroView::OroView()
     background_colour = vec3f(0.0, 0.0, 0.0);
 
     draw_loading = true;
-    debug = false;
+    debug = true;
     paused = false;
 
     fontlarge = fontmanager.grab("FreeSans.ttf", 42);
@@ -73,11 +75,13 @@ void OroView::init(){
 
     Node& a = g.addNode("node1");
     Node& b = g.addNode("node2");
-    Node& c =  g.addNode("node3");
-    g.addNode("node4");
     a.addRelation(b, INSTANCE, "loves");
-    a.addRelation(c, INSTANCE, "hates");
-    b.addRelation(c, INSTANCE, "loves");
+
+   // Node& c =  g.addNode("node3");
+    //g.addNode("node4");
+
+    //a.addRelation(c, INSTANCE, "hates");
+    //b.addRelation(c, INSTANCE, "loves");
 
     TRACE("\t - Graph created and populated");
 }
@@ -490,13 +494,16 @@ void OroView::draw(float t, float dt) {
 	font.print(0,100,"Edges: %d", Graph::getInstance()->edgesCount());
 
 	font.print(0,140,"Camera: (%.2f, %.2f, %.2f)", campos.x, campos.y, campos.z);
-	font.print(0,160,"Gravity: %.2f", gravity);
+	font.print(0,160,"Gravity: %.2f", GRAVITY);
 	font.print(0,180,"Logic Time: %u ms", logic_time);
 	font.print(0,200,"Mouse Trace: %u ms", trace_time);
 	font.print(0,220,"Draw Time: %u ms", SDL_GetTicks() - draw_time);
 
 	if(selectedNode != NULL) {
 	    font.print(0,260,"%s selected.", selectedNode->getID().c_str());
+	    font.print(30,280,"Speed: (%.2f, %.2f)", selectedNode->speed.x, selectedNode->speed.y);
+	    font.print(30,320,"Kinetic energy: %.2f", selectedNode->kinetic_energy);
+	    font.print(30,340,"Number of relations: %d", selectedNode->getRelations().size());
 	}
 
     }

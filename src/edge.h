@@ -15,6 +15,8 @@ class Edge
     Node* node1;
     Node* node2;
 
+    void updateLength();
+
     vec2f spos;
 
     bool stepDone;
@@ -24,6 +26,10 @@ class Edge
 
 public:
     Edge(const NodeRelation& rel);
+
+    float length;
+    float spring_constant;
+    float nominal_length;
 
     void addReferenceRelation(const NodeRelation& rel);
 

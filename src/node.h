@@ -21,7 +21,11 @@ class Node
 
     std::string id;
 
-    vec2f speed;
+    //Forces computation
+    vec2f coulombRepulsionWith(const Node& node) const;
+    vec2f hookeAttractionWith(const NodeRelation& rel) const;
+    vec2f project(float force, vec2f delta) const;
+    void updateKineticEnergy();
 
 public:
 
@@ -31,6 +35,10 @@ public:
 
     NodeRenderer renderer;
 
+    float kinetic_energy;
+    float mass;
+    float damping;
+    vec2f speed;
     vec2f pos;
 
     const std::string& getID() const;

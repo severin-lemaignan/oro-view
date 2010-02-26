@@ -18,4 +18,5 @@ void EdgeRenderer::update(vec2f pos1, vec4f col1, vec2f pos2, vec4f col2, vec2f 
     vec2f projected_spos = display.project(vec3f(spos.x, spos.y, 0.0)).truncate();
 
     spline = SplineEdge(projected_pos1, col1, projected_pos2, col2, spos);
+
 }
