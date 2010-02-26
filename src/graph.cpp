@@ -7,7 +7,7 @@
 #include "macros.h"
 #include "graph.h"
 #include "edge.h"
-#include "noderelation.h"
+#include "node_relation.h"
 
 using namespace std;
 using namespace boost;
@@ -63,6 +63,10 @@ void Graph::resetRenderers() {
     BOOST_FOREACH(Edge& e, edges) {
 	e.resetRenderers();
     }
+}
+
+const Graph::NodeMap& Graph::getNodes() const {
+    return nodes;
 }
 
 Node& Graph::getNode(const string& id) {

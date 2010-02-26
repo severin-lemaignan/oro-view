@@ -32,6 +32,7 @@ public:
     float nominal_length;
 
     void addReferenceRelation(const NodeRelation& rel);
+    void removeReferenceRelation(const NodeRelation& rel);
 
     bool coversRelation(const NodeRelation& rel);
 

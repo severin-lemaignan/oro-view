@@ -7,7 +7,7 @@
 #include "oroview_exceptions.h"
 
 #include "edge.h"
-#include "noderelation.h"
+#include "node_relation.h"
 #include "node.h"
 
 using namespace std;
@@ -44,6 +44,13 @@ void Edge::addReferenceRelation(const NodeRelation& rel) {
 	    !(node1 == rel.to && node2 == rel.from)) {
 	    throw OroViewException("Trying to add a relation to an edge for the wrong nodes!");
 	}
+}
+
+void Edge::removeReferenceRelation(const NodeRelation& rel) {
+    remove(relations.begin(), relations.end(), &rel);
+
+    if (relations.size() == 0)
+	throw OroViewException("Removed the last relation of an edge!");
 }
 
 void Edge::resetRenderers(){

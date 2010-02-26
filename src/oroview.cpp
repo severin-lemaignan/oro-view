@@ -3,7 +3,7 @@
 #include "macros.h"
 #include "oroview.h"
 
-#include "noderelation.h"
+#include "node_relation.h"
 
 #include "graph.h"
 
@@ -502,6 +502,7 @@ void OroView::draw(float t, float dt) {
 	if(selectedNode != NULL) {
 	    font.print(0,260,"%s selected.", selectedNode->getID().c_str());
 	    font.print(30,280,"Speed: (%.2f, %.2f)", selectedNode->speed.x, selectedNode->speed.y);
+	    font.print(30,300,"Charge: %.2f", selectedNode->charge);
 	    font.print(30,320,"Kinetic energy: %.2f", selectedNode->kinetic_energy);
 	    font.print(30,340,"Number of relations: %d", selectedNode->getRelations().size());
 	}
@@ -643,7 +644,7 @@ void OroView::selectNode(Node* node) {
 
     // deselect current node
     if(selectedNode != NULL) {
-	selectedNode->renderer.setSelected(false);
+	selectedNode->setSelected(false);
 	selectedNode = NULL;
     }
 
@@ -655,7 +656,7 @@ void OroView::selectNode(Node* node) {
     selectedNode = node;
 
     //select node, lock on camera
-    selectedNode->renderer.setSelected(true);
+    selectedNode->setSelected(true);
 }
 
 /** Testing */

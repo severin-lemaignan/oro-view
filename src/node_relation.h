@@ -17,12 +17,12 @@ struct NodeRelation {
 	//The edge that represents this relation
 	Edge* edge_p;
 
-	NodeRelation(Node* from, Node* to, const relation_type type, const std::string& label) :
+	NodeRelation(Node* from, Node* to, const relation_type type, const std::string& label, Edge* edge = NULL) :
 								from(from),
 								to(to),
 								type(type),
 								label(label),
-								edge_p(NULL) {}
+								edge_p(edge) {}
 };
 
 #endif // NODERELATION_H

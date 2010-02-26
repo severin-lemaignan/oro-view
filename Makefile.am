@@ -25,6 +25,7 @@ oroview_SOURCES = \
 	src/core/vectors.h \
 	src/node.cpp src/node.h \
 	src/node_renderer.cpp src/node_renderer.h \
+	src/node_relation.cpp src/node_relation.h \
 	src/oroview.cpp src/oroview.h \
 	src/main.cpp \
 	src/edge.cpp src/edge.h \

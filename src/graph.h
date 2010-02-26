@@ -14,12 +14,14 @@ class Edge;
 
 class Graph
 {
-
-private:
+public:
     /**
       a map of nodes. The key is the node ID.
      */
     typedef std::map<int, Node> NodeMap;
+    
+private:
+    
     NodeMap nodes;
 
     typedef std::vector<Edge> EdgeVector;
@@ -47,6 +49,11 @@ public:
     void render(bool complete = true);
 
     void resetRenderers();
+
+    /**
+      Returns an immutable reference to the list of nodes.
+      */
+    const NodeMap& getNodes() const;
 
     /**
       Returns a reference to a node by its id. Throws an exception if the node doesn't exist.

@@ -10,6 +10,7 @@
 #include "constants.h"
 #include "node_renderer.h"
 
+class Edge;
 class NodeRelation;
 
 class Node
@@ -18,6 +19,8 @@ class Node
 
     bool stepDone;
     bool renderingDone;
+
+    bool selected;
 
     std::string id;
 
@@ -36,6 +39,7 @@ public:
     NodeRenderer renderer;
 
     float kinetic_energy;
+    float charge;
     float mass;
     float damping;
     vec2f speed;
@@ -45,7 +49,7 @@ public:
 
     std::vector<NodeRelation>& getRelations();
 
-    void addRelation(Node& to, const relation_type type, const std::string& label);
+    void addRelation(Node& to, const relation_type type, const std::string& label, Edge* edge = NULL);
     /**
       Returns a vector of all the relations of *this that link to node.
       Returns an empty vector if no relation exist between *this and node.
@@ -66,6 +70,8 @@ public:
       primitive in OpenGL GL_SELECT mode.
       */
     void render(bool complete = true);
+
+    void setSelected(bool selected);
 };
 
 #endif // NODE_H

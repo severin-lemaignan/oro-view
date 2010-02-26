@@ -1,11 +1,13 @@
 #include <boost/foreach.hpp>
 #include <boost/functional/hash.hpp>
 
+#include <algorithm>
+
 #include "macros.h"
 
 #include "graph.h"
 #include "node.h"
-#include "noderelation.h"
+#include "node_relation.h"
 
 
 using namespace std;
@@ -21,7 +23,11 @@ Node::Node(string id) : id(id), renderer(NodeRenderer(hash_value(id)))
     mass = INITIAL_MASS;
     damping = INITIAL_DAMPING;
 
+    charge = INITIAL_CHARGE;
+
     resetRenderers();
+
+    selected = false;
 }
 
 bool Node::operator< (const Node& node2) const {
@@ -36,14 +42,54 @@ std::vector<NodeRelation>& Node::getRelations() {
     return relations;
 }
 
-void Node::addRelation(Node& to, const relation_type type, const std::string& label) {
-    relations.push_back(NodeRelation(this, &to, type, label));
+void Node::addRelation(Node& to, const relation_type type, const std::string& label, Edge* e) {
 
-    TRACE("Added relation from " << id << " to " << to.getID());
+
+    //When adding a new relation, we create as well an initial UNDEFINED reciprocal relation if
+    //the destination node has no back relation.
+    //And before adding a relation, we check there is no existing UNDEFINED relation.
+    //If it's the case, we can safely replace it by a well defined relation.
+
+    if (type == UNDEFINED) {
+	//Add an undefined relation and return.
+	relations.push_back(NodeRelation(this, &to, UNDEFINED, "", e));
+	TRACE("Added UNDEFINED back relation to " << to.getID());
+	return;
+    }
+
+    vector<const NodeRelation*> rels = getRelationTo(to);
+
+    relations.push_back(NodeRelation(this, &to, type, label)); //Add a new relation
+
 
     //Ask the graph to create the edge for this relation. If an edge already exist between the two nodes,
     //it will be reused.
-    Graph::getInstance()->addEdge(relations.back());
+    Edge& edge = Graph::getInstance()->addEdge(relations.back()); // keep a reference if we need to define a backrelation.
+
+    if(rels.size() == 1 && rels[0]->type == UNDEFINED) { //I had already an undefined relation to the destination node
+	
+	TRACE("Will replaced an old UNDEFINED relation by a better one!");
+
+	//**** TODO !!! *****/
+
+	//if (edge_p != NULL)
+	//    edge_p->removeReferenceRelation(*this);
+
+	//std::remove(relations.begin(), relations.end(), *(rels[0]));
+
+
+	
+	//no need to check that there is a reciprocal relation since if I had a UNDEFINED relation, it implies
+	//my "to" node had already created a relation to me.
+    }
+    else {
+	if (to.getRelationTo(*this).empty()) //the destination node has no connection to me :-(
+	    to.addRelation(*this, UNDEFINED, "", &edge); // let's create a temporary one.
+    }
+
+
+    TRACE("Added relation from " << id << " to " << to.getID());
+
 }
 
 vector<const NodeRelation*> Node::getRelationTo(Node& node) const {
@@ -63,7 +109,18 @@ void Node::resetRenderers(){
 }
 
 vec2f Node::coulombRepulsionWith(const Node& node) const {
-    return vec2f(0.0, 0.0);
+
+    //TODO: a simple optimization can be to compute Coulomb force
+    //at the same time than Hooke force when possible -> one
+    // less distance computation (not sure it makes a big difference)
+    vec2f delta = node.pos - pos;
+
+    //Coulomb repulsion force is in 1/r^2
+    float f = COULOMB_CONSTANT * charge * node.charge / delta.length2();
+
+    TRACE("Coulomb force from " << node.getID() << ": " << f);
+
+    return project(f, delta);
 }
 
 vec2f Node::hookeAttractionWith(const NodeRelation& rel) const {
@@ -71,6 +128,8 @@ vec2f Node::hookeAttractionWith(const NodeRelation& rel) const {
     float f = - e.spring_constant * (e.length - e.nominal_length);
 
     vec2f delta = rel.to->pos - pos;
+
+    TRACE("Hooke force from " << rel.to->getID() << ": " << f);
 
     return project(f, delta);
 }
@@ -94,19 +153,16 @@ vec2f Node::project(float force, vec2f d) const {
     float dydx = d.y/d.x;
     float sqdydx = 1/sqrt(1 + dydx * dydx);
 
-    TRACE("d.x:" << d.x << " d.y:" << d.y << " 1/sqrt(1 - dxdy * dxdy):" << sqdydx);
-
     res.x = force * sqdydx;
     if (d.x > 0.0) res.x = - res.x;
     res.y = force * sqdydx * abs(dydx);
     if (d.y > 0.0) res.y = - res.y;
 
-    TRACE("res.x:" << res.x << " res.y:" << res.y);
     return res;
 }
 
 void Node::updateKineticEnergy() {
-    kinetic_energy += mass * speed.length2();
+    kinetic_energy = mass * speed.length2();
 }
 
 void Node::step(float dt){
@@ -119,9 +175,11 @@ void Node::step(float dt){
 
 	vec2f force = vec2f(0.0, 0.0);
 
-//	BOOST_FOREACH(Node& node, nodes) {
-//	    force += coulombRepulsionWith(node);
-//	}
+	BOOST_FOREACH(const Graph::NodeMap::value_type& node, Graph::getInstance()->getNodes()) {
+	    if (&(node.second) != this)
+		force += coulombRepulsionWith(node.second);
+	}
+	TRACE("Force after applying Coulomb repulsion: Fx=" << force.x << ", Fy= " << force.y);
 
 	BOOST_FOREACH(NodeRelation& rel, relations) {
 	    force += hookeAttractionWith(rel);
@@ -152,4 +210,17 @@ void Node::render(bool complete){
 	TRACE("Node " << id << " rendered.");
 	renderingDone = true;
     }
+}
+
+void Node::setSelected(bool select) {
+
+    if ((select && selected)||
+	(!select && !selected)) return;
+
+    selected = select;
+    renderer.setSelected(select);
+
+    if(select) charge *= 2;
+    else charge /= 2;
+
 }
