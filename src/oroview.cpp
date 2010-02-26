@@ -228,7 +228,7 @@ void OroView::logic(float t, float dt) {
 
      Graph& g = *(Graph::getInstance());
 
-     g.initializeNextStep();
+     g.resetRenderers();
 
     //still want to update camera while paused
     if(paused) {
@@ -252,15 +252,19 @@ void OroView::logic(float t, float dt) {
 }
 
 void OroView::mouseTrace(Frustum& frustum, float dt) {
-    GLuint	buffer[512];
-	GLint	viewport[4];
 
-	glGetIntegerv(GL_VIEWPORT, viewport);
-	glSelectBuffer(512, buffer);
+    Graph& g = *(Graph::getInstance());
+
+    GLuint	buffer[512];
+    GLint	viewport[4];
+
+    glGetIntegerv(GL_VIEWPORT, viewport);
+    glSelectBuffer(512, buffer);
 
     glDepthFunc(GL_LEQUAL);
     glEnable(GL_DEPTH_TEST);
 
+    /** Start the selection of primitives touched by the mouse **/
     (void) glRenderMode(GL_SELECT);
 
     glInitNames();
@@ -269,6 +273,7 @@ void OroView::mouseTrace(Frustum& frustum, float dt) {
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
 
+    //Restrict the detection to a zone around of the mouse
     gluPickMatrix((GLdouble) mousepos.x, (GLdouble) (viewport[3]-mousepos.y), 1.0f, 1.0f, viewport);
     gluPerspective(90.0f, (GLfloat)display.width/(GLfloat)display.height, 0.1f, camera.getZFar());
     camera.look();
@@ -280,19 +285,23 @@ void OroView::mouseTrace(Frustum& frustum, float dt) {
 //	it->second->drawSimple(dt);
 //    }
 
-//    glDisable(GL_TEXTURE_2D);
-//    glColor4f(1.0, 1.0, 1.0, 1.0);
-//
-//    root->drawSimple(frustum, dt);
+    glDisable(GL_TEXTURE_2D);
+    glColor4f(1.0, 1.0, 1.0, 1.0);
+
+    g.render(false);
+    g.resetRenderers();
 
     glMatrixMode(GL_MODELVIEW);
 
+    //going back to the GL_RENDER mode, returning the number of hits from hte GL_SELECT mode
     mouse_hits = glRenderMode(GL_RENDER);
+    /** End of selection **/
 
     Node* nodeSelection = NULL;
 //    RUser* userSelection = 0;
 
     if (mouse_hits > 0) {
+
 	int choice   = buffer[3];
 	GLuint depth = buffer[1];
 

@@ -16,7 +16,7 @@ public:
 
     void render();
 
-    void updateSpline(vec2f pos1, vec4f col1, vec2f pos2, vec4f col2, vec2f spos);
+    void update(vec2f pos1, vec4f col1, vec2f pos2, vec4f col2, vec2f spos);
 
 
 };

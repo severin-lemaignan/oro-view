@@ -17,9 +17,6 @@ class Edge
 
     vec2f spos;
 
-    vec4f col1;
-    vec4f col2;
-
     bool stepDone;
     bool renderingDone;
 
@@ -32,7 +29,7 @@ public:
 
     bool coversRelation(const NodeRelation& rel);
 
-    void initializeNextStep();
+    void resetRenderers();
 
     void step(float dt);
     void render();

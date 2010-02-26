@@ -44,14 +44,20 @@ public:
       */
     std::vector<const NodeRelation*> getRelationTo(Node& node) const;
 
-    void initializeNextStep();
+    void resetRenderers();
 
     /**
       executes one computation step to compute the position of the node according to other nodes.
       */
     void step(float dt);
 
-    void render();
+     /**
+      Renders the node. If called with argument 'false', goes in simple mode.
+
+      In simple mode, no special effects are rendered. Useful for picking selected
+      primitive in OpenGL GL_SELECT mode.
+      */
+    void render(bool complete = true);
 };
 
 #endif // NODE_H

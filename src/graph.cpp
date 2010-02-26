@@ -41,25 +41,27 @@ void Graph::step(float dt) {
     }
 }
 
-void Graph::render() {
+void Graph::render(bool complete) {
 
-    BOOST_FOREACH(Edge& e, edges) {
-	e.render();
+    if (complete) {
+	BOOST_FOREACH(Edge& e, edges) {
+	    e.render();
+	}
     }
 
     BOOST_FOREACH(NodeMap::value_type& n, nodes) {
-	n.second.render();
+	n.second.render(complete);
     }
 }
 
-void Graph::initializeNextStep() {
+void Graph::resetRenderers() {
 
     BOOST_FOREACH(NodeMap::value_type& n, nodes) {
-	n.second.initializeNextStep();
+	n.second.resetRenderers();
     }
 
     BOOST_FOREACH(Edge& e, edges) {
-	e.initializeNextStep();
+	e.resetRenderers();
     }
 }
 

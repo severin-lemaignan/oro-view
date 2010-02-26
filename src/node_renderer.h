@@ -14,20 +14,23 @@ class NodeRenderer
     float fadetime;
 
     float getAlpha() { return std::min(elapsed/fadetime, 1.0f); }
-    vec3f getColour() { return vec3f(1.0, 1.0, 1.0); }
+
 
     TextureResource* getIcon() { return icon; }
 
-    bool mouseover;
+    bool hovered;
     bool selected;
 
 public:
     NodeRenderer(int tagid);
 
+    vec4f col;
+
     void renderAt(const vec2f& pos);
 
     void setMouseOver(bool over);
     void setSelected(bool selected);
+
 
 
 };

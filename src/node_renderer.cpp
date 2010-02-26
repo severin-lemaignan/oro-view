@@ -8,7 +8,9 @@ NodeRenderer::NodeRenderer(int tagid) : tagid(tagid)
 
     size = 8.0;
 
-    mouseover = false;
+    col = vec4f(1.0, 1.0, 1.0, 1.0);
+
+    hovered = false;
     selected = false;
 
 #ifndef TEXT_ONLY
@@ -17,6 +19,12 @@ NodeRenderer::NodeRenderer(int tagid) : tagid(tagid)
 }
 
 void NodeRenderer::renderAt(const vec2f& pos) {
+
+    if (selected) col = vec4f(1.0, 0.0, 0.5, 1.0);
+    else {
+	if (hovered) col = vec4f(0.0, 1.0, 0.5, 1.0);
+	else col = vec4f(1.0, 1.0, 1.0, 0.7);
+	}
 
     glLoadName(tagid);
 
@@ -30,16 +38,12 @@ void NodeRenderer::renderAt(const vec2f& pos) {
 
     float alpha = getAlpha();
 
-    vec3f col = getColour();
-
     glBindTexture(GL_TEXTURE_2D, getIcon()->textureid);
 
     glPushMatrix();
 	glTranslatef(offsetpos.x, offsetpos.y, 0.0f);
 
-	//TODO: Fix the alpha value...
-	//glColor4f(col.x, col.y, col.z, alpha);
-	glColor4f(col.x, col.y, col.z, 1.0);
+	glColor4f(col.x, col.y, col.z, col.w);
 
 	glBegin(GL_QUADS);
 	    glTexCoord2f(0.0f,0.0f);
@@ -61,7 +65,8 @@ void NodeRenderer::renderAt(const vec2f& pos) {
 }
 
 void NodeRenderer::setMouseOver(bool over) {
-    mouseover = over;
+    hovered = over;
+
 }
 
 void NodeRenderer::setSelected(bool select) {

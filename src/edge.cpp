@@ -19,9 +19,6 @@ Edge::Edge(const NodeRelation& rel) : renderer(EdgeRenderer(
     node1 = NULL;
     node2 = NULL;
 
-    col1 = vec4f(0.3, 0.5, 0.7, 1.0);
-    col1 = vec4f(0.7, 0.5, 0.3, 1.0);
-
     renderingDone = false;
 
     addReferenceRelation(rel);
@@ -45,7 +42,7 @@ void Edge::addReferenceRelation(const NodeRelation& rel) {
 	}
 }
 
-void Edge::initializeNextStep(){
+void Edge::resetRenderers(){
     stepDone = false;
     renderingDone = false;
 }
@@ -71,7 +68,7 @@ void Edge::step(float dt){
 
 	spos += delta * min(1.0, dt * 2.0);
 
-	renderer.updateSpline(pos1, col1, pos2, col2, spos);
+	renderer.update(pos1, node1->renderer.col, pos2, node2->renderer.col, spos);
 
 	stepDone = true;
     }

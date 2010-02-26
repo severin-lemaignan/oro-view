@@ -38,9 +38,15 @@ public:
 
     void step(float dt);
 
-    void render();
+    /**
+      Renders the graph. If called with argument 'false', goes in simple mode.
 
-    void initializeNextStep();
+      In simple mode, neither edges or special effects are rendered. Useful for picking selected
+      primitive in OpenGL GL_SELECT mode.
+      */
+    void render(bool complete = true);
+
+    void resetRenderers();
 
     /**
       Returns a reference to a node by its id. Throws an exception if the node doesn't exist.

@@ -19,7 +19,7 @@ Node::Node(string id) : id(id), renderer(NodeRenderer(hash_value(id)))
 
 
 
-    initializeNextStep();
+    resetRenderers();
 }
 
 bool Node::operator< (const Node& node2) const {
@@ -55,7 +55,7 @@ vector<const NodeRelation*> Node::getRelationTo(Node& node) const {
     return res;
 }
 
-void Node::initializeNextStep(){
+void Node::resetRenderers(){
     stepDone = false;
     renderingDone = false;
 }
@@ -74,7 +74,7 @@ void Node::step(float dt){
     }
 }
 
-void Node::render(){
+void Node::render(bool complete){
 
     if (!renderingDone) {
 #ifndef TEXT_ONLY
