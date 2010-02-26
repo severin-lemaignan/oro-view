@@ -115,21 +115,29 @@ vec2f Node::coulombRepulsionWith(const Node& node) const {
     // less distance computation (not sure it makes a big difference)
     vec2f delta = node.pos - pos;
 
-    //Coulomb repulsion force is in 1/r^2
-    float f = COULOMB_CONSTANT * charge * node.charge / delta.length2();
+    if (isnan(pos.x) || isnan(node.pos.x)) throw OroViewException("NaN exception!");
 
-    TRACE("Coulomb force from " << node.getID() << ": " << f);
+    //Coulomb repulsion force is in 1/r^2
+    float len = delta.length2();
+    if (len < 0.01) len = 0.01; //avoid dividing by zero
+
+    float f = COULOMB_CONSTANT * charge * node.charge / len;
+
+    //TRACE("Coulomb force from " << node.getID() << ": " << f);
 
     return project(f, delta);
 }
 
 vec2f Node::hookeAttractionWith(const NodeRelation& rel) const {
+
+    if (rel.edge_p == NULL) throw OroViewException("Edge not set for this relation!");
+
     Edge& e = *(rel.edge_p);
     float f = - e.spring_constant * (e.length - e.nominal_length);
 
     vec2f delta = rel.to->pos - pos;
 
-    TRACE("Hooke force from " << rel.to->getID() << ": " << f);
+    //TRACE("Hooke force from " << rel.to->getID() << ": " << f);
 
     return project(f, delta);
 }
@@ -179,12 +187,11 @@ void Node::step(float dt){
 	    if (&(node.second) != this)
 		force += coulombRepulsionWith(node.second);
 	}
-	TRACE("Force after applying Coulomb repulsion: Fx=" << force.x << ", Fy= " << force.y);
 
 	BOOST_FOREACH(NodeRelation& rel, relations) {
 	    force += hookeAttractionWith(rel);
 	}
-	TRACE("Force after applying springs attraction: Fx=" << force.x << ", Fy= " << force.y);
+	//TRACE("Force applying: Fx=" << force.x << ", Fy= " << force.y);
 
 	speed = (speed + force * dt) * damping;
 
@@ -196,7 +203,7 @@ void Node::step(float dt){
 	}
 
 
-	TRACE("Step computed for " << id << ". Speed is " << speed.x << ", " << speed.y << " (energy: " << kinetic_energy << ").");
+	//TRACE("Step computed for " << id << ". Speed is " << speed.x << ", " << speed.y << " (energy: " << kinetic_energy << ").");
 	stepDone = true;
     }
 }
@@ -207,7 +214,7 @@ void Node::render(bool complete){
 #ifndef TEXT_ONLY
 	renderer.renderAt(pos);
 #endif
-	TRACE("Node " << id << " rendered.");
+	//TRACE("Node " << id << " rendered.");
 	renderingDone = true;
     }
 }

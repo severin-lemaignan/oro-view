@@ -75,9 +75,12 @@ void OroView::init(){
 
     Node& a = g.addNode("node1");
     Node& b = g.addNode("node2");
-    a.addRelation(b, INSTANCE, "loves");
+    b.addRelation(a, INSTANCE, "loves");
 
-   // Node& c =  g.addNode("node3");
+    Node& c =  g.addNode("node3");
+
+    c.addRelation(a, INSTANCE, "loves");
+
     //g.addNode("node4");
 
     //a.addRelation(c, INSTANCE, "hates");
@@ -108,7 +111,7 @@ void OroView::keyPress(SDL_KeyboardEvent *e) {
 	}
 
 	if (e->keysym.sym == SDLK_SPACE) {
-	    addRandomNodes(2, 1);
+	    addRandomNodes(1, 1);
 	}
 
 	if (e->keysym.sym == SDLK_p) {
@@ -680,6 +683,7 @@ void OroView::addRandomNodes(int amount,int nb_rel) {
 
 	for(int k=0; k<nb_rel; ++k) {
 
+	    //We may pick ourselves, but it's not that a problem
 	    n.addRelation(g.getRandomNode(), SUBCLASS, "test");
 	}
     }

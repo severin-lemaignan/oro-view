@@ -86,7 +86,7 @@ void Edge::step(float dt){
 	renderer.update(pos1, node1->renderer.col, pos2, node2->renderer.col, spos);
 
 #endif
-	TRACE("Edge between " << node1->getID() << " and " << node2->getID() << " updated.");
+	//TRACE("Edge between " << node1->getID() << " and " << node2->getID() << " updated.");
 	stepDone = true;
     }
 }
@@ -98,7 +98,7 @@ void Edge::render(){
 #ifndef TEXT_ONLY
 	renderer.render();
 #endif
-	TRACE("Edge between " << node1->getID() << " and " << node2->getID() << " rendered.");
+	//TRACE("Edge between " << node1->getID() << " and " << node2->getID() << " rendered.");
 	renderingDone = true;
     }
 }
@@ -107,5 +107,5 @@ void Edge::updateLength() {
     //TODO: optimisation by using length2 here?
     length = (node1->pos - node2->pos).length();
 
-    TRACE("Edge between " << node1->getID() << " and " << node2->getID() << " has length " << length);
+    //TRACE("Edge between " << node1->getID() << " and " << node2->getID() << " has length " << length);
 }
