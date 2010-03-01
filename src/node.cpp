@@ -42,29 +42,29 @@ std::vector<NodeRelation>& Node::getRelations() {
     return relations;
 }
 
-void Node::addRelation(Node& to, const relation_type type, const std::string& label, Edge* e) {
+void Node::addRelation(Node& to, const relation_type type, const std::string& label) {
 
+    TRACE("**** Entering Node::addRelation ****");
 
     //When adding a new relation, we create as well an initial UNDEFINED reciprocal relation if
     //the destination node has no back relation.
     //And before adding a relation, we check there is no existing UNDEFINED relation.
     //If it's the case, we can safely replace it by a well defined relation.
 
-    if (type == UNDEFINED) {
-	//Add an undefined relation and return.
-	relations.push_back(NodeRelation(this, &to, UNDEFINED, "", e));
-	TRACE("Added UNDEFINED back relation to " << to.getID());
-	return;
-    }
+//    if (type == UNDEFINED) {
+//	//Add an undefined relation and return.
+//	relations.push_back(NodeRelation(this, &to, UNDEFINED, ""));
+//	TRACE("Added UNDEFINED back relation to " << to.getID());
+//	return;
+//    }
 
     vector<const NodeRelation*> rels = getRelationTo(to);
 
     relations.push_back(NodeRelation(this, &to, type, label)); //Add a new relation
 
-
     //Ask the graph to create the edge for this relation. If an edge already exist between the two nodes,
     //it will be reused.
-    Edge& edge = Graph::getInstance()->addEdge(relations.back()); // keep a reference if we need to define a backrelation.
+    Graph::getInstance()->addEdge(relations.back()); // keep a reference if we need to define a backrelation.
 
     if(rels.size() == 1 && rels[0]->type == UNDEFINED) { //I had already an undefined relation to the destination node
 	
@@ -76,17 +76,7 @@ void Node::addRelation(Node& to, const relation_type type, const std::string& la
 	//    edge_p->removeReferenceRelation(*this);
 
 	//std::remove(relations.begin(), relations.end(), *(rels[0]));
-
-
-	
-	//no need to check that there is a reciprocal relation since if I had a UNDEFINED relation, it implies
-	//my "to" node had already created a relation to me.
     }
-    else {
-	if (to.getRelationTo(*this).empty()) //the destination node has no connection to me :-(
-	    to.addRelation(*this, UNDEFINED, "", &edge); // let's create a temporary one.
-    }
-
 
     TRACE("Added relation from " << id << " to " << to.getID());
 
@@ -123,12 +113,14 @@ vec2f Node::coulombRepulsionWith(const Node& node) const {
 
     float f = COULOMB_CONSTANT * charge * node.charge / len;
 
-    //TRACE("Coulomb force from " << node.getID() << ": " << f);
+    if(id == "node2") TRACE("\tCoulomb force from " << node.getID() << ": " << f);
 
     return project(f, delta);
 }
 
 vec2f Node::hookeAttractionWith(const NodeRelation& rel) const {
+
+    if (rel.to == rel.from) return vec2f(0.0, 0.0); //don't compute spring force when no edge!
 
     if (rel.edge_p == NULL) throw OroViewException("Edge not set for this relation!");
 
@@ -137,7 +129,7 @@ vec2f Node::hookeAttractionWith(const NodeRelation& rel) const {
 
     vec2f delta = rel.to->pos - pos;
 
-    //TRACE("Hooke force from " << rel.to->getID() << ": " << f);
+    if(id == "node2") TRACE("\tHooke force from " << rel.to->getID() << ": " << f);
 
     return project(f, delta);
 }
@@ -166,6 +158,8 @@ vec2f Node::project(float force, vec2f d) const {
     res.y = force * sqdydx * abs(dydx);
     if (d.y > 0.0) res.y = - res.y;
 
+    if(id == "node2") TRACE("\t-> After projection: Fx=" << res.x << ", Fy=" << res.y);
+
     return res;
 }
 
@@ -188,10 +182,13 @@ void Node::step(float dt){
 		force += coulombRepulsionWith(node.second);
 	}
 
+	if(id == "node2") TRACE("** Coulomb force applying: Fx=" << force.x << ", Fy= " << force.y);
+
 	BOOST_FOREACH(NodeRelation& rel, relations) {
+	    if(id == "node2") TRACE("Edge length is: " << rel.edge_p->length);
 	    force += hookeAttractionWith(rel);
 	}
-	//TRACE("Force applying: Fx=" << force.x << ", Fy= " << force.y);
+	if(id == "node2") TRACE("** Total force applying: Fx=" << force.x << ", Fy= " << force.y);
 
 	speed = (speed + force * dt) * damping;
 

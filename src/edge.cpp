@@ -1,5 +1,6 @@
 #include <algorithm>
 #include <boost/functional/hash.hpp>
+#include <boost/foreach.hpp>
 
 #include "core/vectors.h"
 
@@ -25,11 +26,14 @@ Edge::Edge(const NodeRelation& rel) : renderer(EdgeRenderer(
 
     spring_constant = INITIAL_SPRING_CONSTANT;
     nominal_length = NOMINAL_EDGE_LENGTH;
+
     updateLength();
 }
 
 bool Edge::coversRelation(const NodeRelation& rel) {
-    return !(relations.end() == find(relations.begin(), relations.end(), &rel));
+    //TODO: BUG HERE!! this report incorrectly some relation to be covered...
+    //return !(relations.end() == find(relations.begin(), relations.end(), &rel));
+    return false;
 }
 
 void Edge::addReferenceRelation(const NodeRelation& rel) {
@@ -56,6 +60,18 @@ void Edge::removeReferenceRelation(const NodeRelation& rel) {
 void Edge::resetRenderers(){
     stepDone = false;
     renderingDone = false;
+}
+
+int Edge:: countRelations() const {
+    return relations.size();
+}
+
+bool Edge::hasOutboundConnectionFrom(const Node* node) const{
+    BOOST_FOREACH(const NodeRelation* r, relations) {
+	if (r->from == node)
+	    return true;
+    }
+    return false;
 }
 
 void Edge::step(float dt){
@@ -107,5 +123,5 @@ void Edge::updateLength() {
     //TODO: optimisation by using length2 here?
     length = (node1->pos - node2->pos).length();
 
-    //TRACE("Edge between " << node1->getID() << " and " << node2->getID() << " has length " << length);
+    TRACE("Edge between " << node1->getID() << " and " << node2->getID() << " has length " << length);
 }

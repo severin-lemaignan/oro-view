@@ -49,7 +49,7 @@ public:
 
     std::vector<NodeRelation>& getRelations();
 
-    void addRelation(Node& to, const relation_type type, const std::string& label, Edge* edge = NULL);
+    void addRelation(Node& to, const relation_type type, const std::string& label);
     /**
       Returns a vector of all the relations of *this that link to node.
       Returns an empty vector if no relation exist between *this and node.

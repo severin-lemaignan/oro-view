@@ -111,16 +111,16 @@ Node& Graph::addNode(const string& id) {
     return getNode(id);
 }
 
-Edge& Graph::addEdge(NodeRelation& rel) {
+void Graph::addEdge(NodeRelation& rel) {
 
+    //Don't add an edge if the relation is between the same node.
+    //It could be actually useful, but it provokes a segfault somewhere :-/
+    if (rel.from == rel.to) {
+	TRACE("Leaving immediately: from == to");
+	return;
+    }
     //The general idea is: several relations between nodes, but only ONE edge.
     //So we want to reuse existing edges.
-
-    //First, check the relation isn't already covered.
-    BOOST_FOREACH(Edge& e, edges) {
-	if (e.coversRelation(rel))
-	    return e;
-    }
 
     bool foundEdge = false;
 
@@ -130,8 +130,9 @@ Edge& Graph::addEdge(NodeRelation& rel) {
 	if (r->edge_p !=NULL) { //we found an edge!
 	    rel.edge_p = r->edge_p;
 	    rel.edge_p->addReferenceRelation(rel);
+	    if (rel.edge_p == NULL) throw OroViewException("raaaah - A");
 	    foundEdge = true;
-	    return *(rel.edge_p);
+	    return;
 	}
     }
 
@@ -141,15 +142,25 @@ Edge& Graph::addEdge(NodeRelation& rel) {
 		rel.edge_p = r->edge_p;
 		rel.edge_p->addReferenceRelation(rel);
 		foundEdge = true;
-		return *(rel.edge_p);
+		return;
 	    }
 	}
     }
 
    //so now we are confident that there's no edge we can reuse. Let's create a new one.
     edges.push_back(Edge(rel));
-    rel.edge_p = &(edges.back());
-    return *(rel.edge_p);
+
+    Edge& newEdge = edges.back();
+
+    rel.edge_p = &newEdge;
+
+    if (newEdge.countRelations() == 1 || !newEdge.hasOutboundConnectionFrom(rel.to)) { //bad! this edge doesn't have the reverse relation! :)
+	rel.to->addRelation(*rel.from, UNDEFINED, "");
+	TRACE("Added UNDEFINED back-relation from " << rel.to->getID() << " to " << rel.from->getID());
+    }
+
+    if (rel.edge_p == NULL) throw OroViewException("raaaah - C");
+    return;
 }
 
 int Graph::nodesCount() {

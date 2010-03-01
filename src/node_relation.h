@@ -2,8 +2,10 @@
 #define NODERELATION_H
 
 #include <string>
+#include "macros.h"
 
 #include "constants.h"
+
 #include "edge.h"
 
 class Node;
@@ -17,12 +19,7 @@ struct NodeRelation {
 	//The edge that represents this relation
 	Edge* edge_p;
 
-	NodeRelation(Node* from, Node* to, const relation_type type, const std::string& label, Edge* edge = NULL) :
-								from(from),
-								to(to),
-								type(type),
-								label(label),
-								edge_p(edge) {}
+	NodeRelation(Node* from, Node* to, const relation_type type, const std::string& label);
 };
 
 #endif // NODERELATION_H

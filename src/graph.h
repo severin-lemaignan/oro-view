@@ -82,7 +82,7 @@ public:
 
       It stores as well in the Edge object the reference to the relation.
       */
-    Edge& addEdge(NodeRelation& rel);
+    void addEdge(NodeRelation& rel);
 
     int nodesCount();
     int edgesCount();

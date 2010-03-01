@@ -9,7 +9,7 @@
 //#define TEXT_ONLY
 
 #ifdef DEBUG
-#define TRACE(arg) (std::cout << setiosflags(ios::fixed) << setprecision(2) << arg << std::endl)
+#define TRACE(arg) (std::cout << std::setiosflags(std::ios::fixed) << std::setprecision(2) << arg << std::endl)
 #else
 #define TRACE(arg) sizeof(std::cout << arg << std::endl)
 #endif

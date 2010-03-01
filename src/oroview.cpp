@@ -79,14 +79,23 @@ void OroView::init(){
 
     Node& c =  g.addNode("node3");
 
+    c.addRelation(b, INSTANCE, "loves");
     c.addRelation(a, INSTANCE, "loves");
+
+//    Node& d =  g.addNode("node4");
+//
+//    d.addRelation(c, INSTANCE, "loves");
+//    d.addRelation(a, INSTANCE, "loves");
+
+
 
     //g.addNode("node4");
 
     //a.addRelation(c, INSTANCE, "hates");
     //b.addRelation(c, INSTANCE, "loves");
 
-    TRACE("\t - Graph created and populated");
+    TRACE("*** Graph created and populated ***");
+    TRACE("*** STARTING MAIN LOOP ***");
 }
 
 /** Events */
@@ -111,7 +120,7 @@ void OroView::keyPress(SDL_KeyboardEvent *e) {
 	}
 
 	if (e->keysym.sym == SDLK_SPACE) {
-	    addRandomNodes(1, 1);
+	    addRandomNodes(2, 2);
 	}
 
 	if (e->keysym.sym == SDLK_p) {
@@ -390,10 +399,10 @@ void OroView::draw(float t, float dt) {
 
     drawBackground(dt);
 
-    if(draw_loading) {
-	loadingScreen();
-	return;
-    }
+//    if(draw_loading) {
+//	loadingScreen();
+//	return;
+//    }
 
     Frustum frustum(camera);
 
@@ -684,7 +693,8 @@ void OroView::addRandomNodes(int amount,int nb_rel) {
 	for(int k=0; k<nb_rel; ++k) {
 
 	    //We may pick ourselves, but it's not that a problem
-	    n.addRelation(g.getRandomNode(), SUBCLASS, "test");
+	    Node& n2 = g.getRandomNode();
+	    n.addRelation(n2, SUBCLASS, "test");
 	}
     }
 }

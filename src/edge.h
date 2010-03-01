@@ -36,6 +36,9 @@ public:
 
     bool coversRelation(const NodeRelation& rel);
 
+    int countRelations() const;
+    bool hasOutboundConnectionFrom(const Node* node) const;
+
     void resetRenderers();
 
     void step(float dt);
