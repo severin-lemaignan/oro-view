@@ -10,11 +10,12 @@
 #include "edge.h"
 #include "node_relation.h"
 #include "node.h"
+#include "graph.h"
 
 using namespace std;
 using namespace boost;
 
-Edge::Edge(const NodeRelation& rel) : node1(rel.from), node2(rel.to), renderer(EdgeRenderer(
+Edge::Edge(const NodeRelation& rel) : idNode1(rel.from->getID()), idNode2(rel.to->getID()), renderer(EdgeRenderer(
 	hash_value(rel.from->getID() + rel.to->getID())))
 {
     renderingDone = false;
@@ -24,7 +25,7 @@ Edge::Edge(const NodeRelation& rel) : node1(rel.from), node2(rel.to), renderer(E
     spring_constant = INITIAL_SPRING_CONSTANT;
     nominal_length = NOMINAL_EDGE_LENGTH;
 
-    updateLength();
+    length = 0.0;
 }
 
 //bool Edge::coversRelation(const NodeRelation& rel) {
@@ -71,16 +72,19 @@ void Edge::resetRenderers(){
 //    return false;
 //}
 
-void Edge::step(float dt){
+void Edge::step(Graph& g, float dt){
 
     if(!stepDone) {
 
-	updateLength();
+	updateLength(g);
 
 #ifndef TEXT_ONLY
 
-	const vec2f& pos1 = node1->pos;
-	const vec2f& pos2 = node2->pos;
+	Node& node1 = g.getNode(idNode1);
+	Node& node2 = g.getNode(idNode2);
+	
+	const vec2f& pos1 = node1.pos;
+	const vec2f& pos2 = node2.pos;
 
 	//update the spline point
 	vec2f td = (pos2 - pos1) * 0.5;
@@ -96,7 +100,7 @@ void Edge::step(float dt){
 
 	spos += delta * min(1.0, dt * 2.0);
 
-	renderer.update(pos1, node1->renderer.col, pos2, node2->renderer.col, spos);
+	renderer.update(pos1, node1.renderer.col, pos2, node2.renderer.col, spos);
 
 #endif
 	//TRACE("Edge between " << node1->getID() << " and " << node2->getID() << " updated.");
@@ -116,9 +120,15 @@ void Edge::render(){
     }
 }
 
-void Edge::updateLength() {
+void Edge::updateLength(Graph& g) {
     //TODO: optimisation by using length2 here?
-    length = (node1->pos - node2->pos).length();
+    length = (g.getNode(idNode1).pos -  g.getNode(idNode2).pos).length();
+}
 
-    TRACE("Edge::updateLengength(): Edge between " << node1->getID() << " and " << node2->getID() << " has length " << length);
+const string& Edge::getId1() const {
+    return idNode1;
+}
+
+const string& Edge::getId2() const {
+    return idNode2;
 }

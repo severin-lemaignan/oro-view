@@ -11,9 +11,14 @@
 #include "oroview_exceptions.h"
 #include "constants.h"
 
+#include "graph.h"
+
 class Node;
 
 class OroView : public SDLApp {
+
+    //Graph
+    Graph g;
 
     //Time
     time_t currtime;
@@ -71,6 +76,7 @@ class OroView : public SDLApp {
     //Loading screen
     bool draw_loading;
     void loadingScreen();
+    void drawVector(vec2f vec, vec2f pos, vec4f col);
 
     /**
       When true, display in the application debug infos like framerate.

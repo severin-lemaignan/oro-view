@@ -70,22 +70,19 @@ void OroView::init(){
 
     TRACE("*** Initialization ***");
 
-    Graph& g = *(Graph::getInstance());
-
-
     Node& a = g.addNode("node1");
     Node& b = g.addNode("node2");
-    b.addRelation(a, INSTANCE, "loves");
+    g.addEdge(b, a, INSTANCE, "loves");
 
     Node& c =  g.addNode("node3");
-
-    c.addRelation(b, INSTANCE, "loves");
-    c.addRelation(a, INSTANCE, "loves");
-
+//
+//    g.addEdge(c, b, INSTANCE, "loves");
+//    g.addEdge(c, a, INSTANCE, "loves");
+//
 //    Node& d =  g.addNode("node4");
 //
-//    d.addRelation(c, INSTANCE, "loves");
-//    d.addRelation(a, INSTANCE, "loves");
+//    g.addEdge(d, c, INSTANCE, "loves");
+//    g.addEdge(d, a, INSTANCE, "loves");
 
 
 
@@ -202,7 +199,7 @@ void OroView::mouseMove(SDL_MouseMotionEvent *e) {
 /** Time update */
 void OroView::update(float t, float dt) {
 
-    SDL_Delay(200); //N'allons pas trop vite au début...
+    SDL_Delay(20); //N'allons pas trop vite au début...
 
     dt = min(dt, max_tick_rate);
 
@@ -242,8 +239,6 @@ void OroView::updateTime() {
 void OroView::logic(float t, float dt) {
      if(draw_loading && logic_time > 1000) draw_loading = false;
 
-     Graph& g = *(Graph::getInstance());
-
      g.resetRenderers();
 
     //still want to update camera while paused
@@ -268,8 +263,6 @@ void OroView::logic(float t, float dt) {
 }
 
 void OroView::mouseTrace(Frustum& frustum, float dt) {
-
-    Graph& g = *(Graph::getInstance());
 
     GLuint	buffer[512];
     GLint	viewport[4];
@@ -330,7 +323,7 @@ void OroView::mouseTrace(Frustum& frustum, float dt) {
 
 	if(choice != 0) {
 	    selectionDepth = depth;
-	    nodeSelection = Graph::getInstance()->getNodeByTagID(choice);
+	    nodeSelection = g.getNodeByTagID(choice);
 
 //	    else if((usertest = tagusermap.find(choice)) != tagusermap.end()) {
 //		userSelection = usertest->second;
@@ -391,7 +384,6 @@ void OroView::mouseTrace(Frustum& frustum, float dt) {
 
 /** Drawing */
 void OroView::draw(float t, float dt) {
-    Graph& g = *(Graph::getInstance());
 
 #ifndef TEXT_ONLY
 
@@ -420,7 +412,13 @@ void OroView::draw(float t, float dt) {
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
 
+    vec4f col(1.0, 0.2, 0.2, 0.7);
+    drawVector(vec2f(20.0, 50.0), vec2f(20.0, 50.0), col);
+
+    col = vec4f(0.2, 1.0, 0.2, 0.7);
+    drawVector(vec2f(20.0, -50.0), vec2f(20.0, 50.0), col);
 #endif
+
 
      g.render();
 
@@ -502,8 +500,8 @@ void OroView::draw(float t, float dt) {
 	font.print(0,20, "FPS: %.2f", fps);
 	font.print(0,40,"Time Scale: %.2f", time_scale);
 //        font.print(0,60,"Users: %d", users.size());
-	font.print(0,80,"Nodes: %d", Graph::getInstance()->nodesCount());
-	font.print(0,100,"Edges: %d", Graph::getInstance()->edgesCount());
+	font.print(0,80,"Nodes: %d", g.nodesCount());
+	font.print(0,100,"Edges: %d", g.edgesCount());
 
 	font.print(0,140,"Camera: (%.2f, %.2f, %.2f)", campos.x, campos.y, campos.z);
 	font.print(0,160,"Gravity: %.2f", GRAVITY);
@@ -550,6 +548,51 @@ void OroView::loadingScreen() {
     font.print(display.width/2 - width/2, display.height/2 - 10, "%s", loading_message.c_str());
 }
 
+void OroView::drawVector(vec2f vec, vec2f pos, vec4f col) {
+
+	float radius = 5.0;
+
+	//conversion not optimal
+    float angle = atan2(vec.y, vec.x) * 180 / 3.1415926;
+
+    glPushMatrix();
+	glTranslatef(pos.x, pos.y, 0.0f);
+	glRotatef(angle, 0.0, 0.0, 1.0);
+
+	glColor4fv(col);
+
+	glBegin(GL_QUADS);
+
+	// src point
+
+	glTexCoord2f(0.0,0.0);
+	glVertex2f(0, -radius/3);
+	glTexCoord2f(1.0,0.0);
+	glVertex2f(0, radius/3);
+
+	// dest point
+	glTexCoord2f(1.0,0.0);
+	glVertex2f(vec.length() - 5.0, radius/3);
+	glTexCoord2f(0.0,0.0);
+	glVertex2f(vec.length() - 5.0, -radius/3);
+
+
+	glEnd();
+
+	//Arrow
+	glBegin(GL_TRIANGLES);
+
+	glTexCoord2f(0.0,0.0);
+	glVertex2f(vec.length() - radius, -radius/2);
+	glTexCoord2f(1.0,1.0);
+	glVertex2f(vec.length(), 0);
+	glTexCoord2f(0.0,0.0);
+	glVertex2f(vec.length() - radius, radius/2);
+
+	glEnd();
+
+    glPopMatrix();
+}
 /** Camera */
 void OroView::updateCamera(float dt) {
 
@@ -676,8 +719,6 @@ void OroView::addRandomNodes(int amount,int nb_rel) {
 
     const int length = 6; //length of randomly created ID.
 
-    Graph& g = *(Graph::getInstance());
-
     for (int i = 0; i < amount ; ++i) {
 
 	string newId;
@@ -694,7 +735,7 @@ void OroView::addRandomNodes(int amount,int nb_rel) {
 
 	    //We may pick ourselves, but it's not that a problem
 	    Node& n2 = g.getRandomNode();
-	    n.addRelation(n2, SUBCLASS, "test");
+	    g.addEdge(n, n2, SUBCLASS, "test");
 	}
     }
 }

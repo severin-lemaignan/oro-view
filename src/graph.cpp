@@ -12,41 +12,20 @@
 using namespace std;
 using namespace boost;
 
-Graph* Graph::_instance = NULL;
-
 Graph::Graph()
 {
 }
 
-//Singleton access
-Graph* Graph::getInstance(){
-	if (_instance == NULL)
-	    _instance = new Graph();
-	return _instance;
-}
-
-Graph::~Graph() {
-    delete _instance;
-}
 
 void Graph::step(float dt) {
 
     BOOST_FOREACH(Edge& e, edges) {
-	TRACE("Edge before update length " << e.length);
-    }
-
-    BOOST_FOREACH(Edge& e, edges) {
-	e.step(dt);
-    }
-
-
-    BOOST_FOREACH(Edge& e, edges) {
-	TRACE("Edge after update length " << e.length);
+	e.step(*this, dt);
     }
 
     BOOST_FOREACH(NodeMap::value_type& n, nodes) {
 
-	n.second.step(dt);
+	n.second.step(*this, dt);
     }
 }
 
@@ -89,6 +68,17 @@ Node& Graph::getNode(const string& id) {
 
 }
 
+const Node& Graph::getConstNode(const string& id) const {
+
+    NodeMap::const_iterator it = nodes.find(hash_value(id));
+
+    if (it == nodes.end())
+	throw OroViewException("Node " + id + " not found");
+
+    return it->second;
+
+}
+
 Node* Graph::getNodeByTagID(int tagid) {
 
     NodeMap::iterator it = nodes.find(tagid);
@@ -120,49 +110,52 @@ Node& Graph::addNode(const string& id) {
     return getNode(id);
 }
 
-void Graph::addEdge(NodeRelation& rel) {
+/**
+Ask the graph to create the edge for this relation. If an edge already exist between the two nodes,
+it will be reused.
+*/
+void Graph::addEdge(Node& from, Node& to, const relation_type type, const std::string& label) {
+
+    NodeRelation& rel = from.addRelation(to, type, label);
+
+
+
 
     //Don't add an edge if the relation is between the same node.
     //It could be actually useful, but it provokes a segfault somewhere :-/
-    if (rel.from == rel.to) {
+    if (&from == &to) {
 	TRACE("Leaving immediately: from == to");
 	return;
     }
-    //The general idea is: several relations between nodes, but only ONE edge.
-    //So we want to reuse existing edges.
-
-    //Let's see if we need to create an edge for this relation
-    // if it has already been created by the other node, just set the right references
-    BOOST_FOREACH(const NodeRelation* r, rel.to->getRelationTo(*(rel.from))) {
-	//we found an edge!
-	rel.setEdge(r->getEdge());
-	return;
-    }
-
-//    //Check we don't already have ourself another relation with the node that may have an edge.
-//    BOOST_FOREACH(const NodeRelation* r, rel.from->getRelationTo(*(rel.to))) {
-//	if (r->edge_p !=NULL) { //we found an edge!
-//	    rel.edge_p = r->edge_p;
-//	    rel.edge_p->addReferenceRelation(rel);
-//	    foundEdge = true;
-//	    return;
-//	}
-//    }
-
 
    //so now we are confident that there's no edge we can reuse. Let's create a new one.
-    edges.push_back(Edge(rel));
+    if (getEdgesBetween(from, to).size() == 0)
+	edges.push_back(Edge(rel));
 
-    Edge& newEdge = edges.back();
-
-    rel.setEdge(newEdge);
-
-//    if (newEdge.countRelations() == 1 || !newEdge.hasOutboundConnectionFrom(rel.to)) { //bad! this edge doesn't have the reverse relation! :)
-//	rel.to->addRelation(*rel.from, UNDEFINED, "");
-//	TRACE("Added UNDEFINED back-relation from " << rel.to->getID() << " to " << rel.from->getID());
-//    }
 
     return;
+}
+
+vector<const Edge*>  Graph::getEdgesFor(const Node& node) const{
+    vector<const Edge*> res;
+
+    BOOST_FOREACH(const Edge& e, edges) {
+	if (e.getId1() == node.getID() ||
+	    e.getId2() == node.getID())
+	    res.push_back(&e);
+    }
+    return res;
+}
+
+vector<Edge*>  Graph::getEdgesBetween(const Node& node1, const Node& node2){
+    vector<Edge*> res;
+
+    BOOST_FOREACH(Edge& e, edges) {
+	if ((e.getId1() == node1.getID() && e.getId2() == node2.getID()) ||
+	    (e.getId1() == node2.getID() && e.getId2() == node1.getID()))
+	    res.push_back(&e);
+    }
+    return res;
 }
 
 int Graph::nodesCount() {
@@ -172,4 +165,85 @@ int Graph::nodesCount() {
 int Graph::edgesCount() {
     return edges.size();
 }
+
+vec2f Graph::coulombRepulsionFor(const Node& node) const {
+
+    vec2f force(0.0, 0.0);
+
+    //TODO: a simple optimization can be to compute Coulomb force
+    //at the same time than Hooke force when possible -> one
+    // less distance computation (not sure it makes a big difference)
+
+    BOOST_FOREACH(const NodeMap::value_type& nm, nodes) {
+	const Node& n = nm.second;
+	if (&n != &node) {
+	    vec2f delta = n.pos - node.pos;
+
+	    //Coulomb repulsion force is in 1/r^2
+	    float len = delta.length2();
+	    if (len < 0.01) len = 0.01; //avoid dividing by zero
+
+	    float f = COULOMB_CONSTANT * n.charge * node.charge / len;
+
+	    force += project(f, delta);
+	}
+    }
+
+    return force;
+
+}
+
+vec2f Graph::hookeAttractionFor(const Node& node) const {
+
+     vec2f force(0.0, 0.0);
+
+    //TODO: a simple optimization can be to compute Coulomb force
+    //at the same time than Hooke force when possible -> one
+    // less distance computation (not sure it makes a big difference)
+
+    BOOST_FOREACH(const Edge* e, getEdgesFor(node)) {
+	const Node& n_tmp = getConstNode(e->getId1());
+
+	//Retrieve the node at the edge other extremity
+	const Node& n2 = ( (&n_tmp == &node) ? n_tmp : getConstNode(e->getId2()) );
+
+	vec2f delta = n2.pos - node.pos;
+
+	float f = - e->spring_constant * (e->length - e->nominal_length);
+
+	force += project(f, delta);
+    }
+
+    return force;
+}
+
+vec2f Graph::project(float force, const vec2f& d) const {
+    //we need to project this force on x and y
+    //-> Fx = F.cos(arctan(Dy/Dx)) = F/sqrt(1-(Dy/Dx)^2)
+    //-> Fy = F.sin(arctan(Dy/Dx)) = F.(Dy/Dx)/sqrt(1-(Dy/Dx)^2)
+    vec2f res(0.0, 0.0);
+
+    if (d.y == 0.0) {
+	res.x = force;
+	return res;
+    }
+
+    if (d.x == 0.0) {
+	res.y = force;
+	return res;
+    }
+
+    float dydx = d.y/d.x;
+    float sqdydx = 1/sqrt(1 + dydx * dydx);
+
+    res.x = force * sqdydx;
+    if (d.x > 0.0) res.x = - res.x;
+    res.y = force * sqdydx * abs(dydx);
+    if (d.y > 0.0) res.y = - res.y;
+
+    TRACE("\t-> After projection: Fx=" << res.x << ", Fy=" << res.y);
+
+    return res;
+}
+
 

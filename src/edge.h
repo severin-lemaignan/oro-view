@@ -5,17 +5,15 @@
 
 #include "edge_renderer.h"
 
-class Node;
+class Graph;
 class NodeRelation;
 
 class Edge
 {
-    std::vector<const NodeRelation*> relations;
+    std::string idNode1;
+    std::string idNode2;
 
-    const Node* node1;
-    const Node* node2;
-
-    void updateLength();
+    void updateLength(Graph& g);
 
     vec2f spos;
 
@@ -41,8 +39,12 @@ public:
 
     void resetRenderers();
 
-    void step(float dt);
+    void step(Graph& g, float dt);
     void render();
+
+    const std::string& getId1() const;
+    const std::string& getId2() const;
+
 };
 
 #endif // EDGE_H

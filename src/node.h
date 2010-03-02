@@ -10,7 +10,7 @@
 #include "constants.h"
 #include "node_renderer.h"
 
-class Edge;
+class Graph;
 class NodeRelation;
 
 class Node
@@ -24,13 +24,7 @@ class Node
 
     std::string id;
 
-    //Forces computation
-    vec2f coulombRepulsionWith(const Node& node) const;
-    vec2f hookeAttractionWith(const NodeRelation& rel) const;
-    vec2f project(float force, vec2f delta) const;
     void updateKineticEnergy();
-
-    void printEdgeLengths();
 
 public:
 
@@ -51,7 +45,7 @@ public:
 
     std::vector<NodeRelation>& getRelations();
 
-    void addRelation(Node& to, const relation_type type, const std::string& label);
+    NodeRelation& addRelation(Node& to, const relation_type type, const std::string& label);
     /**
       Returns a vector of all the relations of *this that link to node.
       Returns an empty vector if no relation exist between *this and node.
@@ -63,7 +57,7 @@ public:
     /**
       executes one computation step to compute the position of the node according to other nodes.
       */
-    void step(float dt);
+    void step(Graph& g, float dt);
 
      /**
       Renders the node. If called with argument 'false', goes in simple mode.

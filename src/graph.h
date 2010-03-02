@@ -8,9 +8,9 @@
 #include "oroview_exceptions.h"
 
 #include "node.h"
+#include "edge.h"
+#include "node_relation.h"
 
-class NodeRelation;
-class Edge;
 
 class Graph
 {
@@ -27,16 +27,8 @@ private:
     typedef std::vector<Edge> EdgeVector;
     EdgeVector edges;
 
-    //We build a singleton
-    static Graph* _instance;
-
-protected:
-    Graph();
-
 public:
-    ~Graph();
-
-    static Graph* getInstance();
+    Graph();
 
     void step(float dt);
 
@@ -60,6 +52,8 @@ public:
       */
     Node& getNode(const std::string& id);
 
+    const Node& getConstNode(const std::string& id) const;
+
     /**
       Returns a reference to a node by its tagid, ie the hash value of its ID. Return a NULL pointer
       if the node doesn't exists.
@@ -82,10 +76,20 @@ public:
 
       It stores as well in the Edge object the reference to the relation.
       */
-    void addEdge(NodeRelation& rel);
+    void addEdge(Node& from, Node& to, const relation_type type, const std::string& label);
+
+    std::vector<const Edge*> getEdgesFor(const Node& node) const;
+    std::vector<Edge*> getEdgesBetween(const Node& node1, const Node& node2);
 
     int nodesCount();
     int edgesCount();
+
+    vec2f coulombRepulsionFor(const Node& node) const;
+
+    vec2f hookeAttractionFor(const Node& node) const;
+
+    vec2f project(float force, const vec2f& d) const;
+
 };
 
 #endif // GRAPH_H
