@@ -21,6 +21,10 @@ class NodeRenderer
     bool hovered;
     bool selected;
 
+    vec4f base_col;
+
+    void setRenderingColour();
+
 public:
     NodeRenderer(int tagid);
 
@@ -30,6 +34,7 @@ public:
 
     void setMouseOver(bool over);
     void setSelected(bool selected);
+    void setColour(vec4f col);
 
 
 

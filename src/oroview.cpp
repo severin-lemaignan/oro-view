@@ -117,7 +117,7 @@ void OroView::keyPress(SDL_KeyboardEvent *e) {
 	}
 
 	if (e->keysym.sym == SDLK_SPACE) {
-	    addRandomNodes(2, 2);
+	    addRandomNodes(2, 1);
 	}
 
 	if (e->keysym.sym == SDLK_p) {
@@ -416,7 +416,7 @@ void OroView::draw(float t, float dt) {
 #endif
 
 
-     g.render();
+     g.render(true, debug);
 
 #ifndef TEXT_ONLY
 
@@ -429,11 +429,11 @@ void OroView::draw(float t, float dt) {
 //        trace_debug ? it->second->drawSimple(dt) : it->second->draw(dt);
 //    }
 //
-//    glEnable(GL_TEXTURE_2D);
-//    glEnable(GL_BLEND);
-//
-//    //draw bloom
-//    drawBloom(frustum, dt);
+    glEnable(GL_TEXTURE_2D);
+    glEnable(GL_BLEND);
+
+    //draw bloom
+    drawBloom(frustum, dt);
 //
 //    root->drawNames(font,frustum);
 //
@@ -524,6 +524,19 @@ void OroView::draw(float t, float dt) {
     mouseclicked=false;
 #endif
 
+}
+
+void OroView::drawBloom(Frustum &frustum, float dt) {
+
+    glEnable(GL_TEXTURE_2D);
+    glEnable(GL_BLEND);
+
+    //draw 'gourceian blur' around dirnodes
+    glBindTexture(GL_TEXTURE_2D, bloomtex->textureid);
+    glBlendFunc (GL_ONE, GL_ONE);
+    //root->drawBloom(frustum, dt);
+
+    glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 }
 
 void OroView::drawBackground(float dt) {
@@ -738,6 +751,8 @@ void OroView::addRandomNodes(int amount,int nb_rel) {
 	}
 
 	Node& n = g.addNode(newId);
+	vec4f col((float)rand()/RAND_MAX, (float)rand()/RAND_MAX, (float)rand()/RAND_MAX, 0.7);
+	n.setColour(col);
 
 	for(int k=0; k<nb_rel; ++k) {
 

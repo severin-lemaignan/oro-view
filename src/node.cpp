@@ -39,6 +39,10 @@ const string& Node::getID() const {
     return id;
 }
 
+void Node::setColour(vec4f col) {
+    renderer.setColour(col);
+}
+
 std::vector<NodeRelation>& Node::getRelations() {
     return relations;
 }
@@ -138,18 +142,18 @@ void Node::step(Graph& g, float dt){
     }
 }
 
-void Node::render(bool complete){
+void Node::render(bool complete, bool debug){
 
     if (!renderingDone) {
 #ifndef TEXT_ONLY
 
-#ifdef DEBUG
+    if (debug) {
 	vec4f col(1.0, 0.2, 0.2, 0.7);
 	OroView::drawVector(hookeForce , pos, col);
 
 	col = vec4f(0.2, 1.0, 0.2, 0.7);
 	OroView::drawVector(coulombForce , pos, col);
-#endif
+    }
 
 	renderer.renderAt(pos);
 #endif
@@ -166,7 +170,7 @@ void Node::setSelected(bool select) {
     selected = select;
     renderer.setSelected(select);
 
-    if(select) charge *= 2;
-    else charge /= 2;
+    if(select) charge *= 20;
+    else charge /= 20;
 
 }

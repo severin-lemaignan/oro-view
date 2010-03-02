@@ -29,7 +29,7 @@ void Graph::step(float dt) {
     }
 }
 
-void Graph::render(bool complete) {
+void Graph::render(bool complete, bool debug) {
 
     if (complete) {
 	BOOST_FOREACH(Edge& e, edges) {
@@ -38,7 +38,7 @@ void Graph::render(bool complete) {
     }
 
     BOOST_FOREACH(NodeMap::value_type& n, nodes) {
-	n.second.render(complete);
+	n.second.render(complete, debug);
     }
 }
 

@@ -68,7 +68,9 @@ public:
       In simple mode, no special effects are rendered. Useful for picking selected
       primitive in OpenGL GL_SELECT mode.
       */
-    void render(bool complete = true);
+    void render(bool complete = true, bool debug = false);
+
+    void setColour(vec4f col);
 
     void setSelected(bool selected);
 };

@@ -38,7 +38,7 @@ public:
       In simple mode, neither edges or special effects are rendered. Useful for picking selected
       primitive in OpenGL GL_SELECT mode.
       */
-    void render(bool complete = true);
+    void render(bool complete = true, bool debug = false);
 
     void resetRenderers();
 

@@ -1,5 +1,6 @@
 #include "node_renderer.h"
 #include "macros.h"
+#include "constants.h"
 
 NodeRenderer::NodeRenderer(int tagid) : tagid(tagid)
 {
@@ -9,6 +10,7 @@ NodeRenderer::NodeRenderer(int tagid) : tagid(tagid)
     size = 8.0;
 
     col = vec4f(1.0, 1.0, 1.0, 1.0);
+    base_col = vec4f(1.0, 1.0, 1.0, 1.0);
 
     hovered = false;
     selected = false;
@@ -18,13 +20,21 @@ NodeRenderer::NodeRenderer(int tagid) : tagid(tagid)
 #endif
 }
 
+void NodeRenderer::setColour(vec4f col) {
+    base_col = col;
+}
+
+void NodeRenderer::setRenderingColour() {
+    if (selected) col = SELECTED_COLOUR;
+    else {
+	if (hovered) col = HOVERED_COLOUR;
+	else col = base_col;
+    }
+}
+
 void NodeRenderer::renderAt(const vec2f& pos) {
 
-    if (selected) col = vec4f(1.0, 0.0, 0.5, 1.0);
-    else {
-	if (hovered) col = vec4f(0.0, 1.0, 0.5, 1.0);
-	else col = vec4f(1.0, 1.0, 1.0, 0.7);
-	}
+    setRenderingColour();
 
     glLoadName(tagid);
 
@@ -43,7 +53,7 @@ void NodeRenderer::renderAt(const vec2f& pos) {
     glPushMatrix();
 	glTranslatef(offsetpos.x, offsetpos.y, 0.0f);
 
-	glColor4f(col.x, col.y, col.z, col.w);
+	glColor4fv(col);
 
 	glBegin(GL_QUADS);
 	    glTexCoord2f(0.0f,0.0f);
@@ -63,6 +73,34 @@ void NodeRenderer::renderAt(const vec2f& pos) {
 
     glLoadName(0);
 }
+
+//void NodeRenderer::drawBloom(Frustum& frustum, float dt) {
+//
+//    if(isVisible() && frustum.boundsInFrustum(quadItemBounds)) {
+//
+//	float bloom_radius = 10.0;
+//
+//	vec4f bloom_col = col;
+//
+//	glColor4f(bloom_col.x, bloom_col.y, bloom_col.z, 1.0);
+//
+//	glPushMatrix();
+//	    glTranslatef(pos.x, pos.y, 0.0);
+//
+//	    glBegin(GL_QUADS);
+//	    glTexCoord2f(1.0, 1.0);
+//		glVertex2f(bloom_radius,bloom_radius);
+//		glTexCoord2f(1.0, 0.0);
+//		glVertex2f(bloom_radius,-bloom_radius);
+//		glTexCoord2f(0.0, 0.0);
+//		glVertex2f(-bloom_radius,-bloom_radius);
+//		glTexCoord2f(0.0, 1.0);
+//		glVertex2f(-bloom_radius,bloom_radius);
+//	    glEnd();
+//	glPopMatrix();
+//
+//    }
+//}
 
 void NodeRenderer::setMouseOver(bool over) {
     hovered = over;

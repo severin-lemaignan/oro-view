@@ -90,7 +90,9 @@ class OroView : public SDLApp {
     TextureResource* beamtex;
 
     //Drawing routines
+    void drawBloom(Frustum &frustum, float dt);
     void drawBackground(float dt);
+    void displayCoulombField();
 
     //Logic routines
     void mouseTrace(Frustum& frustum, float dt); //render the mouse and update hovered objects
@@ -107,7 +109,6 @@ class OroView : public SDLApp {
       */
     void addRandomNodes(int amount, int nb_rel);
 
-    void displayCoulombField();
 
 public:
     OroView();
