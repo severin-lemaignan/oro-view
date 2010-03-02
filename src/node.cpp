@@ -122,14 +122,17 @@ vec2f Node::hookeAttractionWith(const NodeRelation& rel) const {
 
     if (rel.to == rel.from) return vec2f(0.0, 0.0); //don't compute spring force when no edge!
 
-    if (rel.edge_p == NULL) throw OroViewException("Edge not set for this relation!");
-
-    Edge& e = *(rel.edge_p);
+    Edge& e = rel.getEdge();
     float f = - e.spring_constant * (e.length - e.nominal_length);
 
     vec2f delta = rel.to->pos - pos;
 
-    if(id == "node2") TRACE("\tHooke force from " << rel.to->getID() << ": " << f);
+    if(id == "node2") {
+	TRACE("\t*** Hooke force ***");
+	TRACE("\tNode " << id << ": pos=(" << pos.x << ", " << pos.y <<")");
+	TRACE("\tNode " << rel.to->getID() << ": pos=(" << rel.to->pos.x << ", " << rel.to->pos.y <<")");
+	TRACE("\tHooke force from " << rel.to->getID() << ": " << f);
+    }
 
     return project(f, delta);
 }
@@ -167,6 +170,20 @@ void Node::updateKineticEnergy() {
     kinetic_energy = mass * speed.length2();
 }
 
+void Node::printEdgeLengths(){
+//    BOOST_FOREACH(NodeRelation& rel, relations) {
+//	Edge& tmp = rel.getEdge();
+//	TRACE("Edge length between " << rel.from->getID() << " and " << rel.to->getID() << " is: " << tmp.length);
+//    }
+
+    for(vector<NodeRelation>::iterator it = relations.begin(); it != relations.end(); ++it) {
+	NodeRelation& rel = *it;
+	Edge& tmp = rel.getEdge();
+	TRACE("Edge length between " << rel.from->getID() << " and " << rel.to->getID() << " is: " << tmp.length);
+    }
+
+}
+
 void Node::step(float dt){
 
     if(!stepDone) {
@@ -177,15 +194,16 @@ void Node::step(float dt){
 
 	vec2f force = vec2f(0.0, 0.0);
 
-	BOOST_FOREACH(const Graph::NodeMap::value_type& node, Graph::getInstance()->getNodes()) {
-	    if (&(node.second) != this)
-		force += coulombRepulsionWith(node.second);
-	}
+//	BOOST_FOREACH(const Graph::NodeMap::value_type& node, Graph::getInstance()->getNodes()) {
+//	    if (&(node.second) != this)
+//		force += coulombRepulsionWith(node.second);
+//	}
+//
+//	if(id == "node2") TRACE("** Coulomb force applying: Fx=" << force.x << ", Fy= " << force.y);
 
-	if(id == "node2") TRACE("** Coulomb force applying: Fx=" << force.x << ", Fy= " << force.y);
+	if(id == "node2") printEdgeLengths();
 
-	BOOST_FOREACH(NodeRelation& rel, relations) {
-	    if(id == "node2") TRACE("Edge length is: " << rel.edge_p->length);
+	BOOST_FOREACH(const NodeRelation& rel, relations) {
 	    force += hookeAttractionWith(rel);
 	}
 	if(id == "node2") TRACE("** Total force applying: Fx=" << force.x << ", Fy= " << force.y);
@@ -198,6 +216,8 @@ void Node::step(float dt){
 	if (kinetic_energy > MIN_KINETIC_ENERGY) {
 	    pos += speed * dt;
 	}
+
+	TRACE("Node " << id << ": pos=(" << pos.x << ", " << pos.y <<")");
 
 
 	//TRACE("Step computed for " << id << ". Speed is " << speed.x << ", " << speed.y << " (energy: " << kinetic_energy << ").");

@@ -30,6 +30,8 @@ class Node
     vec2f project(float force, vec2f delta) const;
     void updateKineticEnergy();
 
+    void printEdgeLengths();
+
 public:
 
     Node(std::string id);

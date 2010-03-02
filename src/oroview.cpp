@@ -202,7 +202,7 @@ void OroView::mouseMove(SDL_MouseMotionEvent *e) {
 /** Time update */
 void OroView::update(float t, float dt) {
 
-    SDL_Delay(50); //N'allons pas trop vite au début...
+    SDL_Delay(200); //N'allons pas trop vite au début...
 
     dt = min(dt, max_tick_rate);
 

@@ -12,8 +12,8 @@ class Edge
 {
     std::vector<const NodeRelation*> relations;
 
-    Node* node1;
-    Node* node2;
+    const Node* node1;
+    const Node* node2;
 
     void updateLength();
 
@@ -31,13 +31,13 @@ public:
     float spring_constant;
     float nominal_length;
 
-    void addReferenceRelation(const NodeRelation& rel);
-    void removeReferenceRelation(const NodeRelation& rel);
+    //void addReferenceRelation(const NodeRelation& rel);
+    //void removeReferenceRelation(const NodeRelation& rel);
 
-    bool coversRelation(const NodeRelation& rel);
+    //bool coversRelation(const NodeRelation& rel);
 
-    int countRelations() const;
-    bool hasOutboundConnectionFrom(const Node* node) const;
+    //int countRelations() const;
+    //bool hasOutboundConnectionFrom(const Node* node) const;
 
     void resetRenderers();
 
