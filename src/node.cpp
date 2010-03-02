@@ -107,7 +107,7 @@ void Node::updateKineticEnergy() {
 
 void Node::step(Graph& g, float dt){
 
-    if(!stepDone) {
+    if(!selected) {
 
 	/** Compute here the new position of the node **/
 

@@ -117,7 +117,7 @@ void OroView::keyPress(SDL_KeyboardEvent *e) {
 	}
 
 	if (e->keysym.sym == SDLK_SPACE) {
-	    addRandomNodes(2, 1);
+	    addRandomNodes(2, 2);
 	}
 
 	if (e->keysym.sym == SDLK_p) {
@@ -182,9 +182,14 @@ void OroView::mouseClick(SDL_MouseButtonEvent *e) {
 
 void OroView::mouseMove(SDL_MouseMotionEvent *e) {
 
+   mousepos = vec2f(e->x, e->y);
+
     //move camera in direction the user dragged the mouse
     if(mousedragged) {
-	backgroundPos += vec2f( e->xrel, e->yrel );
+	if (selectedNode != NULL) {
+	    selectedNode->pos += vec2f( e->xrel, e->yrel )/2;
+	}	
+	else backgroundPos += vec2f( e->xrel, e->yrel );
 
 	return;
     }
@@ -192,7 +197,7 @@ void OroView::mouseMove(SDL_MouseMotionEvent *e) {
     mouse_inactivity = 0.0;
     SDL_ShowCursor(true);
 
-    mousepos = vec2f(e->x, e->y);
+
     mousemoved=true;
 }
 
@@ -374,11 +379,10 @@ void OroView::mouseTrace(Frustum& frustum, float dt) {
     }
 
     if(mouseclicked) {
+	mousedragged=true;
 	if(hoverNode!=NULL) selectNode(hoverNode);
 //	else if(hoverUser!=0) selectUser(hoverUser);
-	else {
-	    selectBackground();
-	}
+	else selectBackground();
     }
 }
 
@@ -702,7 +706,6 @@ void OroView::selectBackground() {
     SDL_ShowCursor(false);
     SDL_WM_GrabInput(SDL_GRAB_ON);
 
-    mousedragged=true;
 }
 
 /** Nodes */
