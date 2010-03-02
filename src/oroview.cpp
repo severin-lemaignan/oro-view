@@ -417,6 +417,7 @@ void OroView::draw(float t, float dt) {
 
 
      g.render(true, debug);
+     g.renderNames(font, debug);
 
 #ifndef TEXT_ONLY
 

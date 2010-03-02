@@ -40,6 +40,15 @@ void Graph::render(bool complete, bool debug) {
     BOOST_FOREACH(NodeMap::value_type& n, nodes) {
 	n.second.render(complete, debug);
     }
+
+}
+
+void Graph::renderNames(FXFont font, bool debug) {
+
+    BOOST_FOREACH(NodeMap::value_type& n, nodes) {
+	n.second.renderName(font, debug);
+    }
+
 }
 
 void Graph::resetRenderers() {

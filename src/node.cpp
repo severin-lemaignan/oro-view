@@ -14,7 +14,7 @@
 using namespace std;
 using namespace boost;
 
-Node::Node(string id) : id(id), renderer(NodeRenderer(hash_value(id)))
+Node::Node(string id) : id(id), renderer(NodeRenderer(hash_value(id), id))
 {
     pos = vec2f(100.0 * (float)rand()/RAND_MAX - 50 , 100 * (float)rand()/RAND_MAX - 50);
 
@@ -144,7 +144,6 @@ void Node::step(Graph& g, float dt){
 
 void Node::render(bool complete, bool debug){
 
-    if (!renderingDone) {
 #ifndef TEXT_ONLY
 
     if (debug) {
@@ -157,9 +156,15 @@ void Node::render(bool complete, bool debug){
 
 	renderer.renderAt(pos);
 #endif
-	//TRACE("Node " << id << " rendered.");
-	renderingDone = true;
-    }
+
+}
+
+void Node::renderName(FXFont& font, bool debug){
+
+#ifndef TEXT_ONLY
+	renderer.renderName(pos, font);
+#endif
+
 }
 
 void Node::setSelected(bool select) {

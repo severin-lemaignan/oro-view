@@ -39,6 +39,7 @@ public:
       primitive in OpenGL GL_SELECT mode.
       */
     void render(bool complete = true, bool debug = false);
+    void renderNames(FXFont font, bool debug = false);
 
     void resetRenderers();
 

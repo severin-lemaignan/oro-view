@@ -69,6 +69,7 @@ public:
       primitive in OpenGL GL_SELECT mode.
       */
     void render(bool complete = true, bool debug = false);
+    void renderName(FXFont& font, bool debug = false);
 
     void setColour(vec4f col);
 

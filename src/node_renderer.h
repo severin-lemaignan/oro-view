@@ -5,6 +5,9 @@
 
 class NodeRenderer
 {
+
+    std::string label;
+
     int tagid;
 
     TextureResource* icon;
@@ -26,11 +29,12 @@ class NodeRenderer
     void setRenderingColour();
 
 public:
-    NodeRenderer(int tagid);
+    NodeRenderer(int tagid, std::string label);
 
     vec4f col;
 
     void renderAt(const vec2f& pos);
+    void renderName(vec2f pos, FXFont& font);
 
     void setMouseOver(bool over);
     void setSelected(bool selected);

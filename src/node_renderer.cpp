@@ -1,8 +1,12 @@
+#include <string>
+
 #include "node_renderer.h"
 #include "macros.h"
 #include "constants.h"
 
-NodeRenderer::NodeRenderer(int tagid) : tagid(tagid)
+using namespace std;
+
+NodeRenderer::NodeRenderer(int tagid, string label) : tagid(tagid), label(label)
 {
     elapsed = 0.0;
     fadetime = 1.0;
@@ -101,6 +105,40 @@ void NodeRenderer::renderAt(const vec2f& pos) {
 //
 //    }
 //}
+
+void NodeRenderer::renderName(vec2f pos, FXFont& font){
+
+    //compute that to get a nice fading effect
+    float since_last_node_change = 2.5;
+
+    float alpha = std::max(0.0f, 5.0f - since_last_node_change) / 5.0f;
+
+    glPushMatrix();
+    glTranslatef(pos.x, pos.y, 0.0);
+
+    glColor4f(1.0, 1.0, 1.0, alpha);
+
+    vec3f screenpos = display.project(vec3f(0.0, 0.0, 0.0));
+
+    glMatrixMode(GL_PROJECTION);
+	glPushMatrix();
+	glLoadIdentity();
+	    glOrtho(0, display.width, display.height, 0, -1.0, 1.0);
+
+	glMatrixMode(GL_MODELVIEW);
+	    glPushMatrix();
+	    glLoadIdentity();
+
+	font.draw(screenpos.x, screenpos.y, label);
+
+	glMatrixMode(GL_PROJECTION);
+	glPopMatrix();
+
+	glMatrixMode(GL_MODELVIEW);
+	glPopMatrix();
+
+    glPopMatrix();
+}
 
 void NodeRenderer::setMouseOver(bool over) {
     hovered = over;
