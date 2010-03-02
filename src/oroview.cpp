@@ -412,17 +412,15 @@ void OroView::draw(float t, float dt) {
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
 
-    vec4f col(1.0, 0.2, 0.2, 0.7);
-    drawVector(vec2f(20.0, 50.0), vec2f(20.0, 50.0), col);
-
-    col = vec4f(0.2, 1.0, 0.2, 0.7);
-    drawVector(vec2f(20.0, -50.0), vec2f(20.0, 50.0), col);
+     //displayCoulombField();
 #endif
 
 
      g.render();
 
 #ifndef TEXT_ONLY
+
+
 //    //draw tree
 //    drawTree(frustum, dt);
 //
@@ -592,6 +590,16 @@ void OroView::drawVector(vec2f vec, vec2f pos, vec4f col) {
 	glEnd();
 
     glPopMatrix();
+}
+
+void OroView::displayCoulombField() {
+    for (float i = -200.0; i < 200.0; i += 40.0) {
+	for (float j = -200.0; j < 200.0; j += 40.0) {
+	    vec2f pos(i, j);
+
+	    drawVector(g.coulombRepulsionAt(pos), pos, (1.0, 1.0, 0.2, 0.7));
+	}
+    }
 }
 /** Camera */
 void OroView::updateCamera(float dt) {

@@ -13,7 +13,7 @@ static const float GRAVITY = 9.81;
 static const float INITIAL_MASS = 1.0; //kg :)
 static const float INITIAL_DAMPING = 0.85; // 0<damping<1. 1 means no damping at all.
 
-static const float COULOMB_CONSTANT = 500.0; // impact the strenght of repulsion between nodes.
+static const float COULOMB_CONSTANT = 5000.0; // impact the strenght of repulsion between nodes.
 static const float INITIAL_CHARGE = 1.0; // the charges of each pair of nodes ae multiplied by the Coulomb constant to compute repulsion
 
 static const float INITIAL_SPRING_CONSTANT = 5.0; // N.pixels^(-1)

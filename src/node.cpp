@@ -5,6 +5,7 @@
 
 #include "macros.h"
 
+#include "oroview.h"
 #include "graph.h"
 #include "node.h"
 #include "node_relation.h"
@@ -108,13 +109,17 @@ void Node::step(Graph& g, float dt){
 
 	// Algo from Wikipedia -- http://en.wikipedia.org/wiki/Force-based_layout
 
+	TRACE("Stepping for node " << id);
+
 	vec2f force = vec2f(0.0, 0.0);
 
-	force += g.coulombRepulsionFor(*this);
+	coulombForce = g.coulombRepulsionFor(*this);
+	force +=coulombForce;
 
-	force += g.hookeAttractionFor(*this);
+	hookeForce = g.hookeAttractionFor(*this);
+	force += hookeForce;
 
-	if(id == "node2") TRACE("** Total force applying: Fx=" << force.x << ", Fy= " << force.y);
+	TRACE("** Total force applying: Fx=" << force.x << ", Fy= " << force.y);
 
 	speed = (speed + force * dt) * damping;
 
@@ -125,7 +130,7 @@ void Node::step(Graph& g, float dt){
 	    pos += speed * dt;
 	}
 
-	TRACE("Node " << id << ": pos=(" << pos.x << ", " << pos.y <<")");
+	TRACE("Node " << id << " now in pos=(" << pos.x << ", " << pos.y <<")");
 
 
 	//TRACE("Step computed for " << id << ". Speed is " << speed.x << ", " << speed.y << " (energy: " << kinetic_energy << ").");
@@ -137,6 +142,15 @@ void Node::render(bool complete){
 
     if (!renderingDone) {
 #ifndef TEXT_ONLY
+
+#ifdef DEBUG
+	vec4f col(1.0, 0.2, 0.2, 0.7);
+	OroView::drawVector(hookeForce , pos, col);
+
+	col = vec4f(0.2, 1.0, 0.2, 0.7);
+	OroView::drawVector(coulombForce , pos, col);
+#endif
+
 	renderer.renderAt(pos);
 #endif
 	//TRACE("Node " << id << " rendered.");

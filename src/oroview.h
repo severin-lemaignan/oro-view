@@ -76,7 +76,6 @@ class OroView : public SDLApp {
     //Loading screen
     bool draw_loading;
     void loadingScreen();
-    void drawVector(vec2f vec, vec2f pos, vec4f col);
 
     /**
       When true, display in the application debug infos like framerate.
@@ -108,6 +107,8 @@ class OroView : public SDLApp {
       */
     void addRandomNodes(int amount, int nb_rel);
 
+    void displayCoulombField();
+
 public:
     OroView();
 
@@ -129,6 +130,8 @@ public:
 
     //Background
     void setBackground(vec3f background);
+
+    static void drawVector(vec2f vec, vec2f pos, vec4f col);
 
 };
 

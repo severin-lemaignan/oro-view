@@ -193,6 +193,32 @@ vec2f Graph::coulombRepulsionFor(const Node& node) const {
 
 }
 
+vec2f Graph::coulombRepulsionAt(const vec2f& pos) const {
+
+    vec2f force(0.0, 0.0);
+
+    //TODO: a simple optimization can be to compute Coulomb force
+    //at the same time than Hooke force when possible -> one
+    // less distance computation (not sure it makes a big difference)
+
+    BOOST_FOREACH(const NodeMap::value_type& nm, nodes) {
+	const Node& n = nm.second;
+
+	vec2f delta = n.pos - pos;
+
+	//Coulomb repulsion force is in 1/r^2
+	float len = delta.length2();
+	if (len < 0.01) len = 0.01; //avoid dividing by zero
+
+	float f = COULOMB_CONSTANT * n.charge * INITIAL_CHARGE / len;
+
+	force += project(f, delta);
+    }
+
+    return force;
+
+}
+
 vec2f Graph::hookeAttractionFor(const Node& node) const {
 
      vec2f force(0.0, 0.0);
@@ -205,7 +231,9 @@ vec2f Graph::hookeAttractionFor(const Node& node) const {
 	const Node& n_tmp = getConstNode(e->getId1());
 
 	//Retrieve the node at the edge other extremity
-	const Node& n2 = ( (&n_tmp == &node) ? n_tmp : getConstNode(e->getId2()) );
+	const Node& n2 = ( (&n_tmp != &node) ? n_tmp : getConstNode(e->getId2()) );
+
+	TRACE("\tComputing Hooke force from " << node.getID() << " to " << n2.getID());
 
 	vec2f delta = n2.pos - node.pos;
 
@@ -222,6 +250,8 @@ vec2f Graph::project(float force, const vec2f& d) const {
     //-> Fx = F.cos(arctan(Dy/Dx)) = F/sqrt(1-(Dy/Dx)^2)
     //-> Fy = F.sin(arctan(Dy/Dx)) = F.(Dy/Dx)/sqrt(1-(Dy/Dx)^2)
     vec2f res(0.0, 0.0);
+
+    TRACE("\tForce: " << force << " - Delta: (" << d.x << ", " << d.y << ")");
 
     if (d.y == 0.0) {
 	res.x = force;

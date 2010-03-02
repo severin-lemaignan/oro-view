@@ -41,6 +41,9 @@ public:
     vec2f speed;
     vec2f pos;
 
+    vec2f hookeForce;
+    vec2f coulombForce;
+
     const std::string& getID() const;
 
     std::vector<NodeRelation>& getRelations();

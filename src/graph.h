@@ -85,6 +85,7 @@ public:
     int edgesCount();
 
     vec2f coulombRepulsionFor(const Node& node) const;
+    vec2f coulombRepulsionAt(const vec2f& pos) const;
 
     vec2f hookeAttractionFor(const Node& node) const;
 
