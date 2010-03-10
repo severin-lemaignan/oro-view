@@ -38,10 +38,7 @@ public:
       In simple mode, neither edges or special effects are rendered. Useful for picking selected
       primitive in OpenGL GL_SELECT mode.
       */
-    void render(bool complete = true, bool debug = false);
-    void renderNames(FXFont font, bool debug = false);
-
-    void resetRenderers();
+    void render(rendering_mode mode, bool debug = false);
 
     /**
       Returns an immutable reference to the list of nodes.

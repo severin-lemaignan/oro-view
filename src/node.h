@@ -7,18 +7,15 @@
 
 #include "core/vectors.h"
 
-#include "constants.h"
+#include "styles.h"
 #include "node_renderer.h"
+#include "node_relation.h"
 
 class Graph;
-class NodeRelation;
 
 class Node
 {
     std::vector<NodeRelation> relations;
-
-    bool stepDone;
-    bool renderingDone;
 
     bool selected;
 
@@ -55,21 +52,18 @@ public:
       */
     std::vector<const NodeRelation*> getRelationTo(Node& node) const;
 
-    void resetRenderers();
-
     /**
       executes one computation step to compute the position of the node according to other nodes.
       */
     void step(Graph& g, float dt);
 
      /**
-      Renders the node. If called with argument 'false', goes in simple mode.
+      Renders the node. If called with rendering mode 'SIMPLE', goes in simple mode.
 
       In simple mode, no special effects are rendered. Useful for picking selected
       primitive in OpenGL GL_SELECT mode.
       */
-    void render(bool complete = true, bool debug = false);
-    void renderName(FXFont& font, bool debug = false);
+    void render(rendering_mode mode, bool debug = false);
 
     void setColour(vec4f col);
 

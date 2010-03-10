@@ -2,7 +2,8 @@
 
 #include "node_renderer.h"
 #include "macros.h"
-#include "constants.h"
+
+#include "oroview.h"
 
 using namespace std;
 
@@ -36,46 +37,95 @@ void NodeRenderer::setRenderingColour() {
     }
 }
 
-void NodeRenderer::renderAt(const vec2f& pos) {
+void NodeRenderer::renderAt(const vec2f& pos, rendering_mode mode) {
 
-    setRenderingColour();
+    float alpha = 1.0;
+    vec2f offsetpos;
+    float ratio, halfsize;
 
-    glLoadName(tagid);
+    switch (mode) {
 
-    glEnable(GL_BLEND);
-    glEnable(GL_TEXTURE_2D);
+    /****** NORMAL RENDERING ******/
+    case NORMAL:
+        setRenderingColour();
 
-    float ratio = icon->h / (float) icon->w;
-    float halfsize = size * 0.5f;
-    vec2f offsetpos = pos - vec2f(halfsize, halfsize);
+        glLoadName(tagid);
+
+        glEnable(GL_BLEND);
+        glEnable(GL_TEXTURE_2D);
+
+        ratio = icon->h / (float) icon->w;
+        halfsize = size * 0.5f;
+        offsetpos = pos - vec2f(halfsize, halfsize);
 
 
-    float alpha = getAlpha();
+        alpha = getAlpha();
 
-    glBindTexture(GL_TEXTURE_2D, getIcon()->textureid);
+        glBindTexture(GL_TEXTURE_2D, getIcon()->textureid);
 
-    glPushMatrix();
-	glTranslatef(offsetpos.x, offsetpos.y, 0.0f);
+        glPushMatrix();
+            glTranslatef(offsetpos.x, offsetpos.y, 0.0f);
 
-	glColor4fv(col);
+            glColor4fv(col);
 
-	glBegin(GL_QUADS);
-	    glTexCoord2f(0.0f,0.0f);
-	    glVertex2f(0.0f, 0.0f);
+            glBegin(GL_QUADS);
+                glTexCoord2f(0.0f,0.0f);
+                glVertex2f(0.0f, 0.0f);
 
-	    glTexCoord2f(1.0f,0.0f);
-	    glVertex2f(size, 0.0f);
+                glTexCoord2f(1.0f,0.0f);
+                glVertex2f(size, 0.0f);
 
-	    glTexCoord2f(1.0f,1.0f);
-	    glVertex2f(size, size*ratio);
+                glTexCoord2f(1.0f,1.0f);
+                glVertex2f(size, size*ratio);
 
-	    glTexCoord2f(0.0f,1.0f);
-	    glVertex2f(0.0f, size*ratio);
-	glEnd();
+                glTexCoord2f(0.0f,1.0f);
+                glVertex2f(0.0f, size*ratio);
+            glEnd();
 
-    glPopMatrix();
+        glPopMatrix();
 
-    glLoadName(0);
+        glLoadName(0);
+
+        break;
+
+    /****** NAMES RENDERING ******/
+    case NAMES:
+        //compute that to get a nice fading effect
+        float since_last_node_change = 2.5;
+
+        alpha = std::max(0.0f, 5.0f - since_last_node_change) / 5.0f;
+
+        glPushMatrix();
+        glTranslatef(pos.x, pos.y, 0.0);
+
+        glColor4f(1.0, 1.0, 1.0, alpha);
+
+        vec3f screenpos = display.project(vec3f(0.0, 0.0, 0.0));
+
+        glMatrixMode(GL_PROJECTION);
+            glPushMatrix();
+            glLoadIdentity();
+                glOrtho(0, display.width, display.height, 0, -1.0, 1.0);
+
+            glMatrixMode(GL_MODELVIEW);
+                glPushMatrix();
+                glLoadIdentity();
+
+                font.draw(screenpos.x, screenpos.y, label);
+
+            glMatrixMode(GL_PROJECTION);
+            glPopMatrix();
+
+            glMatrixMode(GL_MODELVIEW);
+            glPopMatrix();
+
+        glPopMatrix();
+
+        break;
+
+    }
+
+
 }
 
 //void NodeRenderer::drawBloom(Frustum& frustum, float dt) {
@@ -106,39 +156,6 @@ void NodeRenderer::renderAt(const vec2f& pos) {
 //    }
 //}
 
-void NodeRenderer::renderName(vec2f pos, FXFont& font){
-
-    //compute that to get a nice fading effect
-    float since_last_node_change = 2.5;
-
-    float alpha = std::max(0.0f, 5.0f - since_last_node_change) / 5.0f;
-
-    glPushMatrix();
-    glTranslatef(pos.x, pos.y, 0.0);
-
-    glColor4f(1.0, 1.0, 1.0, alpha);
-
-    vec3f screenpos = display.project(vec3f(0.0, 0.0, 0.0));
-
-    glMatrixMode(GL_PROJECTION);
-	glPushMatrix();
-	glLoadIdentity();
-	    glOrtho(0, display.width, display.height, 0, -1.0, 1.0);
-
-	glMatrixMode(GL_MODELVIEW);
-	    glPushMatrix();
-	    glLoadIdentity();
-
-	font.draw(screenpos.x, screenpos.y, label);
-
-	glMatrixMode(GL_PROJECTION);
-	glPopMatrix();
-
-	glMatrixMode(GL_MODELVIEW);
-	glPopMatrix();
-
-    glPopMatrix();
-}
 
 void NodeRenderer::setMouseOver(bool over) {
     hovered = over;

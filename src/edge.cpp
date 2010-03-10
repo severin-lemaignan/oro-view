@@ -18,7 +18,6 @@ using namespace boost;
 Edge::Edge(const NodeRelation& rel) : idNode1(rel.from->getID()), idNode2(rel.to->getID()), renderer(EdgeRenderer(
 	hash_value(rel.from->getID() + rel.to->getID())))
 {
-    renderingDone = false;
 
 //    addReferenceRelation(rel);
 
@@ -55,11 +54,6 @@ Edge::Edge(const NodeRelation& rel) : idNode1(rel.from->getID()), idNode2(rel.to
 //	throw OroViewException("Removed the last relation of an edge!");
 //}
 
-void Edge::resetRenderers(){
-    stepDone = false;
-    renderingDone = false;
-}
-
 //int Edge:: countRelations() const {
 //    return relations.size();
 //}
@@ -73,8 +67,6 @@ void Edge::resetRenderers(){
 //}
 
 void Edge::step(Graph& g, float dt){
-
-    if(!stepDone) {
 
 	updateLength(g);
 
@@ -104,20 +96,18 @@ void Edge::step(Graph& g, float dt){
 
 #endif
 	//TRACE("Edge between " << node1->getID() << " and " << node2->getID() << " updated.");
-	stepDone = true;
-    }
+
 }
 
-void Edge::render(){
+void Edge::render(rendering_mode mode){
 
-    if (!renderingDone) {
+
 
 #ifndef TEXT_ONLY
-	renderer.render();
+        renderer.render(mode);
 #endif
 	//TRACE("Edge between " << node1->getID() << " and " << node2->getID() << " rendered.");
-	renderingDone = true;
-    }
+
 }
 
 void Edge::updateLength(Graph& g) {

@@ -8,10 +8,11 @@
 
 #include "edge.h"
 
+enum relation_type {SUBCLASS, SUPERCLASS, INSTANCE, CLASS, OBJ_PROPERTY, DATA_PROPERTY, UNDEFINED};
+
 class Node;
 
 class NodeRelation {
-
 
 public:
 	NodeRelation(Node* from, Node* to, const relation_type type, const std::string& label);

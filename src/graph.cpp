@@ -29,37 +29,16 @@ void Graph::step(float dt) {
     }
 }
 
-void Graph::render(bool complete, bool debug) {
-
-    if (complete) {
-	BOOST_FOREACH(Edge& e, edges) {
-	    e.render();
-	}
-    }
-
-    BOOST_FOREACH(NodeMap::value_type& n, nodes) {
-	n.second.render(complete, debug);
-    }
-
-}
-
-void Graph::renderNames(FXFont font, bool debug) {
-
-    BOOST_FOREACH(NodeMap::value_type& n, nodes) {
-	n.second.renderName(font, debug);
-    }
-
-}
-
-void Graph::resetRenderers() {
-
-    BOOST_FOREACH(NodeMap::value_type& n, nodes) {
-	n.second.resetRenderers();
-    }
+void Graph::render(rendering_mode mode, bool debug) {
 
     BOOST_FOREACH(Edge& e, edges) {
-	e.resetRenderers();
+            e.render(mode);
     }
+
+    BOOST_FOREACH(NodeMap::value_type& n, nodes) {
+        n.second.render(mode, debug);
+    }
+
 }
 
 const Graph::NodeMap& Graph::getNodes() const {

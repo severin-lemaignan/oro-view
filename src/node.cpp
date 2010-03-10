@@ -26,8 +26,6 @@ Node::Node(string id) : id(id), renderer(NodeRenderer(hash_value(id), id))
 
     charge = INITIAL_CHARGE;
 
-    resetRenderers();
-
     selected = false;
 }
 
@@ -94,11 +92,6 @@ vector<const NodeRelation*> Node::getRelationTo(Node& node) const {
     return res;
 }
 
-void Node::resetRenderers(){
-    stepDone = false;
-    renderingDone = false;
-}
-
 
 void Node::updateKineticEnergy() {
     kinetic_energy = mass * speed.length2();
@@ -138,31 +131,22 @@ void Node::step(Graph& g, float dt){
 
 
 	//TRACE("Step computed for " << id << ". Speed is " << speed.x << ", " << speed.y << " (energy: " << kinetic_energy << ").");
-	stepDone = true;
     }
 }
 
-void Node::render(bool complete, bool debug){
+void Node::render(rendering_mode mode, bool debug){
 
 #ifndef TEXT_ONLY
+        renderer.renderAt(pos, mode);
 
-    if (debug) {
-	vec4f col(1.0, 0.2, 0.2, 0.7);
-	OroView::drawVector(hookeForce , pos, col);
+        if (debug) {
+            vec4f col(1.0, 0.2, 0.2, 0.7);
+            OroView::drawVector(hookeForce , pos, col);
 
-	col = vec4f(0.2, 1.0, 0.2, 0.7);
-	OroView::drawVector(coulombForce , pos, col);
-    }
+            col = vec4f(0.2, 1.0, 0.2, 0.7);
+            OroView::drawVector(coulombForce , pos, col);
+        }
 
-	renderer.renderAt(pos);
-#endif
-
-}
-
-void Node::renderName(FXFont& font, bool debug){
-
-#ifndef TEXT_ONLY
-	renderer.renderName(pos, font);
 #endif
 
 }

@@ -6,9 +6,15 @@ EdgeRenderer::EdgeRenderer(int tagid) : tagid(tagid)
 {
 }
 
-void EdgeRenderer::render() {
+void EdgeRenderer::render(rendering_mode mode) {
 
-    spline.draw();
+    switch (mode) {
+    case NORMAL:
+        spline.draw();
+        break;
+    }
+
+
 }
 
 void EdgeRenderer::update(vec2f pos1, vec4f col1, vec2f pos2, vec4f col2, vec2f spos){

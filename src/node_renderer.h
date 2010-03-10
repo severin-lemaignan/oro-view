@@ -1,6 +1,7 @@
 #ifndef NODE_RENDERER_H
 #define NODE_RENDERER_H
 
+#include "styles.h"
 #include "core/sdlapp.h"
 
 class NodeRenderer
@@ -33,8 +34,7 @@ public:
 
     vec4f col;
 
-    void renderAt(const vec2f& pos);
-    void renderName(vec2f pos, FXFont& font);
+    void renderAt(const vec2f& pos, rendering_mode mode);
 
     void setMouseOver(bool over);
     void setSelected(bool selected);

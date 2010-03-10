@@ -4,6 +4,7 @@
 #include <vector>
 
 #include "edge_renderer.h"
+#include "styles.h"
 
 class Graph;
 class NodeRelation;
@@ -37,10 +38,8 @@ public:
     //int countRelations() const;
     //bool hasOutboundConnectionFrom(const Node* node) const;
 
-    void resetRenderers();
-
     void step(Graph& g, float dt);
-    void render();
+    void render(rendering_mode mode);
 
     const std::string& getId1() const;
     const std::string& getId2() const;
