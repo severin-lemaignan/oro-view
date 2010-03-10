@@ -70,26 +70,9 @@ void OroView::init(){
 
     TRACE("*** Initialization ***");
 
-    Node& a = g.addNode("node1");
-    Node& b = g.addNode("node2");
-    g.addEdge(b, a, INSTANCE, "loves");
+    g.addNode("Thing");
 
-    Node& c =  g.addNode("node3");
-//
-//    g.addEdge(c, b, INSTANCE, "loves");
-//    g.addEdge(c, a, INSTANCE, "loves");
-//
-//    Node& d =  g.addNode("node4");
-//
-//    g.addEdge(d, c, INSTANCE, "loves");
-//    g.addEdge(d, a, INSTANCE, "loves");
-
-
-
-    //g.addNode("node4");
-
-    //a.addRelation(c, INSTANCE, "hates");
-    //b.addRelation(c, INSTANCE, "loves");
+    addRandomNodes(3, 2);
 
     TRACE("*** Graph created and populated ***");
     TRACE("*** STARTING MAIN LOOP ***");
@@ -244,8 +227,6 @@ void OroView::updateTime() {
 void OroView::logic(float t, float dt) {
      if(draw_loading && logic_time > 1000) draw_loading = false;
 
-     g.resetRenderers();
-
     //still want to update camera while paused
     if(paused) {
 	updateCamera(dt);
@@ -302,8 +283,7 @@ void OroView::mouseTrace(Frustum& frustum, float dt) {
     glDisable(GL_TEXTURE_2D);
     glColor4f(1.0, 1.0, 1.0, 1.0);
 
-    g.render(false);
-    g.resetRenderers();
+    g.render(SIMPLE);
 
     glMatrixMode(GL_MODELVIEW);
 
@@ -420,8 +400,8 @@ void OroView::draw(float t, float dt) {
 #endif
 
 
-     g.render(true, debug);
-     g.renderNames(font, debug);
+     g.render(NORMAL, debug);
+     g.render(NAMES, debug);
 
 #ifndef TEXT_ONLY
 
@@ -754,11 +734,15 @@ void OroView::addRandomNodes(int amount,int nb_rel) {
 		newId += (char)(rand() % 26 + 97); //ASCII codes of letters starts at 98 for "a"
 	}
 
-	Node& n = g.addNode(newId);
+        Node& neighbour = g.getRandomNode();
+
+        Node& n = g.addNode(newId, &neighbour);
 	vec4f col((float)rand()/RAND_MAX, (float)rand()/RAND_MAX, (float)rand()/RAND_MAX, 0.7);
 	n.setColour(col);
 
-	for(int k=0; k<nb_rel; ++k) {
+        g.addEdge(n, neighbour, SUBCLASS, "voisin");
+
+        for(int k=0; k<(nb_rel - 1); ++k) {
 
 	    //We may pick ourselves, but it's not that a problem
 	    Node& n2 = g.getRandomNode();

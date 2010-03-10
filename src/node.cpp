@@ -14,11 +14,15 @@
 using namespace std;
 using namespace boost;
 
-Node::Node(string id) : id(id), renderer(NodeRenderer(hash_value(id), id))
+Node::Node(string id, const Node* neighbour) : id(id), renderer(NodeRenderer(hash_value(id), id))
 {
-    pos = vec2f(100.0 * (float)rand()/RAND_MAX - 50 , 100 * (float)rand()/RAND_MAX - 50);
 
-    //speed = vec2f(40.0 * (float)rand()/RAND_MAX - 20 , 40.0 * (float)rand()/RAND_MAX - 20);
+    //If a neighbour is given, we set our initial position close to it.
+    if (neighbour != NULL)
+        pos = neighbour->pos + vec2f(10.0 * (float)rand()/RAND_MAX - 5 , 10.0 * (float)rand()/RAND_MAX - 5);
+    else
+        pos = vec2f(100.0 * (float)rand()/RAND_MAX - 50 , 100 * (float)rand()/RAND_MAX - 50);
+
     speed = vec2f(0.0, 0.0);
 
     mass = INITIAL_MASS;
