@@ -39,10 +39,10 @@ CXXFLAGS="$CXXFLAGS $SDL_CFLAGS"
 CPPFLAGS="$CPPFLAGS $SDL_CFLAGS"
 LIBS="$LIBS $SDL_LIBS"
 
-#Freetype2
-AC_CHECK_FT2([9.0.3],[],[AC_MSG_ERROR([FreeType2 is required by FTGL. Please see README])])
-CXXFLAGS="$CXXFLAGS $FT2_CFLAGS"
-CPPFLAGS="$CPPFLAGS $FT2_CFLAGS"
+#Freetype2 #not necessary since already required by FTGL?
+#AC_CHECK_FT2([9.0.3],[],[AC_MSG_ERROR([FreeType2 is required by FTGL. Please see README])])
+#CXXFLAGS="$CXXFLAGS $FT2_CFLAGS"
+#CPPFLAGS="$CPPFLAGS $FT2_CFLAGS"
 
 #FTGL
 PKG_CHECK_MODULES(FTGL, ftgl >= 2.1.3, [], AC_MSG_ERROR(ftgl 2.1.3 or greater is required. Please see README))
