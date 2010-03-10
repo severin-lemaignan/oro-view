@@ -63,7 +63,7 @@ public:
       In simple mode, no special effects are rendered. Useful for picking selected
       primitive in OpenGL GL_SELECT mode.
       */
-    void render(rendering_mode mode, bool debug = false);
+    void render(rendering_mode mode, OroView& env, bool debug = false);
 
     void setColour(vec4f col);
 

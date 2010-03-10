@@ -29,14 +29,14 @@ void Graph::step(float dt) {
     }
 }
 
-void Graph::render(rendering_mode mode, bool debug) {
+void Graph::render(rendering_mode mode, OroView& env, bool debug) {
 
     BOOST_FOREACH(Edge& e, edges) {
             e.render(mode);
     }
 
     BOOST_FOREACH(NodeMap::value_type& n, nodes) {
-        n.second.render(mode, debug);
+        n.second.render(mode, env, debug);
     }
 
 }

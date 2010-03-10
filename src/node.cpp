@@ -138,10 +138,10 @@ void Node::step(Graph& g, float dt){
     }
 }
 
-void Node::render(rendering_mode mode, bool debug){
+void Node::render(rendering_mode mode, OroView& env, bool debug){
 
 #ifndef TEXT_ONLY
-        renderer.renderAt(pos, mode);
+        renderer.draw(pos, mode, env);
 
         if (debug) {
             vec4f col(1.0, 0.2, 0.2, 0.7);

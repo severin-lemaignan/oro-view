@@ -283,7 +283,7 @@ void OroView::mouseTrace(Frustum& frustum, float dt) {
     glDisable(GL_TEXTURE_2D);
     glColor4f(1.0, 1.0, 1.0, 1.0);
 
-    g.render(SIMPLE);
+    g.render(SIMPLE, *this);
 
     glMatrixMode(GL_MODELVIEW);
 
@@ -400,8 +400,8 @@ void OroView::draw(float t, float dt) {
 #endif
 
 
-     g.render(NORMAL, debug);
-     g.render(NAMES, debug);
+     g.render(NORMAL, *this, debug);
+     g.render(NAMES, *this, debug);
 
 #ifndef TEXT_ONLY
 

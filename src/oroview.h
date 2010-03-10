@@ -85,7 +85,6 @@ class OroView : public SDLApp {
     bool paused;
 
     //Resources
-    FXFont font, fontlarge, fontmedium;
     TextureResource* bloomtex;
     TextureResource* beamtex;
 
@@ -112,6 +111,9 @@ class OroView : public SDLApp {
 
 public:
     OroView();
+
+    //Public resources
+    FXFont font, fontlarge, fontmedium;
 
     //Initialisation
     void init(); //overrides SDLApp::init

@@ -2,7 +2,6 @@
 
 #include "node_renderer.h"
 #include "macros.h"
-
 #include "oroview.h"
 
 using namespace std;
@@ -37,7 +36,7 @@ void NodeRenderer::setRenderingColour() {
     }
 }
 
-void NodeRenderer::renderAt(const vec2f& pos, rendering_mode mode) {
+void NodeRenderer::draw(const vec2f& pos, rendering_mode mode, OroView& env) {
 
     float alpha = 1.0;
     vec2f offsetpos;
@@ -111,7 +110,7 @@ void NodeRenderer::renderAt(const vec2f& pos, rendering_mode mode) {
                 glPushMatrix();
                 glLoadIdentity();
 
-                font.draw(screenpos.x, screenpos.y, label);
+                env.font.draw(screenpos.x, screenpos.y, label);
 
             glMatrixMode(GL_PROJECTION);
             glPopMatrix();
