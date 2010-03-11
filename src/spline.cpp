@@ -1,4 +1,5 @@
 /*
+    Copyright (c) 2010 Séverin Lemaignan (slemaign@laas.fr)
     Copyright (C) 2009 Andrew Caudwell (acaudwell@gmail.com)
 
     This program is free software; you can redistribute it and/or
