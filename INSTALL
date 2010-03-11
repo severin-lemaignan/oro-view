@@ -1,0 +1,11 @@
+===== ORO View =====
+
+If you've get the code from the GIT repository,
+
+autoreconf -f -i
+
+Then,
+
+./configure
+make
+make install
