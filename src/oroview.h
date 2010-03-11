@@ -97,7 +97,7 @@ class OroView : public SDLApp {
     void mouseTrace(Frustum& frustum, float dt); //render the mouse and update hovered objects
 
     //Camera
-    ZoomCamera camera;
+
     void updateCamera(float dt);
     void toggleCameraMode();
     void zoom(bool zoomin);
@@ -114,6 +114,9 @@ public:
 
     //Public resources
     FXFont font, fontlarge, fontmedium;
+
+    //Public camera
+    ZoomCamera camera;
 
     //Initialisation
     void init(); //overrides SDLApp::init

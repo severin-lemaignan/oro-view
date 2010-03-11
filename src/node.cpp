@@ -131,6 +131,9 @@ void Node::step(Graph& g, float dt){
 	    pos += speed * dt;
 	}
 
+        //Update the age of the node renderer
+        renderer.increment_idle_time(dt);
+
 	TRACE("Node " << id << " now in pos=(" << pos.x << ", " << pos.y <<")");
 
 
