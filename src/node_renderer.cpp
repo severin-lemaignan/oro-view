@@ -45,14 +45,11 @@ void NodeRenderer::draw(const vec2f& pos, rendering_mode mode, OroView& env) {
 
     switch (mode) {
 
-    /****** NORMAL RENDERING ******/
-    /****** SIMPLE RENDERING ******/
     case NORMAL:
     case SIMPLE:
        drawSimple(pos);
         break;
 
-    /****** NAMES RENDERING ******/
     case NAMES:
         drawName(pos, env.font);
         break;
@@ -146,7 +143,7 @@ void NodeRenderer::drawBloom(const vec2f& pos, ZoomCamera& camera){
 
     //if(isVisible() && frustum.boundsInFrustum(quadItemBounds)) {
 
-        float bloom_radius = 10.0;
+        float bloom_radius = 50.0;
 
         vec4f bloom_col = col;
 

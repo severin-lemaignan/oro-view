@@ -399,28 +399,32 @@ void OroView::draw(float t, float dt) {
      //displayCoulombField();
 #endif
 
-
+    //Draw nodes
      g.render(NORMAL, *this, debug);
+
+    //Draw Bloom
+     glEnable(GL_TEXTURE_2D);
+     glEnable(GL_BLEND);
+
+     //draw 'gourceian blur' around dirnodes
+     glBindTexture(GL_TEXTURE_2D, bloomtex->textureid);
+     glBlendFunc (GL_ONE, GL_ONE);
+     g.render(BLOOM, *this, debug);
+
+     glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+    //Draw names
      g.render(NAMES, *this, debug);
+
 
 #ifndef TEXT_ONLY
 
 
-//    //draw tree
-//    drawTree(frustum, dt);
-//
 //    glColor4f(1.0, 1.0, 0.0, 1.0);
 //    for(map<string,RUser*>::iterator it = users.begin(); it!=users.end(); it++) {
 //        trace_debug ? it->second->drawSimple(dt) : it->second->draw(dt);
 //    }
 //
-    glEnable(GL_TEXTURE_2D);
-    glEnable(GL_BLEND);
-
-    //draw bloom
-    drawBloom(frustum, dt);
-//
-//    root->drawNames(font,frustum);
 //
 //    if(!(gGourceHideUsernames || gGourceHideUsers)) {
 //        for(map<string,RUser*>::iterator it = users.begin(); it!=users.end(); it++) {
@@ -509,19 +513,6 @@ void OroView::draw(float t, float dt) {
     mouseclicked=false;
 #endif
 
-}
-
-void OroView::drawBloom(Frustum &frustum, float dt) {
-
-    glEnable(GL_TEXTURE_2D);
-    glEnable(GL_BLEND);
-
-    //draw 'gourceian blur' around dirnodes
-    glBindTexture(GL_TEXTURE_2D, bloomtex->textureid);
-    glBlendFunc (GL_ONE, GL_ONE);
-    //root->drawBloom(frustum, dt);
-
-    glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 }
 
 void OroView::drawBackground(float dt) {
