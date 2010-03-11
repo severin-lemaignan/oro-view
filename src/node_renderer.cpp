@@ -46,6 +46,7 @@ void NodeRenderer::draw(const vec2f& pos, rendering_mode mode, OroView& env) {
 
     /****** NORMAL RENDERING ******/
     case NORMAL:
+    case SIMPLE:
         setRenderingColour();
 
         glLoadName(tagid);
