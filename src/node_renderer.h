@@ -35,7 +35,7 @@ class NodeRenderer
     void drawSimple(const vec2f& pos);
     void drawName(const vec2f& pos, FXFont& font);
     void drawBloom(const vec2f& pos, ZoomCamera& camera);
-    void drawShadow();
+    void drawShadow(const vec2f& pos);
 
 
 public:

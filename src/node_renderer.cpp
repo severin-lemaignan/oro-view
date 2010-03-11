@@ -57,6 +57,10 @@ void NodeRenderer::draw(const vec2f& pos, rendering_mode mode, OroView& env) {
     case BLOOM:
         drawBloom(pos, env.camera);
         break;
+
+    case SHADOWS:
+        drawShadow(pos);
+        break;
     }
 
 
@@ -168,7 +172,37 @@ void NodeRenderer::drawBloom(const vec2f& pos, ZoomCamera& camera){
 
 }
 
-void NodeRenderer::drawShadow(){
+void NodeRenderer::drawShadow(const vec2f& pos){
+
+    glEnable(GL_BLEND);
+    glEnable(GL_TEXTURE_2D);
+
+    float ratio = icon->h / (float) icon->w;
+    float halfsize = size * 0.5f;
+    vec2f offsetpos = pos - vec2f(halfsize, halfsize) + SHADOW_OFFSET;;
+
+    glBindTexture(GL_TEXTURE_2D, getIcon()->textureid);
+
+    glPushMatrix();
+        glTranslatef(offsetpos.x, offsetpos.y, 0.0f);
+
+        glColor4f(0.0, 0.0, 0.0, SHADOW_STRENGTH);
+
+        glBegin(GL_QUADS);
+            glTexCoord2f(0.0f,0.0f);
+            glVertex2f(0.0f, 0.0f);
+
+            glTexCoord2f(1.0f,0.0f);
+            glVertex2f(size, 0.0f);
+
+            glTexCoord2f(1.0f,1.0f);
+            glVertex2f(size, size*ratio);
+
+            glTexCoord2f(0.0f,1.0f);
+            glVertex2f(0.0f, size*ratio);
+        glEnd();
+
+    glPopMatrix();
 
 }
 

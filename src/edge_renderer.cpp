@@ -12,6 +12,9 @@ void EdgeRenderer::render(rendering_mode mode) {
     case NORMAL:
         spline.draw();
         break;
+    case SHADOWS:
+        spline.drawShadow();
+        break;
     }
 
 

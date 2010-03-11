@@ -42,7 +42,7 @@ OroView::OroView()
     background_colour = vec3f(0.0, 0.0, 0.0);
 
     draw_loading = true;
-    debug = true;
+    debug = false;
     paused = false;
 
     fontlarge = fontmanager.grab("FreeSans.ttf", 42);
@@ -184,7 +184,7 @@ void OroView::mouseMove(SDL_MouseMotionEvent *e) {
     mousemoved=true;
 }
 
-/** Time update */
+/** main update function */
 void OroView::update(float t, float dt) {
 
     SDL_Delay(20); //N'allons pas trop vite au début...
@@ -396,8 +396,10 @@ void OroView::draw(float t, float dt) {
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
 
-     //displayCoulombField();
 #endif
+    //Draw shadows
+     g.render(SHADOWS, *this, debug);
+
 
     //Draw nodes
      g.render(NORMAL, *this, debug);
@@ -416,6 +418,7 @@ void OroView::draw(float t, float dt) {
     //Draw names
      g.render(NAMES, *this, debug);
 
+     //displayCoulombField(); //doesn't work?
 
 #ifndef TEXT_ONLY
 

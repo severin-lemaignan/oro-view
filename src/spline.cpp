@@ -19,6 +19,7 @@
 #include "macros.h"
 
 #include "spline.h"
+#include "styles.h"
 
 
 SplineEdge::SplineEdge() {
@@ -85,12 +86,10 @@ void SplineEdge::drawShadow() {
 
     int edges_count = spline_point.size() - 1;
 
-    vec2f offset(2.0, 2.0);
-
     glBegin(GL_QUADS);
 
     for(int i=0;i<edges_count;i++) {
-	drawBeam(spline_point[i] + offset, vec4f(0.0, 0.0, 0.0, shadowStrength), spline_point[i+1] + offset, vec4f(0.0, 0.0, 0.0, shadowStrength), 2.5);
+        drawBeam(spline_point[i] + SHADOW_OFFSET, vec4f(0.0, 0.0, 0.0, SHADOW_STRENGTH), spline_point[i+1] + SHADOW_OFFSET, vec4f(0.0, 0.0, 0.0, SHADOW_STRENGTH), 2.5);
     }
 
     glEnd();
