@@ -99,9 +99,18 @@ class OroView : public SDLApp {
     void loadingScreen();
 
     /**
-      When true, display in the application debug infos like framerate.
-      */
+     * When true, display in the application debug infos like framerate.
+     * 
+     * Normally, activated by pushing on D during runtime
+     */
     bool debug;
+    
+    /**
+     * When true, display advanced debug infos like force vectors
+     * 
+     * Normally, activated by pushing two times on D during runtime
+     */
+    bool advanced_debug;
 
     bool paused;
 

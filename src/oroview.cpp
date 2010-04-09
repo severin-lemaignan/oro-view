@@ -62,6 +62,7 @@ OroView::OroView()
     draw_loading = true;
     display_node_infos = true;
     debug = false;
+    advanced_debug = false;
     paused = false;
 
     fontlarge = fontmanager.grab("FreeSans.ttf", 42);
@@ -111,9 +112,14 @@ void OroView::keyPress(SDL_KeyboardEvent *e) {
 	}
 
 	if (e->keysym.sym == SDLK_d) {
-	    debug = !debug;
+	    if (debug)
+			if (advanced_debug) {
+				debug = false;
+				advanced_debug = false;
+			}
+			else advanced_debug = true;
+		else debug = true;
 	}
-
 //        if (e->keysym.sym == SDLK_w) {
 //            gGourceQuadTreeDebug = !gGourceQuadTreeDebug;
 //        }
@@ -422,11 +428,11 @@ void OroView::draw(float t, float dt) {
 
 #endif
     //Draw shadows
-     g.render(SHADOWS, *this, debug);
+     g.render(SHADOWS, *this, advanced_debug);
 
 
     //Draw nodes
-     g.render(NORMAL, *this, debug);
+     g.render(NORMAL, *this, advanced_debug);
 
     //Draw Bloom
      glEnable(GL_TEXTURE_2D);
@@ -435,12 +441,12 @@ void OroView::draw(float t, float dt) {
      //draw 'gourceian blur' around dirnodes
      glBindTexture(GL_TEXTURE_2D, bloomtex->textureid);
      glBlendFunc (GL_ONE, GL_ONE);
-     g.render(BLOOM, *this, debug);
+     g.render(BLOOM, *this, advanced_debug);
 
      glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
     //Draw names
-     g.render(NAMES, *this, debug);
+     g.render(NAMES, *this, advanced_debug);
 
      //displayCoulombField(); //doesn't work?
 
@@ -471,7 +477,7 @@ void OroView::draw(float t, float dt) {
 //        glPopMatrix();
 //    }
 
-    if(debug) {
+    if(advanced_debug) {
 
 	glDisable(GL_TEXTURE_2D);
 	glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
