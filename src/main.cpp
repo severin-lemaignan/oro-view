@@ -26,7 +26,28 @@
 
 using namespace std;
 
+void usage() {
+	cout << "Usage: oro-view [OPTION...]" << endl << endl;
+	cout << "  -h          display this message and exits" << endl;
+	cout << "  -i file     load an input file" << endl;
+	cout << "  -f          fullscreen mode" << endl;
+	cout << "  -LxH        windowed mode, LxH pixels window" << endl;
+	cout << endl;
+	cout << "oro-view is an OpenGL-based visualization tool for RDF/OWL";
+	cout << " ontologies" << endl;
+	cout << "Séverin Lemaignan, LAAS-CNRS 2010, based on Gource by ";
+	cout << "Andrew Caudwell" << endl << endl;
+	cout << "Report bugs to openrobots@laas.fr" << endl;
+}
+
 int main(int argc, char *argv[]) {
+	
+	if (argc > 1 && !strcmp(argv[1],"-h")) {
+		usage();
+		exit(0);
+	}
+
+	string file_path  = "";
     int width  = 1024;
     int height = 768;
     bool fullscreen=false;
@@ -46,8 +67,11 @@ int main(int argc, char *argv[]) {
 
     SDLAppInit("ORO View", "oroview");
 
-    SDLAppParseArgs(argc, argv, &width, &height, &fullscreen, &arguments);
+    SDLAppParseArgs(argc, argv, file_path, &width, &height, &fullscreen, &arguments);
 
+	if (file_path != "")
+		cout << "Using input file " << file_path << endl;
+		
 #ifndef TEXT_ONLY
 
 	// this causes corruption on some video drivers

@@ -202,7 +202,7 @@ void SDLAppInit(std::string apptitle, std::string execname) {
     gSDLAppConfDir     = conf_dir;
 }
 
-void SDLAppParseArgs(int argc, char *argv[], int* xres, int* yres, bool* fullscreen, std::vector<std::string>* otherargs) {
+void SDLAppParseArgs(int argc, char *argv[], std::string& file, int* xres, int* yres, bool* fullscreen, std::vector<std::string>* otherargs) {
 
     for (int i=1; i<argc; i++) {
         debugLog("argv[%d] = %s\n", i, argv[i]);
@@ -215,7 +215,12 @@ void SDLAppParseArgs(int argc, char *argv[], int* xres, int* yres, bool* fullscr
             *fullscreen = 0;
             continue;
         }
-
+        else if (!strcmp(argv[i],"-i")) {
+			i++;
+            file = std::string(argv[i]);
+            continue;
+        }
+        
         //get video mode
         if(strchr(argv[i], '-') != 0 && strlen(argv[i])>1) {
             std::string argstr(argv[i], 1, strlen(argv[i])-1);
