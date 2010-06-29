@@ -18,9 +18,10 @@
 #ifndef ORO_CONNECTOR_H
 #define ORO_CONNECTOR_H
 
-#include "oroview.h"
-
 #include "liboro/oro.h"
+#include "liboro/socket_connector.h"
+
+class OroView;
 
 class OntologyConnector {
     
@@ -31,6 +32,7 @@ public:
     
 private:
     oro::Ontology *oro;
+    oro::SocketConnector sc;
     
 };
 

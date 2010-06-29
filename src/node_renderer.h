@@ -73,6 +73,8 @@ public:
     void setSelected(bool selected);
     void setColour(vec4f col);
 
+    std::string getLabel() {return label;}
+
 
 
 };

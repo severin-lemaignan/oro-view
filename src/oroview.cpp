@@ -25,8 +25,6 @@
 
 #include "graph.h"
 
-#include "oro_connector.h"
-
 using namespace std;
 
 OroView::OroView()
@@ -62,6 +60,7 @@ OroView::OroView()
     background_colour = vec3f(0.0, 0.0, 0.0);
 
     draw_loading = true;
+    display_node_infos = true;
     debug = false;
     paused = false;
 
@@ -90,15 +89,13 @@ void OroView::init(){
 
     TRACE("*** Initialization ***");
 
-    g.addNode("Thing");
+    g.addNode(ROOT_CONCEPT, "Thing");
 
     //addRandomNodes(3, 2);
 
-    addNodeConnectedTo("Animal", "Thing", SUBCLASS, "subclass");
+    //addNodeConnectedTo("Animal", ROOT_CONCEPT, SUBCLASS, "subclass");
 
-    OntologyConnector oro;
-
-    oro.walkThroughOntology("Thing", 1, this);
+    oro.walkThroughOntology("owl:Thing", 2, this);
 
     TRACE("*** Graph created and populated ***");
     TRACE("*** STARTING MAIN LOOP ***");
@@ -126,7 +123,8 @@ void OroView::keyPress(SDL_KeyboardEvent *e) {
 	}
 
 	if (e->keysym.sym == SDLK_SPACE) {
-	    addRandomNodes(2, 2);
+            //addRandomNodes(2, 2);
+            updateCurrentNode();
 	}
 
 	if (e->keysym.sym == SDLK_p) {
@@ -535,6 +533,16 @@ void OroView::draw(float t, float dt) {
 
     }
 
+    if(selectedNode != NULL && display_node_infos) {
+        vec3f campos = camera.getPos();
+
+        glDisable(GL_TEXTURE_2D);
+        glColor4f(1.0f, 1.0f, 0.8f, 0.7f);
+
+        fontmedium.print(40,640, "%s   (ID = %s)", selectedNode->renderer.getLabel().c_str(), selectedNode->getID().c_str());
+
+    }
+
     glDisable(GL_TEXTURE_2D);
 
 
@@ -741,9 +749,10 @@ void OroView::selectNode(Node* node) {
 
 //Add node
 void OroView::addNodeConnectedTo(const string& id,
-                        const string& to,
-                        relation_type type,
-                        const string& label){
+                                 const string& node_label,
+                                const string& to,
+                                relation_type type,
+                                const string& edge_label){
 
     Node* n;
     Node* neighbour;
@@ -753,7 +762,7 @@ void OroView::addNodeConnectedTo(const string& id,
     }
     catch(OroViewException& exception) {
         //neighbour not found, create it.
-        addNodeConnectedTo(to, "Thing", UNDEFINED, "");
+        addNodeConnectedTo(to, to, ROOT_CONCEPT, UNDEFINED, "");
         neighbour = &g.getNode(to);
     }
 
@@ -765,13 +774,20 @@ void OroView::addNodeConnectedTo(const string& id,
     }
     catch(OroViewException& exception) {
         //if not, create it, create it.
-        n = &g.addNode(id, neighbour);
-        vec4f col((float)rand()/RAND_MAX, (float)rand()/RAND_MAX, (float)rand()/RAND_MAX, 0.7);
-        n->setColour(col);
+        n = &g.addNode(id, node_label, neighbour);
     }
 
-    g.addEdge(*n, *neighbour, type, label);
+    g.addEdge(*n, *neighbour, type, edge_label);
 
+}
+
+Node& OroView::getNode(const std::string &id) {
+    return g.getNode(id);
+}
+
+void OroView::updateCurrentNode() {
+    cout << "Updating node " << selectedNode->getID() << endl;
+    oro.walkThroughOntology(selectedNode->getID(), 1, this);
 }
 
 /** Testing */
@@ -791,7 +807,7 @@ void OroView::addRandomNodes(int amount,int nb_rel) {
 
         Node& neighbour = g.getRandomNode();
 
-        Node& n = g.addNode(newId, &neighbour);
+        Node& n = g.addNode(newId, newId, &neighbour);
 	vec4f col((float)rand()/RAND_MAX, (float)rand()/RAND_MAX, (float)rand()/RAND_MAX, 0.7);
 	n.setColour(col);
 

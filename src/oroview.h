@@ -31,6 +31,8 @@
 
 #include "graph.h"
 
+#include "oro_connector.h"
+
 class Node;
 
 class OroView : public SDLApp {
@@ -65,6 +67,7 @@ class OroView : public SDLApp {
     Node* selectedNode;
     void selectNode(Node* node);
     Bounds2D nodesBounds;
+    bool display_node_infos;
 
     bool track_users;
     void* selectedUser;
@@ -106,6 +109,9 @@ class OroView : public SDLApp {
     TextureResource* bloomtex;
     TextureResource* beamtex;
 
+    //Connection to the ontology
+    OntologyConnector oro;
+
     //Drawing routines
     void drawBloom(Frustum &frustum, float dt);
     void drawBackground(float dt);
@@ -125,6 +131,9 @@ class OroView : public SDLApp {
       Adds (amount) of new nodes to the graph, with (nb_rel) random connections to other nodes
       */
     void addRandomNodes(int amount, int nb_rel);
+
+    void updateCurrentNode();
+
 
 
 public:
@@ -160,9 +169,12 @@ public:
 
     //Add node
     void addNodeConnectedTo(const std::string& id,
+                            const std::string& node_label,
                             const std::string& to,
                             relation_type type,
-                            const std::string& label);
+                            const std::string& edge_label);
+
+    Node& getNode(const std::string& id);
 };
 
 #endif // OROVIEW_H
