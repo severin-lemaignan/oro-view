@@ -157,6 +157,12 @@ public:
 
     static void drawVector(vec2f vec, vec2f pos, vec4f col);
 
+
+    //Add node
+    void addNodeConnectedTo(const std::string& id,
+                            const std::string& to,
+                            relation_type type,
+                            const std::string& label);
 };
 
 #endif // OROVIEW_H

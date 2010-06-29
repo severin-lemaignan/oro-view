@@ -25,6 +25,8 @@
 
 #include "graph.h"
 
+#include "oro_connector.h"
+
 using namespace std;
 
 OroView::OroView()
@@ -90,7 +92,13 @@ void OroView::init(){
 
     g.addNode("Thing");
 
-    addRandomNodes(3, 2);
+    //addRandomNodes(3, 2);
+
+    addNodeConnectedTo("Animal", "Thing", SUBCLASS, "subclass");
+
+    OntologyConnector oro;
+
+    oro.walkThroughOntology("Thing", 1, this);
 
     TRACE("*** Graph created and populated ***");
     TRACE("*** STARTING MAIN LOOP ***");
@@ -729,6 +737,41 @@ void OroView::selectNode(Node* node) {
 
     //select node, lock on camera
     selectedNode->setSelected(true);
+}
+
+//Add node
+void OroView::addNodeConnectedTo(const string& id,
+                        const string& to,
+                        relation_type type,
+                        const string& label){
+
+    Node* n;
+    Node* neighbour;
+
+    try {
+        neighbour = &g.getNode(to);
+    }
+    catch(OroViewException& exception) {
+        //neighbour not found, create it.
+        addNodeConnectedTo(to, "Thing", UNDEFINED, "");
+        neighbour = &g.getNode(to);
+    }
+
+    try {
+        //does the node already exists?
+
+        //if yes, reuse it
+        n = &g.getNode(id);
+    }
+    catch(OroViewException& exception) {
+        //if not, create it, create it.
+        n = &g.addNode(id, neighbour);
+        vec4f col((float)rand()/RAND_MAX, (float)rand()/RAND_MAX, (float)rand()/RAND_MAX, 0.7);
+        n->setColour(col);
+    }
+
+    g.addEdge(*n, *neighbour, type, label);
+
 }
 
 /** Testing */
