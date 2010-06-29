@@ -3,7 +3,7 @@
 
 AC_PREREQ(2.61)
 
-AC_INIT(oro-view, 0.1, [severin.lemaignan@laas.fr])
+AC_INIT(oro-view, 0.1.99, [severin.lemaignan@laas.fr])
 AC_CONFIG_SRCDIR([src/main.cpp])
 
 AM_INIT_AUTOMAKE([dist-bzip2 foreign subdir-objects])
@@ -50,19 +50,33 @@ CXXFLAGS="$CXXFLAGS $FTGL_CFLAGS"
 CPPFLAGS="$CPPFLAGS $FTGL_CFLAGS"
 LIBS="$LIBS $FTGL_LIBS"
 
+#LIBORO
+PKG_CHECK_MODULES(LIBORO, liboro >= 0.7.6, [], AC_MSG_ERROR(liboro 0.7.6 or greater is required. Please see README))
+CXXFLAGS="$CXXFLAGS $LIBORO_CFLAGS"
+CPPFLAGS="$CPPFLAGS $LIBORO_CFLAGS"
+LIBS="$LIBS $LIBORO_LIBS"
+
+
 #PNG library
 AC_CHECK_LIB(png, png_read_info, , AC_MSG_ERROR([PNG library required. Please see README]))
 
 #JPEG library
 AC_CHECK_LIB(jpeg, jpeg_read_header, , AC_MSG_ERROR([JPEG library required. Please see README]))
 
+#JSON library
+#AC_CHECK_LIB(json, , , AC_MSG_ERROR([JPEG library required. Please see README]))
+LIBS="$LIBS -ljson"
+
 #SDL_image library with PNG support
-AC_CHECK_LIB(SDL_image, IMG_LoadPNG_RW, LIBS="$LIBS -lSDL_image", AC_MSG_ERROR([SDL_image required. Please see README]))
+#AC_CHECK_LIB(SDL_image, IMG_LoadPNG_RW, LIBS="$LIBS -lSDL_image", AC_MSG_ERROR([SDL_image required. Please see README]))
+LIBS="$LIBS -lSDL_image"
 
 #Check for required headers
 AC_CHECK_HEADER([SDL.h],, AC_MSG_ERROR(SDL.h is required. Please see README))
 AC_CHECK_HEADER([SDL_image.h],, AC_MSG_ERROR(SDL_image.h is required. Please see README))
 AC_CHECK_HEADER([ftgl.h],, AC_MSG_ERROR(ftgl.h is required. Please see README))
+AC_CHECK_HEADER([liboro/oro.h],, AC_MSG_ERROR(oro.h is required. Please see README))
+#AC_CHECK_HEADER([json.h],, AC_MSG_ERROR(json.h is required. Please see README))
 
 #see if ttf-font-dir option is enabled
 AC_ARG_ENABLE(ttf-font-dir,[AS_HELP_STRING([--enable-ttf-font-dir=DIR],[directory containing GNU FreeFont TTF fonts])],[oroviewfontdir="$enableval"],[oroviewfontdir=""])
