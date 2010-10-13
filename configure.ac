@@ -56,6 +56,13 @@ CXXFLAGS="$CXXFLAGS $LIBORO_CFLAGS"
 CPPFLAGS="$CPPFLAGS $LIBORO_CFLAGS"
 LIBS="$LIBS $LIBORO_LIBS"
 
+#We are using JsonCpp library which is not available in Linux distro
+#JSON
+#PKG_CHECK_MODULES(JSON, json >= 0.9, [], AC_MSG_ERROR(libjson 0.9 or greater is required.))
+#CXXFLAGS="$CXXFLAGS $JSON_CFLAGS"
+#CPPFLAGS="$CPPFLAGS $JSON_CFLAGS"
+#LIBS="$LIBS $JSON_LIBS"
+
 
 #PNG library
 AC_CHECK_LIB(png, png_read_info, , AC_MSG_ERROR([PNG library required. Please see README]))
@@ -75,7 +82,7 @@ LIBS="$LIBS -lSDL_image"
 AC_CHECK_HEADER([SDL.h],, AC_MSG_ERROR(SDL.h is required. Please see README))
 AC_CHECK_HEADER([SDL_image.h],, AC_MSG_ERROR(SDL_image.h is required. Please see README))
 AC_CHECK_HEADER([ftgl.h],, AC_MSG_ERROR(ftgl.h is required. Please see README))
-AC_CHECK_HEADER([liboro/oro.h],, AC_MSG_ERROR(oro.h is required. Please see README))
+AC_CHECK_HEADER([oro.h],, AC_MSG_ERROR(oro.h is required. Please see README))
 #AC_CHECK_HEADER([json.h],, AC_MSG_ERROR(json.h is required. Please see README))
 
 #see if ttf-font-dir option is enabled
