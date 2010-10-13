@@ -29,7 +29,7 @@ NodeRenderer::NodeRenderer(int tagid, string label) : tagid(tagid), label(label)
 
     idle_time = 0.0;
 
-    size = 8.0;
+    size = NODE_SIZE;
 
     col = vec4f(1.0, 1.0, 1.0, 1.0);
     base_col = vec4f(1.0, 1.0, 1.0, 1.0);
@@ -38,7 +38,7 @@ NodeRenderer::NodeRenderer(int tagid, string label) : tagid(tagid), label(label)
     selected = false;
 
 #ifndef TEXT_ONLY
-    icon = texturemanager.grab("file.png");
+    icon = texturemanager.grab("classes.png");
 #endif
 }
 

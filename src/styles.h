@@ -22,6 +22,8 @@
 
 enum rendering_mode {NORMAL, SIMPLE, SHADOWS, BLOOM, NAMES};
 
+static const float NODE_SIZE = 15.0;
+
 static const float FADE_TIME = 25.0; //idle time (in sec) before labels vanish
 static const float SHADOW_STRENGTH = 0.5; //intensity of shadows (from 0.0 to 1.0)
 static const vec2f SHADOW_OFFSET(1.0, 1.0); //offset of shadows

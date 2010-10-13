@@ -18,8 +18,8 @@
 #ifndef ORO_CONNECTOR_H
 #define ORO_CONNECTOR_H
 
-#include "liboro/oro.h"
-#include "liboro/socket_connector.h"
+#include "oro.h"
+#include "socket_connector.h"
 
 class OroView;
 

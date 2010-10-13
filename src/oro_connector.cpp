@@ -14,7 +14,7 @@
 #include "oroview.h"
 #include "node_relation.h"
 
-#include "liboro/oro_exceptions.h"
+#include "oro_exceptions.h"
 
 
 #include "json/json.h"
@@ -23,7 +23,7 @@
 using namespace std;
 using namespace oro;
 
-OntologyConnector::OntologyConnector() : sc("localhost", "7000")
+OntologyConnector::OntologyConnector() : sc("localhost", "6969")
 {
         oro = Ontology::createWithConnector(sc);
 }

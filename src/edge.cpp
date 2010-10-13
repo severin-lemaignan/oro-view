@@ -97,7 +97,7 @@ void Edge::step(Graph& g, float dt){
 
 	//update the spline point
 	vec2f td = (pos2 - pos1) * 0.5;
-
+	
 	vec2f mid = pos1 + td;// - td.perpendicular() * pos.normal();// * 10.0;
 
 	vec2f delta = (mid - spos);
@@ -109,7 +109,11 @@ void Edge::step(Graph& g, float dt){
 
 	spos += delta * min(1.0, dt * 2.0);
 
-	renderer.update(pos1, node1.renderer.col, pos2, node2.renderer.col, spos);
+	td.normalize();
+	
+	vec2f out_of_node_distance = td * (NODE_SIZE / 2 + 2);
+	
+	renderer.update(pos1 + out_of_node_distance , node1.renderer.col, pos2  - out_of_node_distance , node2.renderer.col, spos);
 
 #endif
 	//TRACE("Edge between " << node1->getID() << " and " << node2->getID() << " updated.");
