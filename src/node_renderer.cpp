@@ -24,7 +24,7 @@
 
 using namespace std;
 
-NodeRenderer::NodeRenderer(int tagid, string label) : tagid(tagid), label(label)
+NodeRenderer::NodeRenderer(int tagid, string label, node_type type) : tagid(tagid), label(label), type(type)
 {
 
     idle_time = 0.0;
@@ -32,13 +32,27 @@ NodeRenderer::NodeRenderer(int tagid, string label) : tagid(tagid), label(label)
     size = NODE_SIZE;
 
     col = vec4f(1.0, 1.0, 1.0, 1.0);
-    base_col = vec4f(1.0, 1.0, 1.0, 1.0);
 
     hovered = false;
     selected = false;
 
 #ifndef TEXT_ONLY
-    icon = texturemanager.grab("classes.png");
+    if (type == CLASS_NODE) {
+		base_col = CLASSES_COLOUR;
+		icon = texturemanager.grab("classes.png");
+	}
+	else if (type == INSTANCE_NODE) {
+		base_col = INSTANCES_COLOUR;
+		icon = texturemanager.grab("instances.png");
+	}
+	else if (type == LITERAL_NODE) {
+		base_col = LITERAL_COLOUR;
+		icon = texturemanager.grab("literals.png");
+	}
+	else {
+		base_col = vec4f(1.0, 1.0, 1.0, 1.0);
+		icon = texturemanager.grab("instances.png");
+	}
 #endif
 }
 

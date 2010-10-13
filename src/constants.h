@@ -21,6 +21,10 @@
 #include <string>
 #include "core/vectors.h"
 
+enum node_type {CLASS_NODE, INSTANCE_NODE, LITERAL_NODE};
+
+enum relation_type {SUBCLASS, SUPERCLASS, INSTANCE, CLASS, OBJ_PROPERTY, DATA_PROPERTY, UNDEFINED};
+
 static const std::string dateFormat("%A, %d %B, %Y %X");
 
 static const float GRAVITY = 9.81;
@@ -37,7 +41,8 @@ static const float NOMINAL_EDGE_LENGTH = 50.0; // pixels
 static const float MIN_KINETIC_ENERGY = 1.0; //Nodes with a lower energy won't move at all.
 
 //static const std::string ROOT_CONCEPT = "http%3A%2F%2Fwww.w3.org%2F2002%2F07%2Fowl%23Thing"; // http://www.w3.org/2002/07/owl#Thing
-static const std::string ROOT_CONCEPT = "owl:Thing";
+//static const std::string ROOT_CONCEPT = "owl:Thing";
+static const std::string ROOT_CONCEPT = "myself";
 
 #endif // CONSTANTS_H
 

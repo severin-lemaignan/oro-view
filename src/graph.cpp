@@ -102,16 +102,12 @@ Node& Graph::getRandomNode() {
 }
 
 
-Node& Graph::addNode(const string& id, const string& label, const Node* neighbour) {
+Node& Graph::addNode(const string& id, const string& label, const Node* neighbour, node_type type) {
 
     pair<NodeMap::iterator, bool> res;
 
-    if (neighbour != NULL)
-        //TODO: I'm doing 2 !! copies of Node, here??
-        res = nodes.insert(make_pair(hash_value(id),Node(id, label, neighbour)));
-    else
-        //TODO: I'm doing 2 !! copies of Node, here??
-        res = nodes.insert(make_pair(hash_value(id),Node(id, label)));
+	//TODO: I'm doing 2 !! copies of Node, here??
+	res = nodes.insert(make_pair(hash_value(id),Node(id, label, neighbour, type)));
 
     if ( ! res.second )
 	TRACE("Didn't add node " << id << " because it already exists.");

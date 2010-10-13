@@ -90,13 +90,13 @@ void OroView::init(){
 
     TRACE("*** Initialization ***");
 
-    g.addNode(ROOT_CONCEPT, "Thing");
+    g.addNode(ROOT_CONCEPT, ROOT_CONCEPT, NULL, INSTANCE_NODE);
 
     //addRandomNodes(3, 2);
 
     //addNodeConnectedTo("Animal", ROOT_CONCEPT, SUBCLASS, "subclass");
 
-    oro.walkThroughOntology("owl:Thing", 2, this);
+    oro.walkThroughOntology(ROOT_CONCEPT, 2, this);
 
     TRACE("*** Graph created and populated ***");
     TRACE("*** STARTING MAIN LOOP ***");
@@ -768,6 +768,30 @@ void OroView::addNodeConnectedTo(const string& id,
     }
     catch(OroViewException& exception) {
         //neighbour not found, create it.
+        
+        node_type ntype;
+        
+        //guess the type of the node we are adding
+        switch (type) {
+         case SUBCLASS:
+         case SUPERCLASS:
+         case CLASS:
+			ntype = CLASS_NODE;
+			break;
+			
+         case INSTANCE:
+         case OBJ_PROPERTY:
+         	ntype = INSTANCE_NODE;
+			break;
+         
+         case DATA_PROPERTY:
+			ntype = LITERAL_NODE;
+			break;
+			
+         default:
+			ntype = INSTANCE_NODE;
+		}
+		
         addNodeConnectedTo(to, to, ROOT_CONCEPT, UNDEFINED, "");
         neighbour = &g.getNode(to);
     }
@@ -780,7 +804,28 @@ void OroView::addNodeConnectedTo(const string& id,
     }
     catch(OroViewException& exception) {
         //if not, create it, create it.
-        n = &g.addNode(id, node_label, neighbour);
+        
+        node_type ntype;
+        
+        //guess the type of the node we are adding
+        switch (type) {
+         case SUBCLASS:
+         case SUPERCLASS:
+         case INSTANCE:
+			ntype = CLASS_NODE;
+			break;
+			
+         case CLASS:
+         case OBJ_PROPERTY:
+         case DATA_PROPERTY:
+			ntype = INSTANCE_NODE;
+			break;
+			
+         default:
+			ntype = INSTANCE_NODE;
+		}
+		
+        n = &g.addNode(id, node_label, neighbour, ntype);
     }
 
     g.addEdge(*n, *neighbour, type, edge_label);

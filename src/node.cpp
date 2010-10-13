@@ -31,7 +31,7 @@
 using namespace std;
 using namespace boost;
 
-Node::Node(const string& id, const string& label, const Node* neighbour) : id(id), renderer(NodeRenderer(hash_value(id), label))
+Node::Node(const string& id, const string& label, const Node* neighbour, node_type type) : id(id), renderer(NodeRenderer(hash_value(id), label, type))
 {
 
     //If a neighbour is given, we set our initial position close to it.

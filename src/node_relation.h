@@ -25,8 +25,6 @@
 
 #include "edge.h"
 
-enum relation_type {SUBCLASS, SUPERCLASS, INSTANCE, CLASS, OBJ_PROPERTY, DATA_PROPERTY, UNDEFINED};
-
 class Node;
 
 class NodeRelation {

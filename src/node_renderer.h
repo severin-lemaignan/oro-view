@@ -20,6 +20,7 @@
 #define NODE_RENDERER_H
 
 #include "styles.h"
+#include "constants.h"
 #include "core/vectors.h"
 #include "core/texture.h"
 #include "zoomcamera.h"
@@ -34,6 +35,8 @@ class NodeRenderer
     std::string label;
 
     int tagid;
+    
+    node_type type;
 
     TextureResource* icon;
     float size;
@@ -57,7 +60,7 @@ class NodeRenderer
 
 
 public:
-    NodeRenderer(int tagid, std::string label);
+    NodeRenderer(int tagid, std::string label, node_type type = CLASS_NODE);
 
     vec4f col;
 

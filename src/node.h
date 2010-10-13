@@ -41,7 +41,7 @@ class Node
 
 public:
 
-    Node(const std::string& id, const std::string& label, const Node* neighbour = NULL);
+    Node(const std::string& id, const std::string& label, const Node* neighbour = NULL, node_type type = CLASS_NODE);
 
     bool operator< (const Node& node) const;
 
