@@ -7,7 +7,6 @@
 
 #include <iostream>
 #include <iterator>
-#include <locale>
 
 #include <boost/variant.hpp>
 
@@ -27,14 +26,28 @@ using namespace oro;
 
 OntologyConnector::OntologyConnector() : sc("localhost", "6969")
 {
-        oro = Ontology::createWithConnector(sc);
+    //Initializes the random generator for later generation of unique id for concepts.
+    srand(time(NULL));
+    
+    oro = Ontology::createWithConnector(sc);
 }
+
+const string OntologyConnector::get_edge_label(relation_type type, const string& original_label) {
     
+    switch(type) {
+        case SUBCLASS:
+        case SUPERCLASS:
+        case CLASS:
+        case INSTANCE:
+        case COMMENT:
+            return "";
+        
+        default:
+            return original_label;
+    }
+}
+
 void OntologyConnector::walkThroughOntology(const string& from_node, int depth, OroView* graph) {
-    
-    //We need a collate object to compute hashes of literals
-    locale loc;                 // the "C" locale
-    const collate<char>& coll = use_facet<collate<char> >(loc);
     
     if (depth == 0) return;
     
@@ -69,8 +82,10 @@ void OntologyConnector::walkThroughOntology(const string& from_node, int depth, 
 
     const Json::Value attributes = root["attributes"];
     for ( int index = 0; index < attributes.size(); ++index ) { // Iterates over the sequence elements.
+        
         string oroType = attributes[index]["name"].asString();
         cout << endl << oroType << ":" << endl;
+        
         Json::Value values = attributes[index]["values"];
         
         relation_type type = PROPERTY;
@@ -83,11 +98,9 @@ void OntologyConnector::walkThroughOntology(const string& from_node, int depth, 
         
         for ( int index = 0; index < values.size(); ++index ) { // Iterates over the sequence elements.
             cout << "  - " << values[index]["name"].asString() << endl;
-            if (values[index]["id"].asString() == "literal") {
-                string name = values[index]["name"].asString();
-                ostringstream o;
-                o << "literal" << coll.hash(name.data(),name.data()+name.length());
-                id = o.str();
+
+            if (values[index]["id"].asString() == "literal") { // add a random string at the end of the literal to distinguish between each literal
+                id = "literal_" + randomId();
             }
             else
                 id = values[index]["id"].asString();
@@ -97,7 +110,7 @@ void OntologyConnector::walkThroughOntology(const string& from_node, int depth, 
                     values[index]["name"].asString(),
                     from_node, 
                     type, 
-                    attributes[index]["name"].asString());
+                    get_edge_label(type, attributes[index]["name"].asString()));
             
             walkThroughOntology(values[index]["name"].asString(),
                                 depth - 1,
@@ -105,6 +118,18 @@ void OntologyConnector::walkThroughOntology(const string& from_node, int depth, 
         }
     }
 
+}
+
+string OntologyConnector::randomId(int length)
+{
+	string result;
+
+	for(int i=0; i<length; i++)
+	{
+		result += (char)(rand() % 26 + 97); //ASCII codes of letters starts at 98 for "a"
+	}
+
+	return result;
 }
 
 /*
