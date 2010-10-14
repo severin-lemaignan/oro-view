@@ -36,7 +36,6 @@ private:
     oro::SocketConnector sc;
     
     const std::string get_edge_label(relation_type type, const std::string& original_label);
-    std::string randomId(int length = 8);
 };
 
 #endif // ORO_CONNECTOR_H

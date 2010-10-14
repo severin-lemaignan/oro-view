@@ -7,6 +7,7 @@
 
 #include <iostream>
 #include <iterator>
+#include <locale>
 
 #include <boost/variant.hpp>
 
@@ -26,8 +27,6 @@ using namespace oro;
 
 OntologyConnector::OntologyConnector() : sc("localhost", "6969")
 {
-    //Initializes the random generator for later generation of unique id for concepts.
-    srand(time(NULL));
     
     oro = Ontology::createWithConnector(sc);
 }
@@ -50,6 +49,11 @@ const string OntologyConnector::get_edge_label(relation_type type, const string&
 void OntologyConnector::walkThroughOntology(const string& from_node, int depth, OroView* graph) {
     
     if (depth == 0) return;
+    
+    //We need a collate object to compute hashes of literals
+    locale loc;                 // the "C" locale
+    const collate<char>& coll = use_facet<collate<char> >(loc);
+    
     
     string details;
     string id;
@@ -99,8 +103,11 @@ void OntologyConnector::walkThroughOntology(const string& from_node, int depth, 
         for ( int index = 0; index < values.size(); ++index ) { // Iterates over the sequence elements.
             cout << "  - " << values[index]["name"].asString() << endl;
 
-            if (values[index]["id"].asString() == "literal") { // add a random string at the end of the literal to distinguish between each literal
-                id = "literal_" + randomId();
+            if (values[index]["id"].asString() == "literal") { //build a hash for each literal based on "full name": current node + predicate + literal value
+                string full_name = from_node + oroType + values[index]["name"].asString();
+                ostringstream o;
+                o << "literal_" << coll.hash(full_name.data(),full_name.data()+full_name.length());
+                id = o.str();
             }
             else
                 id = values[index]["id"].asString();
@@ -118,18 +125,6 @@ void OntologyConnector::walkThroughOntology(const string& from_node, int depth, 
         }
     }
 
-}
-
-string OntologyConnector::randomId(int length)
-{
-	string result;
-
-	for(int i=0; i<length; i++)
-	{
-		result += (char)(rand() % 26 + 97); //ASCII codes of letters starts at 98 for "a"
-	}
-
-	return result;
 }
 
 /*
