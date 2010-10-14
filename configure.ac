@@ -57,11 +57,12 @@ CPPFLAGS="$CPPFLAGS $LIBORO_CFLAGS"
 LIBS="$LIBS $LIBORO_LIBS"
 
 #We are using JsonCpp library which is not available in Linux distro
+#This uses a custom jsoncpp.pc files (can be adapted from the one found in oro-view root directory).
 #JSON
-#PKG_CHECK_MODULES(JSON, json >= 0.9, [], AC_MSG_ERROR(libjson 0.9 or greater is required.))
-#CXXFLAGS="$CXXFLAGS $JSON_CFLAGS"
-#CPPFLAGS="$CPPFLAGS $JSON_CFLAGS"
-#LIBS="$LIBS $JSON_LIBS"
+PKG_CHECK_MODULES(JSON, jsoncpp >= 0.5, [], AC_MSG_ERROR(jsoncpp 0.5 or greater is required.))
+CXXFLAGS="$CXXFLAGS $JSON_CFLAGS"
+CPPFLAGS="$CPPFLAGS $JSON_CFLAGS"
+LIBS="$LIBS $JSON_LIBS"
 
 
 #PNG library
