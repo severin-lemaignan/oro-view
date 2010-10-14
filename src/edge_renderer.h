@@ -21,22 +21,38 @@
 
 #include "core/vectors.h"
 
+#include "constants.h"
+
 #include "styles.h"
 #include "spline.h"
 
+class OroView;
+
 class EdgeRenderer
 {
+    float idle_time;
+    
     int tagid;
+    
+    vec2f label_pos;
+        
+    std::string label;
 
     SplineEdge spline;
+    
+    float getAlpha() { return std::max(0.0f, FADE_TIME - idle_time)/FADE_TIME; }
+
+    void drawName(FXFont& font);
+
 
 public:
-    EdgeRenderer(int tagid);
+    void increment_idle_time(float dt) {idle_time += dt;}
 
-    void render(rendering_mode mode);
+    EdgeRenderer(int tagid, const std::string& label = "");
+
+    void draw(rendering_mode mode, OroView& env);
 
     void update(vec2f pos1, vec4f col1, vec2f pos2, vec4f col2, vec2f spos);
-
 
 };
 

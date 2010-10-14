@@ -32,8 +32,13 @@
 using namespace std;
 using namespace boost;
 
-Edge::Edge(const NodeRelation& rel) : idNode1(rel.from->getID()), idNode2(rel.to->getID()), renderer(EdgeRenderer(
-	hash_value(rel.from->getID() + rel.to->getID())))
+Edge::Edge(const NodeRelation& rel, const string& label) : 
+			idNode1(rel.from->getID()), 
+			idNode2(rel.to->getID()), 
+			renderer(EdgeRenderer(
+				hash_value(rel.from->getID() + rel.to->getID()),
+				label
+				))
 {
 
 //    addReferenceRelation(rel);
@@ -113,6 +118,9 @@ void Edge::step(Graph& g, float dt){
 	
 	vec2f out_of_node_distance = td * (NODE_SIZE / 2 + 2);
 	
+	//Update the age of the node renderer
+	renderer.increment_idle_time(dt);
+	
 	renderer.update(pos1 + out_of_node_distance , node1.renderer.col, pos2  - out_of_node_distance , node2.renderer.col, spos);
 
 #endif
@@ -120,12 +128,12 @@ void Edge::step(Graph& g, float dt){
 
 }
 
-void Edge::render(rendering_mode mode){
+void Edge::render(rendering_mode mode, OroView& env){
 
 
 
 #ifndef TEXT_ONLY
-        renderer.render(mode);
+        renderer.draw(mode, env);
 #endif
 	//TRACE("Edge between " << node1->getID() << " and " << node2->getID() << " rendered.");
 

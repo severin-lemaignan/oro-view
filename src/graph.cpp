@@ -49,7 +49,7 @@ void Graph::step(float dt) {
 void Graph::render(rendering_mode mode, OroView& env, bool debug) {
 
     BOOST_FOREACH(Edge& e, edges) {
-            e.render(mode);
+            e.render(mode, env);
     }
 
     BOOST_FOREACH(NodeMap::value_type& n, nodes) {
@@ -131,13 +131,13 @@ void Graph::addEdge(Node& from, Node& to, const relation_type type, const std::s
     //Don't add an edge if the relation is between the same node.
     //It could be actually useful, but it provokes a segfault somewhere :-/
     if (&from == &to) {
-	TRACE("Leaving immediately: from == to");
+	TRACE("Leaving immediately because of strange segfault: from == to");
 	return;
     }
 
    //so now we are confident that there's no edge we can reuse. Let's create a new one.
     if (getEdgesBetween(from, to).size() == 0)
-	edges.push_back(Edge(rel));
+	edges.push_back(Edge(rel, label));
 
 
     return;

@@ -41,7 +41,7 @@ class Edge
     EdgeRenderer renderer;
 
 public:
-    Edge(const NodeRelation& rel);
+    Edge(const NodeRelation& rel, const std::string& label = "");
 
     float length;
     float spring_constant;
@@ -56,7 +56,7 @@ public:
     //bool hasOutboundConnectionFrom(const Node* node) const;
 
     void step(Graph& g, float dt);
-    void render(rendering_mode mode);
+    void render(rendering_mode mode, OroView& env);
 
     const std::string& getId1() const;
     const std::string& getId2() const;

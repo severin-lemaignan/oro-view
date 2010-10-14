@@ -19,17 +19,29 @@
 #include "edge_renderer.h"
 
 #include "node.h"
+#include "oroview.h"
 
-EdgeRenderer::EdgeRenderer(int tagid) : tagid(tagid)
+using namespace std;
+
+EdgeRenderer::EdgeRenderer(int tagid, const string& label) : 
+            tagid(tagid), 
+            label(label),
+            label_pos(vec2f(0.0, 0.0)),
+            idle_time(0.0)
 {
 }
 
-void EdgeRenderer::render(rendering_mode mode) {
+void EdgeRenderer::draw(rendering_mode mode, OroView& env) {
 
     switch (mode) {
     case NORMAL:
         spline.draw();
         break;
+
+    case NAMES:
+        drawName(env.font);
+        break;
+
     case SHADOWS:
         spline.drawShadow();
         break;
@@ -40,10 +52,43 @@ void EdgeRenderer::render(rendering_mode mode) {
 
 void EdgeRenderer::update(vec2f pos1, vec4f col1, vec2f pos2, vec4f col2, vec2f spos){
 
+    label_pos = pos1 + (pos2 - pos1) * 0.5;
+    
     vec2f projected_pos1  = display.project(vec3f(pos1.x, pos1.y, 0.0)).truncate();
     vec2f projected_pos2  = display.project(vec3f(pos2.x, pos2.y, 0.0)).truncate();
     vec2f projected_spos = display.project(vec3f(spos.x, spos.y, 0.0)).truncate();
 
     spline = SplineEdge(projected_pos1, col1, projected_pos2, col2, spos);
 
+}
+
+void EdgeRenderer::drawName(FXFont& font){
+
+    float alpha = getAlpha();
+
+    glPushMatrix();
+    glTranslatef(label_pos.x, label_pos.y, 0.0);
+
+    glColor4f(1.0, 1.0, 1.0, alpha);
+
+    vec3f screenpos = display.project(vec3f(0.0, 0.0, 0.0));
+
+    glMatrixMode(GL_PROJECTION);
+        glPushMatrix();
+        glLoadIdentity();
+            glOrtho(0, display.width, display.height, 0, -1.0, 1.0);
+
+        glMatrixMode(GL_MODELVIEW);
+            glPushMatrix();
+            glLoadIdentity();
+
+            font.draw(screenpos.x, screenpos.y, label);
+
+        glMatrixMode(GL_PROJECTION);
+        glPopMatrix();
+
+        glMatrixMode(GL_MODELVIEW);
+        glPopMatrix();
+
+    glPopMatrix();
 }
