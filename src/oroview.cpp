@@ -765,35 +765,15 @@ void OroView::addNodeConnectedTo(const string& id,
     Node* neighbour;
     
     string label = node_label;
-
+    
+    cout << "Edge label: " << edge_label << endl; 
+    
     try {
         neighbour = &g.getNode(to);
     }
     catch(OroViewException& exception) {
+	cout << "Neighbour " << to << " not found. Creating it." << endl;
         //neighbour not found, create it.
-        
-        node_type ntype;
-        
-        //guess the type of the node we are adding
-        switch (type) {
-         case SUBCLASS:
-         case SUPERCLASS:
-         case CLASS:
-	    ntype = CLASS_NODE;
-	    break;
-	
-         case INSTANCE:
-         case OBJ_PROPERTY:
-	    ntype = INSTANCE_NODE;
-	    break;
-         
-         case DATA_PROPERTY:
-	    ntype = LITERAL_NODE;
-	    break;
-	
-         default:
-	    ntype = INSTANCE_NODE;
-	}
 	
         addNodeConnectedTo(to, to, ROOT_CONCEPT, UNDEFINED, "");
         neighbour = &g.getNode(to);
@@ -806,22 +786,26 @@ void OroView::addNodeConnectedTo(const string& id,
         n = &g.getNode(id);
     }
     catch(OroViewException& exception) {
+	cout << "Not existing myself (" << id << "). Creating myself." << endl;
         //if not, create it, create it.
         
         node_type ntype;
         
         //guess the type of the node we are adding
         switch (type) {
-         case SUBCLASS:
-         case SUPERCLASS:
-         case INSTANCE:
-			ntype = CLASS_NODE;
-			break;
+	    case SUBCLASS:
+	    case SUPERCLASS:
+	    case CLASS:
+		ntype = CLASS_NODE;
+		break;
+
+	    case INSTANCE:
+		ntype = INSTANCE_NODE;
+		break;
 	
-         case CLASS:
-	 case PROPERTY:
-         case OBJ_PROPERTY:
-         case DATA_PROPERTY:
+	    case PROPERTY:
+	    case OBJ_PROPERTY:
+	    case DATA_PROPERTY:
 		if (boost::starts_with(id, "literal")) {
 		    if (node_label == "true"){
 			ntype = TRUE_NODE;
@@ -837,13 +821,14 @@ void OroView::addNodeConnectedTo(const string& id,
 		else ntype = INSTANCE_NODE;
 		break;
 	
-	case COMMENT:
-	    ntype = COMMENT_NODE;
-	    break;
+	    case COMMENT:
+		ntype = COMMENT_NODE;
+		break;
 	
-         default:
-			ntype = INSTANCE_NODE;
-		}
+	    default:
+		cout << "Default type of node? strange..." << endl;
+		ntype = INSTANCE_NODE;
+	}
 		
         n = &g.addNode(id, label, neighbour, ntype);
     }
