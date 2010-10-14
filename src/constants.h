@@ -21,9 +21,10 @@
 #include <string>
 #include "core/vectors.h"
 
-enum node_type {CLASS_NODE, INSTANCE_NODE, LITERAL_NODE};
+enum node_type {CLASS_NODE, INSTANCE_NODE, LITERAL_NODE, COMMENT_NODE, TRUE_NODE, FALSE_NODE};
 
-enum relation_type {SUBCLASS, SUPERCLASS, INSTANCE, CLASS, OBJ_PROPERTY, DATA_PROPERTY, UNDEFINED};
+//note that PROPERTY is either OBJ_PROPERTY or DATA_PROPERTY or COMMENT
+enum relation_type {SUBCLASS, SUPERCLASS, INSTANCE, CLASS, PROPERTY, OBJ_PROPERTY, DATA_PROPERTY, COMMENT, UNDEFINED};
 
 static const std::string dateFormat("%A, %d %B, %Y %X");
 

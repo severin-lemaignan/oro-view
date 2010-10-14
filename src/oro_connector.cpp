@@ -7,6 +7,8 @@
 
 #include <iostream>
 #include <iterator>
+#include <locale>
+
 #include <boost/variant.hpp>
 
 #include "oro_connector.h"
@@ -30,6 +32,10 @@ OntologyConnector::OntologyConnector() : sc("localhost", "6969")
     
 void OntologyConnector::walkThroughOntology(const string& from_node, int depth, OroView* graph) {
     
+    //We need a collate object to compute hashes of literals
+    locale loc;                 // the "C" locale
+    const collate<char>& coll = use_facet<collate<char> >(loc);
+    
     if (depth == 0) return;
     
     string details;
@@ -41,7 +47,7 @@ void OntologyConnector::walkThroughOntology(const string& from_node, int depth, 
         cout << details << endl;
     }
     catch (ResourceNotFoundOntologyException& e) {
-        cerr << "Node " + from_node + " not found. Continuing." << endl;
+        cerr << "Node " + from_node + " not found in the ontology. Continuing." << endl;
         return;
     }
     
@@ -61,29 +67,28 @@ void OntologyConnector::walkThroughOntology(const string& from_node, int depth, 
 
     string type = root.get("type", "NO_TYPE").asString();
 
-    if (type == "class")
-        color = CLASSES_COLOUR;
-    else {
-        if  (type == "instance")
-            color = INSTANCES_COLOUR;
-        else
-            color = LITERAL_COLOUR;
-    }
-
-    try {
-        graph->getNode(from_node).setColour(color);
-    }
-    catch(OroViewException& exception) {}
-
     const Json::Value attributes = root["attributes"];
     for ( int index = 0; index < attributes.size(); ++index ) { // Iterates over the sequence elements.
-        cout << endl << attributes[index]["name"].asString() << ":" << endl;
+        string oroType = attributes[index]["name"].asString();
+        cout << endl << oroType << ":" << endl;
         Json::Value values = attributes[index]["values"];
-       
+        
+        relation_type type = PROPERTY;
+        
+        if (oroType == "Parents") {type = SUBCLASS;}
+        else if (oroType == "Children") {type = SUPERCLASS;}
+        else if (oroType == "Instances") {type = CLASS;}
+        else if (oroType == "Classes") {type = INSTANCE;}
+        else if (oroType == "comment") {type = COMMENT;}
+        
         for ( int index = 0; index < values.size(); ++index ) { // Iterates over the sequence elements.
             cout << "  - " << values[index]["name"].asString() << endl;
-            if (values[index]["id"].asString() == "literal")
-                id = values[index]["name"].asString();
+            if (values[index]["id"].asString() == "literal") {
+                string name = values[index]["name"].asString();
+                ostringstream o;
+                o << "literal" << coll.hash(name.data(),name.data()+name.length());
+                id = o.str();
+            }
             else
                 id = values[index]["id"].asString();
 
@@ -91,7 +96,7 @@ void OntologyConnector::walkThroughOntology(const string& from_node, int depth, 
                     id,
                     values[index]["name"].asString(),
                     from_node, 
-                    SUBCLASS, 
+                    type, 
                     attributes[index]["name"].asString());
             
             walkThroughOntology(values[index]["name"].asString(),

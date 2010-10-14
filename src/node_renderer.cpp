@@ -49,6 +49,18 @@ NodeRenderer::NodeRenderer(int tagid, string label, node_type type) : tagid(tagi
 		base_col = LITERAL_COLOUR;
 		icon = texturemanager.grab("literals.png");
 	}
+    else if (type == COMMENT_NODE) {
+		base_col = LITERAL_COLOUR;
+		icon = texturemanager.grab("comment.png");
+	}
+    else if (type == TRUE_NODE) {
+		base_col = vec4f(0.2, 1.0, 0.2, 1.0); //green
+		icon = texturemanager.grab("yes.png");
+	}
+    else if (type == FALSE_NODE) {
+		base_col = vec4f(1.0, 0.2, 0.2, 1.0); //red
+		icon = texturemanager.grab("no.png");
+	}
 	else {
 		base_col = vec4f(1.0, 1.0, 1.0, 1.0);
 		icon = texturemanager.grab("instances.png");

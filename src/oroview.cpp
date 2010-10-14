@@ -17,6 +17,7 @@
 */
 
 #include <string>
+#include <boost/algorithm/string/predicate.hpp>
 
 #include "macros.h"
 #include "oroview.h"
@@ -762,6 +763,8 @@ void OroView::addNodeConnectedTo(const string& id,
 
     Node* n;
     Node* neighbour;
+    
+    string label = node_label;
 
     try {
         neighbour = &g.getNode(to);
@@ -776,22 +779,22 @@ void OroView::addNodeConnectedTo(const string& id,
          case SUBCLASS:
          case SUPERCLASS:
          case CLASS:
-			ntype = CLASS_NODE;
-			break;
-			
+	    ntype = CLASS_NODE;
+	    break;
+	
          case INSTANCE:
          case OBJ_PROPERTY:
-         	ntype = INSTANCE_NODE;
-			break;
+	    ntype = INSTANCE_NODE;
+	    break;
          
          case DATA_PROPERTY:
-			ntype = LITERAL_NODE;
-			break;
-			
+	    ntype = LITERAL_NODE;
+	    break;
+	
          default:
-			ntype = INSTANCE_NODE;
-		}
-		
+	    ntype = INSTANCE_NODE;
+	}
+	
         addNodeConnectedTo(to, to, ROOT_CONCEPT, UNDEFINED, "");
         neighbour = &g.getNode(to);
     }
@@ -814,18 +817,35 @@ void OroView::addNodeConnectedTo(const string& id,
          case INSTANCE:
 			ntype = CLASS_NODE;
 			break;
-			
+	
          case CLASS:
+	 case PROPERTY:
          case OBJ_PROPERTY:
          case DATA_PROPERTY:
-			ntype = INSTANCE_NODE;
-			break;
-			
+		if (boost::starts_with(id, "literal")) {
+		    if (node_label == "true"){
+			ntype = TRUE_NODE;
+			label = "";
+		    }
+		    else if (node_label == "false"){
+			ntype = FALSE_NODE;
+			label = "";
+		    }
+		    else ntype = LITERAL_NODE;
+		    
+		}
+		else ntype = INSTANCE_NODE;
+		break;
+	
+	case COMMENT:
+	    ntype = COMMENT_NODE;
+	    break;
+	
          default:
 			ntype = INSTANCE_NODE;
 		}
 		
-        n = &g.addNode(id, node_label, neighbour, ntype);
+        n = &g.addNode(id, label, neighbour, ntype);
     }
 
     g.addEdge(*n, *neighbour, type, edge_label);
