@@ -37,19 +37,19 @@ public:
     vec2f max;
     bool first;
 
-    vec2f centre() {
+    vec2f centre() const {
         return min + (max - min) * 0.5f;
     }
 
-    float width() {
+    float width() const {
         return max.x - min.x;
     }
 
-    float height() {
+    float height() const {
         return max.y - min.y;
     }
 
-    float area() {
+    float area() const {
         return width() * height();
     }
 
@@ -63,13 +63,35 @@ public:
         reset();
     }
 
-    Bounds2D(vec2f min, vec2f max) {
+    Bounds2D(const vec2f& min, const vec2f& max) {
         reset();
         update(min);
         update(max);
     }
 
-    void update(vec2f point) {
+    void update(const Bounds2D& bounds) {
+        update(bounds.min);
+        update(bounds.max);
+    }
+
+
+    void set(const Bounds2D& bounds) {
+        reset();
+        update(bounds);
+    }
+
+    void set(vec2f point) {
+        reset();
+        update(point);
+    }
+
+    void set(const vec2f& a, const vec2f& b) {
+        reset();
+        update(a);
+        update(b);
+    }
+
+    void update(const vec2f& point) {
         if(first) {
             min = point;
             max = point;
@@ -83,7 +105,7 @@ public:
         if(max.y < point.y) max.y = point.y;
     }
 
-    bool contains(vec2f point) {
+    bool contains(const vec2f& point) const {
         if(first) return false;
 
         if(min.x<=point.x && min.y<=point.y && max.x >= point.x && max.y >= point.y)
@@ -92,7 +114,7 @@ public:
         return false;
     }
 
-    bool overlaps(Bounds2D& b) {
+    bool overlaps(const Bounds2D & b) const {
 
         if(max.y < b.min.y) return false;
         if(min.y > b.max.y) return false;
@@ -102,7 +124,7 @@ public:
         return true;
     }
 
-    void draw() {
+    void draw() const{
         glBegin(GL_LINE_STRIP);
             glVertex2fv(min);
             glVertex2f(max.x, min.y);
