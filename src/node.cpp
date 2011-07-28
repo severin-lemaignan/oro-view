@@ -21,6 +21,7 @@
 #include <algorithm>
 
 #include "macros.h"
+#include "constants.h"
 
 #include "oroview.h"
 #include "graph.h"
@@ -85,15 +86,15 @@ NodeRelation& Node::addRelation(Node& to, const relation_type type, const std::s
     relations.push_back(NodeRelation(this, &to, type, label)); //Add a new relation
 
     if(rels.size() == 1 && rels[0]->type == UNDEFINED) { //I had already an undefined relation to the destination node
-	
-	TRACE("Will replaced an old UNDEFINED relation by a better one!");
 
-	//**** TODO !!! *****/
+    TRACE("Will replaced an old UNDEFINED relation by a better one!");
 
-	//if (edge_p != NULL)
-	//    edge_p->removeReferenceRelation(*this);
+    //**** TODO !!! *****/
 
-	//std::remove(relations.begin(), relations.end(), *(rels[0]));
+    //if (edge_p != NULL)
+    //    edge_p->removeReferenceRelation(*this);
+
+    //std::remove(relations.begin(), relations.end(), *(rels[0]));
     }
 
     TRACE("Added relation from " << id << " to " << to.getID());
@@ -107,9 +108,9 @@ vector<const NodeRelation*> Node::getRelationTo(Node& node) const {
     vector<const NodeRelation*> res;
 
     BOOST_FOREACH(const NodeRelation& rel, relations) {
-		if (rel.to == &node)
-			res.push_back(&rel);
-	}
+        if (rel.to == &node)
+            res.push_back(&rel);
+    }
     return res;
 }
 
@@ -123,38 +124,40 @@ void Node::step(Graph& g, float dt){
 
     if(!selected) {
 
-	/** Compute here the new position of the node **/
+    /** Compute here the new position of the node **/
 
-	// Algo from Wikipedia -- http://en.wikipedia.org/wiki/Force-based_layout
+    // Algo from Wikipedia -- http://en.wikipedia.org/wiki/Force-based_layout
 
-	TRACE("Stepping for node " << id);
+    TRACE("Stepping for node " << id);
 
-	vec2f force = vec2f(0.0, 0.0);
+    vec2f force = vec2f(0.0, 0.0);
 
-	coulombForce = g.coulombRepulsionFor(*this);
-	force +=coulombForce;
+    coulombForce = g.coulombRepulsionFor(*this);
+    force +=coulombForce;
 
-	hookeForce = g.hookeAttractionFor(*this);
-	force += hookeForce;
+    hookeForce = g.hookeAttractionFor(*this);
+    force += hookeForce;
 
-	TRACE("** Total force applying: Fx=" << force.x << ", Fy= " << force.y);
+    TRACE("** Total force applying: Fx=" << force.x << ", Fy= " << force.y);
 
-	speed = (speed + force * dt) * damping;
+    speed = (speed + force * dt) * damping;
+    speed.x = CLAMP(speed.x, -MAX_SPEED, MAX_SPEED);
+    speed.y = CLAMP(speed.y, -MAX_SPEED, MAX_SPEED);
 
-	updateKineticEnergy();
+    updateKineticEnergy();
 
-	//Check we have enough energy to move :)
-	if (kinetic_energy > MIN_KINETIC_ENERGY) {
-	    pos += speed * dt;
-	}
+    //Check we have enough energy to move :)
+    if (kinetic_energy > MIN_KINETIC_ENERGY) {
+        pos += speed * dt;
+    }
 
         //Update the age of the node renderer
         renderer.increment_idle_time(dt);
 
-	TRACE("Node " << id << " now in pos=(" << pos.x << ", " << pos.y <<")");
+    TRACE("Node " << id << " now in pos=(" << pos.x << ", " << pos.y <<")");
 
 
-	//TRACE("Step computed for " << id << ". Speed is " << speed.x << ", " << speed.y << " (energy: " << kinetic_energy << ").");
+    //TRACE("Step computed for " << id << ". Speed is " << speed.x << ", " << speed.y << " (energy: " << kinetic_energy << ").");
     }
 }
 
@@ -178,7 +181,7 @@ void Node::render(rendering_mode mode, OroView& env, bool debug){
 void Node::setSelected(bool select) {
 
     if ((select && selected)||
-	(!select && !selected)) return;
+    (!select && !selected)) return;
 
     selected = select;
     renderer.setSelected(select);

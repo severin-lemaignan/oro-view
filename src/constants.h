@@ -40,6 +40,7 @@ static const float INITIAL_SPRING_CONSTANT = 20.0; // N.pixels^(-1)
 static const float NOMINAL_EDGE_LENGTH = 50.0; // pixels
 
 static const float MIN_KINETIC_ENERGY = 1.0; //Nodes with a lower energy won't move at all.
+static const float MAX_SPEED = 500.0; //Maximum allowed speed for a node.
 
 //static const std::string ROOT_CONCEPT = "http%3A%2F%2Fwww.w3.org%2F2002%2F07%2Fowl%23Thing"; // http://www.w3.org/2002/07/owl#Thing
 //static const std::string ROOT_CONCEPT = "owl:Thing";

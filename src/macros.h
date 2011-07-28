@@ -21,6 +21,10 @@
 #include <iostream>
 #include <iomanip>
 
+#define MIN(X,Y) ((X) < (Y) ? (X) : (Y))
+#define MAX(X,Y) ((X) > (Y) ? (X) : (Y))
+#define CLAMP(x, low, high)  (((x) > (high)) ? (high) : (((x) < (low)) ? (low) : (x)))
+
 //Enable debugging
 //#define DEBUG
 //#define TEXT_ONLY
