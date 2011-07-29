@@ -38,33 +38,33 @@ NodeRenderer::NodeRenderer(int tagid, string label, node_type type) : tagid(tagi
 
 #ifndef TEXT_ONLY
     if (type == CLASS_NODE) {
-		base_col = CLASSES_COLOUR;
-		icon = texturemanager.grab("classes.png");
-	}
-	else if (type == INSTANCE_NODE) {
-		base_col = INSTANCES_COLOUR;
-		icon = texturemanager.grab("instances.png");
-	}
-	else if (type == LITERAL_NODE) {
-		base_col = LITERAL_COLOUR;
-		icon = texturemanager.grab("literals.png");
-	}
+        base_col = CLASSES_COLOUR;
+        icon = texturemanager.grab("classes.png");
+    }
+    else if (type == INSTANCE_NODE) {
+        base_col = INSTANCES_COLOUR;
+        icon = texturemanager.grab("instances.png");
+    }
+    else if (type == LITERAL_NODE) {
+        base_col = LITERAL_COLOUR;
+        icon = texturemanager.grab("literals.png");
+    }
     else if (type == COMMENT_NODE) {
-		base_col = LITERAL_COLOUR;
-		icon = texturemanager.grab("comment.png");
-	}
+        base_col = LITERAL_COLOUR;
+        icon = texturemanager.grab("comment.png");
+    }
     else if (type == TRUE_NODE) {
-		base_col = vec4f(0.2, 1.0, 0.2, 1.0); //green
-		icon = texturemanager.grab("yes.png");
-	}
+        base_col = vec4f(0.2, 1.0, 0.2, 1.0); //green
+        icon = texturemanager.grab("yes.png");
+    }
     else if (type == FALSE_NODE) {
-		base_col = vec4f(1.0, 0.2, 0.2, 1.0); //red
-		icon = texturemanager.grab("no.png");
-	}
-	else {
-		base_col = vec4f(1.0, 1.0, 1.0, 1.0);
-		icon = texturemanager.grab("instances.png");
-	}
+        base_col = vec4f(1.0, 0.2, 0.2, 1.0); //red
+        icon = texturemanager.grab("no.png");
+    }
+    else {
+        base_col = vec4f(1.0, 1.0, 1.0, 1.0);
+        icon = texturemanager.grab("instances.png");
+    }
 #endif
 }
 
@@ -75,8 +75,8 @@ void NodeRenderer::setColour(vec4f col) {
 void NodeRenderer::setRenderingColour() {
     if (selected) col = SELECTED_COLOUR;
     else {
-	if (hovered) col = HOVERED_COLOUR;
-	else col = base_col;
+        if (hovered) col = HOVERED_COLOUR;
+        else col = base_col;
     }
 }
 
@@ -91,7 +91,7 @@ void NodeRenderer::draw(const vec2f& pos, rendering_mode mode, OroView& env) {
 
     case NORMAL:
     case SIMPLE:
-       drawSimple(pos);
+        drawSimple(pos);
         break;
 
     case NAMES:
@@ -130,23 +130,23 @@ void NodeRenderer::drawSimple(const vec2f& pos){
     glBindTexture(GL_TEXTURE_2D, getIcon()->textureid);
 
     glPushMatrix();
-        glTranslatef(offsetpos.x, offsetpos.y, 0.0f);
+    glTranslatef(offsetpos.x, offsetpos.y, 0.0f);
 
-        glColor4fv(col);
+    glColor4fv(col);
 
-        glBegin(GL_QUADS);
-            glTexCoord2f(0.0f,0.0f);
-            glVertex2f(0.0f, 0.0f);
+    glBegin(GL_QUADS);
+    glTexCoord2f(0.0f,0.0f);
+    glVertex2f(0.0f, 0.0f);
 
-            glTexCoord2f(1.0f,0.0f);
-            glVertex2f(size, 0.0f);
+    glTexCoord2f(1.0f,0.0f);
+    glVertex2f(size, 0.0f);
 
-            glTexCoord2f(1.0f,1.0f);
-            glVertex2f(size, size*ratio);
+    glTexCoord2f(1.0f,1.0f);
+    glVertex2f(size, size*ratio);
 
-            glTexCoord2f(0.0f,1.0f);
-            glVertex2f(0.0f, size*ratio);
-        glEnd();
+    glTexCoord2f(0.0f,1.0f);
+    glVertex2f(0.0f, size*ratio);
+    glEnd();
 
     glPopMatrix();
 
@@ -166,21 +166,21 @@ void NodeRenderer::drawName(const vec2f& pos, FXFont& font){
     vec3f screenpos = display.project(vec3f(0.0, 0.0, 0.0));
 
     glMatrixMode(GL_PROJECTION);
-        glPushMatrix();
-        glLoadIdentity();
-            glOrtho(0, display.width, display.height, 0, -1.0, 1.0);
+    glPushMatrix();
+    glLoadIdentity();
+    glOrtho(0, display.width, display.height, 0, -1.0, 1.0);
 
-        glMatrixMode(GL_MODELVIEW);
-            glPushMatrix();
-            glLoadIdentity();
+    glMatrixMode(GL_MODELVIEW);
+    glPushMatrix();
+    glLoadIdentity();
 
-            font.draw(screenpos.x, screenpos.y, label);
+    font.draw(screenpos.x, screenpos.y, label);
 
-        glMatrixMode(GL_PROJECTION);
-        glPopMatrix();
+    glMatrixMode(GL_PROJECTION);
+    glPopMatrix();
 
-        glMatrixMode(GL_MODELVIEW);
-        glPopMatrix();
+    glMatrixMode(GL_MODELVIEW);
+    glPopMatrix();
 
     glPopMatrix();
 }
@@ -191,26 +191,26 @@ void NodeRenderer::drawBloom(const vec2f& pos, ZoomCamera& camera){
 
     //if(isVisible() && frustum.boundsInFrustum(quadItemBounds)) {
 
-        float bloom_radius = 50.0;
+    float bloom_radius = 50.0;
 
-        vec4f bloom_col = col;
+    vec4f bloom_col = col;
 
-        glColor4f(bloom_col.x, bloom_col.y, bloom_col.z, 1.0);
+    glColor4f(bloom_col.x, bloom_col.y, bloom_col.z, 1.0);
 
-        glPushMatrix();
-            glTranslatef(pos.x, pos.y, 0.0);
+    glPushMatrix();
+    glTranslatef(pos.x, pos.y, 0.0);
 
-            glBegin(GL_QUADS);
-            glTexCoord2f(1.0, 1.0);
-                glVertex2f(bloom_radius,bloom_radius);
-                glTexCoord2f(1.0, 0.0);
-                glVertex2f(bloom_radius,-bloom_radius);
-                glTexCoord2f(0.0, 0.0);
-                glVertex2f(-bloom_radius,-bloom_radius);
-                glTexCoord2f(0.0, 1.0);
-                glVertex2f(-bloom_radius,bloom_radius);
-            glEnd();
-        glPopMatrix();
+    glBegin(GL_QUADS);
+    glTexCoord2f(1.0, 1.0);
+    glVertex2f(bloom_radius,bloom_radius);
+    glTexCoord2f(1.0, 0.0);
+    glVertex2f(bloom_radius,-bloom_radius);
+    glTexCoord2f(0.0, 0.0);
+    glVertex2f(-bloom_radius,-bloom_radius);
+    glTexCoord2f(0.0, 1.0);
+    glVertex2f(-bloom_radius,bloom_radius);
+    glEnd();
+    glPopMatrix();
 
     //}
 
@@ -228,23 +228,23 @@ void NodeRenderer::drawShadow(const vec2f& pos){
     glBindTexture(GL_TEXTURE_2D, getIcon()->textureid);
 
     glPushMatrix();
-        glTranslatef(offsetpos.x, offsetpos.y, 0.0f);
+    glTranslatef(offsetpos.x, offsetpos.y, 0.0f);
 
-        glColor4f(0.0, 0.0, 0.0, SHADOW_STRENGTH);
+    glColor4f(0.0, 0.0, 0.0, SHADOW_STRENGTH);
 
-        glBegin(GL_QUADS);
-            glTexCoord2f(0.0f,0.0f);
-            glVertex2f(0.0f, 0.0f);
+    glBegin(GL_QUADS);
+    glTexCoord2f(0.0f,0.0f);
+    glVertex2f(0.0f, 0.0f);
 
-            glTexCoord2f(1.0f,0.0f);
-            glVertex2f(size, 0.0f);
+    glTexCoord2f(1.0f,0.0f);
+    glVertex2f(size, 0.0f);
 
-            glTexCoord2f(1.0f,1.0f);
-            glVertex2f(size, size*ratio);
+    glTexCoord2f(1.0f,1.0f);
+    glVertex2f(size, size*ratio);
 
-            glTexCoord2f(0.0f,1.0f);
-            glVertex2f(0.0f, size*ratio);
-        glEnd();
+    glTexCoord2f(0.0f,1.0f);
+    glVertex2f(0.0f, size*ratio);
+    glEnd();
 
     glPopMatrix();
 

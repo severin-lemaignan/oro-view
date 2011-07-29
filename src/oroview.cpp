@@ -42,7 +42,7 @@ OroView::OroView()
 
     srand(currtime);
 
-	//Nodes & users
+    //Nodes & users
 
     hoverNode = NULL;
     selectedNode = NULL;
@@ -108,43 +108,43 @@ void OroView::keyPress(SDL_KeyboardEvent *e) {
     if (e->type == SDL_KEYUP) return;
 
     if (e->type == SDL_KEYDOWN) {
-	if (e->keysym.sym == SDLK_ESCAPE) {
-	    appFinished=true;
-	}
+        if (e->keysym.sym == SDLK_ESCAPE) {
+            appFinished=true;
+        }
 
-	if (e->keysym.sym == SDLK_d) {
-	    if (debug)
-			if (advanced_debug) {
-				debug = false;
-				advanced_debug = false;
-			}
-			else advanced_debug = true;
-		else debug = true;
-	}
-//        if (e->keysym.sym == SDLK_w) {
-//            gGourceQuadTreeDebug = !gGourceQuadTreeDebug;
-//        }
+        if (e->keysym.sym == SDLK_d) {
+            if (debug)
+                if (advanced_debug) {
+                    debug = false;
+                    advanced_debug = false;
+                }
+                else advanced_debug = true;
+            else debug = true;
+        }
+        //        if (e->keysym.sym == SDLK_w) {
+        //            gGourceQuadTreeDebug = !gGourceQuadTreeDebug;
+        //        }
 
-	if (e->keysym.sym == SDLK_c) {
-	    toggleCameraMode();
-	}
+        if (e->keysym.sym == SDLK_c) {
+            toggleCameraMode();
+        }
 
-	if (e->keysym.sym == SDLK_SPACE) {
+        if (e->keysym.sym == SDLK_SPACE) {
             //addRandomNodes(2, 2);
             updateCurrentNode();
-	}
+        }
 
-	if (e->keysym.sym == SDLK_p) {
-	    paused = !paused;
-	}
+        if (e->keysym.sym == SDLK_p) {
+            paused = !paused;
+        }
 
-	if(e->keysym.sym == SDLK_UP) {
-	    zoom(true);
-	}
+        if(e->keysym.sym == SDLK_UP) {
+            zoom(true);
+        }
 
-	if(e->keysym.sym == SDLK_DOWN) {
-	    zoom(false);
-	}
+        if(e->keysym.sym == SDLK_DOWN) {
+            zoom(false);
+        }
     }
 }
 
@@ -152,60 +152,60 @@ void OroView::mouseClick(SDL_MouseButtonEvent *e) {
 
     if(e->type == SDL_MOUSEBUTTONUP) {
 
-	if(e->button == SDL_BUTTON_LEFT) {
+        if(e->button == SDL_BUTTON_LEFT) {
 
-	    mouse_inactivity=0.0;
-	    SDL_ShowCursor(true);
+            mouse_inactivity=0.0;
+            SDL_ShowCursor(true);
 
-	    SDL_WM_GrabInput(SDL_GRAB_OFF);
+            SDL_WM_GrabInput(SDL_GRAB_OFF);
 
-	    //stop dragging mouse, return the mouse to where
-	    //the user started dragging.
-	    if(mousedragged) {
-		SDL_WarpMouse(mousepos.x, mousepos.y);
-		mousedragged=false;
-	    }
-	}
+            //stop dragging mouse, return the mouse to where
+            //the user started dragging.
+            if(mousedragged) {
+                SDL_WarpMouse(mousepos.x, mousepos.y);
+                mousedragged=false;
+            }
+        }
     }
 
     if(e->type != SDL_MOUSEBUTTONDOWN) return;
 
     //wheel up
     if(e->button == SDL_BUTTON_WHEELUP) {
-	zoom(true);
-	return;
+        zoom(true);
+        return;
     }
 
     //wheel down
     if(e->button == SDL_BUTTON_WHEELDOWN) {
-	zoom(false);
-	return;
+        zoom(false);
+        return;
     }
 
     if(e->button == SDL_BUTTON_RIGHT) {
-	toggleCameraMode();
-	return;
+        toggleCameraMode();
+        return;
     }
 
     if(e->button == SDL_BUTTON_LEFT) {
 
-	mousepos = vec2f(e->x, e->y);
-	mouseclicked=true;
+        mousepos = vec2f(e->x, e->y);
+        mouseclicked=true;
     }
 }
 
 void OroView::mouseMove(SDL_MouseMotionEvent *e) {
 
-   mousepos = vec2f(e->x, e->y);
+    mousepos = vec2f(e->x, e->y);
 
     //move camera in direction the user dragged the mouse
     if(mousedragged) {
-	if (selectedNode != NULL) {
-	    selectedNode->pos += vec2f( e->xrel, e->yrel )/2;
-	}	
-	else backgroundPos += vec2f( e->xrel, e->yrel );
+        if (selectedNode != NULL) {
+            selectedNode->pos += vec2f( e->xrel, e->yrel )/2;
+        }
+        else backgroundPos += vec2f( e->xrel, e->yrel );
 
-	return;
+        return;
     }
 
     mouse_inactivity = 0.0;
@@ -256,27 +256,27 @@ void OroView::updateTime() {
 
 /** App logic */
 void OroView::logic(float t, float dt) {
-     if(draw_loading && logic_time > 1000) draw_loading = false;
+    if(draw_loading && logic_time > 1000) draw_loading = false;
 
     //still want to update camera while paused
     if(paused) {
-	updateCamera(dt);
-	return;
+        updateCamera(dt);
+        return;
     }
 
     //check if mouse has been inactive for 3 seconds
     //and if so hide it.
     if(!mouseclicked && mouse_inactivity<3.0) {
-	mouse_inactivity += dt;
+        mouse_inactivity += dt;
 
-	if(mouse_inactivity>=3.0) {
-	    SDL_ShowCursor(false);
-	}
+        if(mouse_inactivity>=3.0) {
+            SDL_ShowCursor(false);
+        }
     }
 
     g.step(dt);
 
-     updateCamera(dt);
+    updateCamera(dt);
 }
 
 void OroView::mouseTrace(Frustum& frustum, float dt) {
@@ -307,9 +307,9 @@ void OroView::mouseTrace(Frustum& frustum, float dt) {
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
 
-//    for(std::map<std::string,RUser*>::iterator it = users.begin(); it!=users.end(); it++) {
-//	it->second->drawSimple(dt);
-//    }
+    //    for(std::map<std::string,RUser*>::iterator it = users.begin(); it!=users.end(); it++) {
+    //	it->second->drawSimple(dt);
+    //    }
 
     glDisable(GL_TEXTURE_2D);
     glColor4f(1.0, 1.0, 1.0, 1.0);
@@ -323,77 +323,77 @@ void OroView::mouseTrace(Frustum& frustum, float dt) {
     /** End of selection **/
 
     Node* nodeSelection = NULL;
-//    RUser* userSelection = 0;
+    //    RUser* userSelection = 0;
 
     if (mouse_hits > 0) {
 
-	int choice   = buffer[3];
-	GLuint depth = buffer[1];
+        int choice   = buffer[3];
+        GLuint depth = buffer[1];
 
-	for (int loop = 1; loop < mouse_hits; loop++) {
-	    if (buffer[loop*4+1] < depth) {
-		choice = buffer[loop*4+3];
-		depth  = buffer[loop*4+1];
-	    }
-	}
+        for (int loop = 1; loop < mouse_hits; loop++) {
+            if (buffer[loop*4+1] < depth) {
+                choice = buffer[loop*4+3];
+                depth  = buffer[loop*4+1];
+            }
+        }
 
-	if(choice != 0) {
-	    selectionDepth = depth;
-	    nodeSelection = g.getNodeByTagID(choice);
+        if(choice != 0) {
+            selectionDepth = depth;
+            nodeSelection = g.getNodeByTagID(choice);
 
-//	    else if((usertest = tagusermap.find(choice)) != tagusermap.end()) {
-//		userSelection = usertest->second;
-//	    }
-	}
+            //	    else if((usertest = tagusermap.find(choice)) != tagusermap.end()) {
+            //		userSelection = usertest->second;
+            //	    }
+        }
     }
 
     glDisable(GL_DEPTH_TEST);
 
     // is over a file
     if(nodeSelection != NULL) {
-//	// un hover a user
-//	if(hoverUser != 0) {
-//	    hoverUser->setMouseOver(false);
-//	    hoverUser = 0;
-//	}
+        //	// un hover a user
+        //	if(hoverUser != 0) {
+        //	    hoverUser->setMouseOver(false);
+        //	    hoverUser = 0;
+        //	}
 
-	if(nodeSelection != hoverNode) {
-	    //deselect previous selection
-	    if(hoverNode !=NULL) hoverNode->renderer.setMouseOver(false);
+        if(nodeSelection != hoverNode) {
+            //deselect previous selection
+            if(hoverNode !=NULL) hoverNode->renderer.setMouseOver(false);
 
-	    //select new
-	    nodeSelection->renderer.setMouseOver(true);
-	    hoverNode = nodeSelection;
-	}
-//    } // is over a user
-//    else if(userSelection != 0) {
-//	// un hover a file
-//	if(hoverFile != 0) {
-//	    hoverFile->setMouseOver(false);
-//	    hoverFile = 0;
-//	}
-//
-//	if(userSelection != hoverUser) {
-//	    //deselect previous selection
-//	    if(hoverUser !=0) hoverUser->setMouseOver(false);
-//
-//	    //select new
-//	    userSelection->setMouseOver(true);
-//	    hoverUser = userSelection;
-//	}
+            //select new
+            nodeSelection->renderer.setMouseOver(true);
+            hoverNode = nodeSelection;
+        }
+        //    } // is over a user
+        //    else if(userSelection != 0) {
+        //	// un hover a file
+        //	if(hoverFile != 0) {
+        //	    hoverFile->setMouseOver(false);
+        //	    hoverFile = 0;
+        //	}
+        //
+        //	if(userSelection != hoverUser) {
+        //	    //deselect previous selection
+        //	    if(hoverUser !=0) hoverUser->setMouseOver(false);
+        //
+        //	    //select new
+        //	    userSelection->setMouseOver(true);
+        //	    hoverUser = userSelection;
+        //	}
     }
     else {
-	if(hoverNode!=NULL) hoverNode->renderer.setMouseOver(false);
-//	if(hoverUser!=0) hoverUser->setMouseOver(false);
-	hoverNode=NULL;
-//	hoverUser=0;
+        if(hoverNode!=NULL) hoverNode->renderer.setMouseOver(false);
+        //	if(hoverUser!=0) hoverUser->setMouseOver(false);
+        hoverNode=NULL;
+        //	hoverUser=0;
     }
 
     if(mouseclicked) {
-	mousedragged=true;
-	if(hoverNode!=NULL) selectNode(hoverNode);
-//	else if(hoverUser!=0) selectUser(hoverUser);
-	else selectBackground();
+        mousedragged=true;
+        if(hoverNode!=NULL) selectNode(hoverNode);
+        //	else if(hoverUser!=0) selectUser(hoverUser);
+        else selectBackground();
     }
 }
 
@@ -406,10 +406,10 @@ void OroView::draw(float t, float dt) {
 
     drawBackground(dt);
 
-//    if(draw_loading) {
-//	loadingScreen();
-//	return;
-//    }
+    //    if(draw_loading) {
+    //	loadingScreen();
+    //	return;
+    //    }
 
     Frustum frustum(camera);
 
@@ -428,76 +428,77 @@ void OroView::draw(float t, float dt) {
     glLoadIdentity();
 
 #endif
-    //Draw shadows
-     g.render(SHADOWS, *this, advanced_debug);
+    glEnable(GL_TEXTURE_2D);
+    glEnable(GL_BLEND);
+
+    //Draw shadows for edges and then nodes
+    g.render(SHADOWS, *this, advanced_debug);
 
 
-    //Draw nodes
-     g.render(NORMAL, *this, advanced_debug);
+    //Draw edges and then nodes
+    g.render(NORMAL, *this, advanced_debug);
+
+    //draw 'gourceian blur' around dirnodes
+    glBlendFunc (GL_ONE, GL_ONE);
+    glBindTexture(GL_TEXTURE_2D, bloomtex->textureid);
 
     //Draw Bloom
-     glEnable(GL_TEXTURE_2D);
-     glEnable(GL_BLEND);
+    g.render(BLOOM, *this, advanced_debug);
 
-     //draw 'gourceian blur' around dirnodes
-     glBindTexture(GL_TEXTURE_2D, bloomtex->textureid);
-     glBlendFunc (GL_ONE, GL_ONE);
-     g.render(BLOOM, *this, advanced_debug);
-
-     glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
     //Draw names
-     g.render(NAMES, *this, advanced_debug);
+    g.render(NAMES, *this, advanced_debug);
 
-     //displayCoulombField(); //doesn't work?
+    //displayCoulombField(); //doesn't work?
 
 #ifndef TEXT_ONLY
 
 
-//    glColor4f(1.0, 1.0, 0.0, 1.0);
-//    for(map<string,RUser*>::iterator it = users.begin(); it!=users.end(); it++) {
-//        trace_debug ? it->second->drawSimple(dt) : it->second->draw(dt);
-//    }
-//
-//
-//    if(!(gGourceHideUsernames || gGourceHideUsers)) {
-//        for(map<string,RUser*>::iterator it = users.begin(); it!=users.end(); it++) {
-//            it->second->drawName();
-//        }
-//    }
-//
-//    //draw selected item names again so they are over the top
-//    if(selectedUser !=0) selectedUser->drawName();
-//
-//    if(selectedNode !=0) {
-//        vec2f dirpos = selectedNode->getDir()->getPos();
-//
-//        glPushMatrix();
-//            glTranslatef(dirpos.x, dirpos.y, 0.0);
-//            selectedNode->drawName();
-//        glPopMatrix();
-//    }
+    //    glColor4f(1.0, 1.0, 0.0, 1.0);
+    //    for(map<string,RUser*>::iterator it = users.begin(); it!=users.end(); it++) {
+    //        trace_debug ? it->second->drawSimple(dt) : it->second->draw(dt);
+    //    }
+    //
+    //
+    //    if(!(gGourceHideUsernames || gGourceHideUsers)) {
+    //        for(map<string,RUser*>::iterator it = users.begin(); it!=users.end(); it++) {
+    //            it->second->drawName();
+    //        }
+    //    }
+    //
+    //    //draw selected item names again so they are over the top
+    //    if(selectedUser !=0) selectedUser->drawName();
+    //
+    //    if(selectedNode !=0) {
+    //        vec2f dirpos = selectedNode->getDir()->getPos();
+    //
+    //        glPushMatrix();
+    //            glTranslatef(dirpos.x, dirpos.y, 0.0);
+    //            selectedNode->drawName();
+    //        glPopMatrix();
+    //    }
 
     if(advanced_debug) {
 
-	glDisable(GL_TEXTURE_2D);
-	glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+        glDisable(GL_TEXTURE_2D);
+        glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
 
-	track_users ? usersBounds.draw() : nodesBounds.draw();
+        track_users ? usersBounds.draw() : nodesBounds.draw();
 
     }
 
     //gGourceQuadTreeDebug
     if(false) {
-	glDisable(GL_TEXTURE_2D);
-	glColor4f(0.0f, 1.0f, 0.0f, 1.0f);
+        glDisable(GL_TEXTURE_2D);
+        glColor4f(0.0f, 1.0f, 0.0f, 1.0f);
 
-	glLineWidth(1.0);
-//	dirNodeTree->outline();
+        glLineWidth(1.0);
+        //	dirNodeTree->outline();
 
-	glColor4f(0.0f, 1.0f, 1.0f, 1.0f);
+        glColor4f(0.0f, 1.0f, 1.0f, 1.0f);
 
-//	userTree->outline();
+        //	userTree->outline();
     }
 
     glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
@@ -511,32 +512,32 @@ void OroView::draw(float t, float dt) {
     fontmedium.draw(display.width/2 - date_x_offset, 20, displaydate);
 
     if(debug) {
-	vec3f campos = camera.getPos();
+        vec3f campos = camera.getPos();
 
-	glDisable(GL_TEXTURE_2D);
-	glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+        glDisable(GL_TEXTURE_2D);
+        glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
 
-	track_users ? usersBounds.draw() : nodesBounds.draw();
+        track_users ? usersBounds.draw() : nodesBounds.draw();
 
-	font.print(0,20, "FPS: %.2f", fps);
-	font.print(0,40,"Time Scale: %.2f", time_scale);
-//        font.print(0,60,"Users: %d", users.size());
-	font.print(0,80,"Nodes: %d", g.nodesCount());
-	font.print(0,100,"Edges: %d", g.edgesCount());
+        font.print(0,20, "FPS: %.2f", fps);
+        font.print(0,40,"Time Scale: %.2f", time_scale);
+        //        font.print(0,60,"Users: %d", users.size());
+        font.print(0,80,"Nodes: %d", g.nodesCount());
+        font.print(0,100,"Edges: %d", g.edgesCount());
 
-	font.print(0,140,"Camera: (%.2f, %.2f, %.2f)", campos.x, campos.y, campos.z);
-	font.print(0,160,"Gravity: %.2f", GRAVITY);
-	font.print(0,180,"Logic Time: %u ms", logic_time);
-	font.print(0,200,"Mouse Trace: %u ms", trace_time);
-	font.print(0,220,"Draw Time: %u ms", SDL_GetTicks() - draw_time);
+        font.print(0,140,"Camera: (%.2f, %.2f, %.2f)", campos.x, campos.y, campos.z);
+        font.print(0,160,"Gravity: %.2f", GRAVITY);
+        font.print(0,180,"Logic Time: %u ms", logic_time);
+        font.print(0,200,"Mouse Trace: %u ms", trace_time);
+        font.print(0,220,"Draw Time: %u ms", SDL_GetTicks() - draw_time);
 
-	if(selectedNode != NULL) {
-	    font.print(0,260,"%s selected.", selectedNode->getID().c_str());
-	    font.print(30,280,"Speed: (%.2f, %.2f)", selectedNode->speed.x, selectedNode->speed.y);
-	    font.print(30,300,"Charge: %.2f", selectedNode->charge);
-	    font.print(30,320,"Kinetic energy: %.2f", selectedNode->kinetic_energy);
-	    font.print(30,340,"Number of relations: %d", selectedNode->getRelations().size());
-	}
+        if(selectedNode != NULL) {
+            font.print(0,260,"%s selected.", selectedNode->getID().c_str());
+            font.print(30,280,"Speed: (%.2f, %.2f)", selectedNode->speed.x, selectedNode->speed.y);
+            font.print(30,300,"Charge: %.2f", selectedNode->charge);
+            font.print(30,320,"Kinetic energy: %.2f", selectedNode->kinetic_energy);
+            font.print(30,340,"Number of relations: %d", selectedNode->getRelations().size());
+        }
 
     }
 
@@ -581,57 +582,57 @@ void OroView::loadingScreen() {
 
 void OroView::drawVector(vec2f vec, vec2f pos, vec4f col) {
 
-	float radius = 5.0;
+    float radius = 5.0;
 
-	//conversion not optimal
+    //conversion not optimal
     float angle = atan2(vec.y, vec.x) * 180 / 3.1415926;
 
     glPushMatrix();
-	glTranslatef(pos.x, pos.y, 0.0f);
-	glRotatef(angle, 0.0, 0.0, 1.0);
+    glTranslatef(pos.x, pos.y, 0.0f);
+    glRotatef(angle, 0.0, 0.0, 1.0);
 
-	glColor4fv(col);
+    glColor4fv(col);
 
-	glBegin(GL_QUADS);
+    glBegin(GL_QUADS);
 
-	// src point
+    // src point
 
-	glTexCoord2f(0.0,0.0);
-	glVertex2f(0, -radius/3);
-	glTexCoord2f(1.0,0.0);
-	glVertex2f(0, radius/3);
+    glTexCoord2f(0.0,0.0);
+    glVertex2f(0, -radius/3);
+    glTexCoord2f(1.0,0.0);
+    glVertex2f(0, radius/3);
 
-	// dest point
-	glTexCoord2f(1.0,0.0);
-	glVertex2f(vec.length() - 5.0, radius/3);
-	glTexCoord2f(0.0,0.0);
-	glVertex2f(vec.length() - 5.0, -radius/3);
+    // dest point
+    glTexCoord2f(1.0,0.0);
+    glVertex2f(vec.length() - 5.0, radius/3);
+    glTexCoord2f(0.0,0.0);
+    glVertex2f(vec.length() - 5.0, -radius/3);
 
 
-	glEnd();
+    glEnd();
 
-	//Arrow
-	glBegin(GL_TRIANGLES);
+    //Arrow
+    glBegin(GL_TRIANGLES);
 
-	glTexCoord2f(0.0,0.0);
-	glVertex2f(vec.length() - radius, -radius/2);
-	glTexCoord2f(1.0,1.0);
-	glVertex2f(vec.length(), 0);
-	glTexCoord2f(0.0,0.0);
-	glVertex2f(vec.length() - radius, radius/2);
+    glTexCoord2f(0.0,0.0);
+    glVertex2f(vec.length() - radius, -radius/2);
+    glTexCoord2f(1.0,1.0);
+    glVertex2f(vec.length(), 0);
+    glTexCoord2f(0.0,0.0);
+    glVertex2f(vec.length() - radius, radius/2);
 
-	glEnd();
+    glEnd();
 
     glPopMatrix();
 }
 
 void OroView::displayCoulombField() {
     for (float i = -200.0; i < 200.0; i += 40.0) {
-	for (float j = -200.0; j < 200.0; j += 40.0) {
-	    vec2f pos(i, j);
+        for (float j = -200.0; j < 200.0; j += 40.0) {
+            vec2f pos(i, j);
 
-	    drawVector(g.coulombRepulsionAt(pos), pos, (1.0, 1.0, 0.2, 0.7));
-	}
+            drawVector(g.coulombRepulsionAt(pos), pos, (1.0, 1.0, 0.2, 0.7));
+        }
     }
 }
 /** Camera */
@@ -640,23 +641,23 @@ void OroView::updateCamera(float dt) {
     //camera tracking
 
     if(backgroundSelected) {
-	Bounds2D mousebounds;
-	mousebounds.update(backgroundPos);
+        Bounds2D mousebounds;
+        mousebounds.update(backgroundPos);
 
-	camera.adjust(mousebounds);
+        camera.adjust(mousebounds);
 
     } else if(track_users && (selectedNode !=NULL || selectedUser !=NULL)) {
-	Bounds2D focusbounds;
+        Bounds2D focusbounds;
 
-	vec3f camerapos = camera.getPos();
+        vec3f camerapos = camera.getPos();
 
-//	if(selectedUser !=NULL) focusbounds.update(selectedUser->getPos());
-	if(selectedNode !=NULL) focusbounds.update(selectedNode->pos);
+        //	if(selectedUser !=NULL) focusbounds.update(selectedUser->getPos());
+        if(selectedNode !=NULL) focusbounds.update(selectedNode->pos);
 
-	camera.adjust(focusbounds);
+        camera.adjust(focusbounds);
     } else {
-	if(track_users && idle_time==0) camera.adjust(usersBounds);
-	else camera.adjust(nodesBounds);
+        if(track_users && idle_time==0) camera.adjust(usersBounds);
+        else camera.adjust(nodesBounds);
     }
 
     camera.logic(dt);
@@ -680,15 +681,15 @@ void OroView::zoom(bool zoomin) {
     float zoom_multi = 1.1;
 
     if(zoomin) {
-	min_distance /= zoom_multi;
-	if(min_distance < 100.0) min_distance = 100.0;
+        min_distance /= zoom_multi;
+        if(min_distance < 100.0) min_distance = 100.0;
 
-	camera.setMinDistance(min_distance);
+        camera.setMinDistance(min_distance);
     } else {
-	min_distance *= zoom_multi;
-	if(min_distance > 1000.0) min_distance = 1000.0;
+        min_distance *= zoom_multi;
+        if(min_distance > 1000.0) min_distance = 1000.0;
 
-	camera.setMinDistance(min_distance);
+        camera.setMinDistance(min_distance);
     }
 }
 
@@ -731,21 +732,21 @@ void OroView::selectNode(Node* node) {
     if(node!=NULL && selectedNode==node) return;
 
     backgroundSelected=false;
-//
-//    if(selectedUser != 0) {
-//        selectedUser->setSelected(false);
-//        selectedUser = 0;
-//    }
+    //
+    //    if(selectedUser != 0) {
+    //        selectedUser->setSelected(false);
+    //        selectedUser = 0;
+    //    }
 
     // deselect current node
     if(selectedNode != NULL) {
-	selectedNode->setSelected(false);
-	selectedNode = NULL;
+        selectedNode->setSelected(false);
+        selectedNode = NULL;
     }
 
     //if no file return
     if(node == NULL) {
-	return;
+        return;
     }
 
     selectedNode = node;
@@ -757,24 +758,24 @@ void OroView::selectNode(Node* node) {
 //Add node
 void OroView::addNodeConnectedTo(const string& id,
                                  const string& node_label,
-                                const string& to,
-                                relation_type type,
-                                const string& edge_label){
+                                 const string& to,
+                                 relation_type type,
+                                 const string& edge_label){
 
     Node* n;
     Node* neighbour;
-    
+
     string label = node_label;
-    
-    cout << "Edge label: " << edge_label << endl; 
-    
+
+    cout << "Edge label: " << edge_label << endl;
+
     try {
         neighbour = &g.getNode(to);
     }
     catch(OroViewException& exception) {
-	cout << "Neighbour " << to << " not found. Creating it." << endl;
+        cout << "Neighbour " << to << " not found. Creating it." << endl;
         //neighbour not found, create it.
-	
+
         addNodeConnectedTo(to, to, ROOT_CONCEPT, UNDEFINED, "");
         neighbour = &g.getNode(to);
     }
@@ -786,50 +787,50 @@ void OroView::addNodeConnectedTo(const string& id,
         n = &g.getNode(id);
     }
     catch(OroViewException& exception) {
-	cout << "Not existing myself (" << id << "). Creating myself." << endl;
+        cout << "Not existing myself (" << id << "). Creating myself." << endl;
         //if not, create it, create it.
-        
+
         node_type ntype;
-        
+
         //guess the type of the node we are adding
         switch (type) {
-	    case SUBCLASS:
-	    case SUPERCLASS:
-	    case CLASS:
-		ntype = CLASS_NODE;
-		break;
+        case SUBCLASS:
+        case SUPERCLASS:
+        case CLASS:
+            ntype = CLASS_NODE;
+            break;
 
-	    case INSTANCE:
-		ntype = INSTANCE_NODE;
-		break;
-	
-	    case PROPERTY:
-	    case OBJ_PROPERTY:
-	    case DATA_PROPERTY:
-		if (boost::starts_with(id, "literal")) {
-		    if (node_label == "true"){
-			ntype = TRUE_NODE;
-			label = "";
-		    }
-		    else if (node_label == "false"){
-			ntype = FALSE_NODE;
-			label = "";
-		    }
-		    else ntype = LITERAL_NODE;
-		    
-		}
-		else ntype = INSTANCE_NODE;
-		break;
-	
-	    case COMMENT:
-		ntype = COMMENT_NODE;
-		break;
-	
-	    default:
-		cout << "Default type of node? strange..." << endl;
-		ntype = INSTANCE_NODE;
-	}
-		
+        case INSTANCE:
+            ntype = INSTANCE_NODE;
+            break;
+
+        case PROPERTY:
+        case OBJ_PROPERTY:
+        case DATA_PROPERTY:
+            if (boost::starts_with(id, "literal")) {
+                if (node_label == "true"){
+                    ntype = TRUE_NODE;
+                    label = "";
+                }
+                else if (node_label == "false"){
+                    ntype = FALSE_NODE;
+                    label = "";
+                }
+                else ntype = LITERAL_NODE;
+
+            }
+            else ntype = INSTANCE_NODE;
+            break;
+
+        case COMMENT:
+            ntype = COMMENT_NODE;
+            break;
+
+        default:
+            cout << "Default type of node? strange..." << endl;
+            ntype = INSTANCE_NODE;
+        }
+
         n = &g.addNode(id, label, neighbour, ntype);
     }
 
@@ -853,27 +854,27 @@ void OroView::addRandomNodes(int amount,int nb_rel) {
 
     for (int i = 0; i < amount ; ++i) {
 
-	string newId;
+        string newId;
 
-	//Generate a new random id for this node
-	for(int j=0; j<length; ++j)
-	{
-		newId += (char)(rand() % 26 + 97); //ASCII codes of letters starts at 98 for "a"
-	}
+        //Generate a new random id for this node
+        for(int j=0; j<length; ++j)
+        {
+            newId += (char)(rand() % 26 + 97); //ASCII codes of letters starts at 98 for "a"
+        }
 
         Node& neighbour = g.getRandomNode();
 
         Node& n = g.addNode(newId, newId, &neighbour);
-	vec4f col((float)rand()/RAND_MAX, (float)rand()/RAND_MAX, (float)rand()/RAND_MAX, 0.7);
-	n.setColour(col);
+        vec4f col((float)rand()/RAND_MAX, (float)rand()/RAND_MAX, (float)rand()/RAND_MAX, 0.7);
+        n.setColour(col);
 
         g.addEdge(n, neighbour, SUBCLASS, "voisin");
 
         for(int k=0; k<(nb_rel - 1); ++k) {
 
-	    //We may pick ourselves, but it's not that a problem
-	    Node& n2 = g.getRandomNode();
-	    g.addEdge(n, n2, SUBCLASS, "test");
-	}
+            //We may pick ourselves, but it's not that a problem
+            Node& n2 = g.getRandomNode();
+            g.addEdge(n, n2, SUBCLASS, "test");
+        }
     }
 }
