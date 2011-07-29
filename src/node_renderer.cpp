@@ -139,6 +139,7 @@ void NodeRenderer::drawSimple(const vec2f& pos){
     setRenderingColour();
 
     float node_size = selected ? size * SELECT_SIZE_FACTOR : size;
+    node_size = node_size * std::max(0.5f, getAlpha()); //scales nodes depending on their 'visibility' (mix of idle time + distance to selected node)
 
     glLoadName(tagid);
 
@@ -237,8 +238,11 @@ void NodeRenderer::drawShadow(const vec2f& pos){
     glEnable(GL_BLEND);
     glEnable(GL_TEXTURE_2D);
 
+    float node_size = selected ? size * SELECT_SIZE_FACTOR : size;
+    node_size = node_size * std::max(0.5f, getAlpha()); //scales nodes depending on their 'visibility' (mix of idle time + distance to selected node)
+
     float ratio = icon->h / (float) icon->w;
-    float halfsize = size * 0.5f;
+    float halfsize = node_size * 0.5f;
     vec2f offsetpos = pos - vec2f(halfsize, halfsize) + SHADOW_OFFSET;;
 
     glBindTexture(GL_TEXTURE_2D, getIcon()->textureid);
@@ -253,13 +257,13 @@ void NodeRenderer::drawShadow(const vec2f& pos){
     glVertex2f(0.0f, 0.0f);
 
     glTexCoord2f(1.0f,0.0f);
-    glVertex2f(size, 0.0f);
+    glVertex2f(node_size, 0.0f);
 
     glTexCoord2f(1.0f,1.0f);
-    glVertex2f(size, size*ratio);
+    glVertex2f(node_size, node_size*ratio);
 
     glTexCoord2f(0.0f,1.0f);
-    glVertex2f(0.0f, size*ratio);
+    glVertex2f(0.0f, node_size*ratio);
     glEnd();
 
     glPopMatrix();
