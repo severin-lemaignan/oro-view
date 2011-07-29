@@ -41,7 +41,7 @@ class NodeRenderer
     TextureResource* icon;
     float size;
 
-    float getAlpha() { return std::max(0.0f, FADE_TIME - idle_time)/FADE_TIME; }
+    float getAlpha(int distance_to_selected);
 
 
     TextureResource* getIcon() { return icon; }
@@ -54,7 +54,7 @@ class NodeRenderer
     void setRenderingColour();
 
     void drawSimple(const vec2f& pos);
-    void drawName(const vec2f& pos, FXFont& font);
+    void drawName(const vec2f& pos, FXFont& font, int distance_to_selected);
     void drawBloom(const vec2f& pos, ZoomCamera& camera);
     void drawShadow(const vec2f& pos);
 

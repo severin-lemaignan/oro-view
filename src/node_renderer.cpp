@@ -83,6 +83,13 @@ void NodeRenderer::setRenderingColour() {
     }
 }
 
+float NodeRenderer::getAlpha(int distance) {
+
+    if (distance <= 1) return 1.0f;
+
+    return std::max(0.0f, FADE_TIME - (idle_time * std::max(1, distance)))/FADE_TIME;
+}
+
 void NodeRenderer::increment_idle_time(float dt) {
     if (selected || hovered) idle_time = 0.0;
     else idle_time += dt;
@@ -98,9 +105,8 @@ void NodeRenderer::draw(const vec2f& pos, rendering_mode mode, OroView& env, int
         break;
 
     case NAMES:
-        if (distance_to_selected < 3){
-            drawName(pos, env.font);
-        }
+        drawName(pos, env.font, distance_to_selected);
+
         break;
 
     case BLOOM:
@@ -158,9 +164,9 @@ void NodeRenderer::drawSimple(const vec2f& pos){
 
 }
 
-void NodeRenderer::drawName(const vec2f& pos, FXFont& font){
+void NodeRenderer::drawName(const vec2f& pos, FXFont& font, int distance_to_selected){
 
-    float alpha = getAlpha();
+    float alpha = getAlpha(distance_to_selected);
 
     glPushMatrix();
     glTranslatef(pos.x, pos.y, 0.0);

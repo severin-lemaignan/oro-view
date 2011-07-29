@@ -31,26 +31,31 @@ class OroView;
 class EdgeRenderer
 {
     float idle_time;
-    
+
     int tagid;
-    
+
     vec2f label_pos;
-        
+
     std::string label;
 
     SplineEdge spline;
-    
-    float getAlpha() { return std::max(0.0f, FADE_TIME - idle_time)/FADE_TIME; }
 
-    void drawName(FXFont& font);
+
+    float getAlpha(int distance_to_selected);
+
+    void drawName(FXFont& font, int distance_to_selected);
 
 
 public:
-    void increment_idle_time(float dt) {idle_time += dt;}
+
+    // True is one of the two edge nodes is selected
+    bool selected;
+
+    void increment_idle_time(float dt);
 
     EdgeRenderer(int tagid, const std::string& label = "");
 
-    void draw(rendering_mode mode, OroView& env);
+    void draw(rendering_mode mode, OroView& env, int distance_to_selected = -1);
 
     void update(vec2f pos1, vec4f col1, vec2f pos2, vec4f col2, vec2f spos);
 
