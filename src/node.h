@@ -57,6 +57,7 @@ public:
        If no node is selected, -1
     **/
     int distance_to_selected;
+    bool distance_to_selected_updated;
 
     vec2f hookeForce;
     vec2f coulombForce;

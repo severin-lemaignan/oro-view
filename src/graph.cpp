@@ -181,16 +181,20 @@ void Graph::updateDistances() {
         return;
     }
     //Else, start from the selected node
+    BOOST_FOREACH(NodeMap::value_type& n, nodes) {
+        n.second.distance_to_selected_updated = false;
+    }
     recurseUpdateDistances(selectedNode, NULL, 0);
 
 }
 
 void Graph::recurseUpdateDistances(Node* node, Node* parent, int distance) {
     node->distance_to_selected = distance;
+    node->distance_to_selected_updated = true;
     TRACE("Node " << node->getID() << " is at " << distance << " nodes from selected");
 
     BOOST_FOREACH(Node* n, node->getConnectedNodes()){
-        if (n != parent) recurseUpdateDistances(n, node, distance + 1);
+        if (n != parent && !n->distance_to_selected_updated) recurseUpdateDistances(n, node, distance + 1);
     }
 }
 

@@ -34,7 +34,10 @@ using namespace boost;
 
 Node::Node(const string& id, const string& label, const Node* neighbour, node_type type) :
     id(id),
-    renderer(NodeRenderer(hash_value(id), label, type))
+    renderer(NodeRenderer(hash_value(id), label, type)),
+    selected(false),
+    distance_to_selected(-1),
+    distance_to_selected_updated(false)
 {
 
     //If a neighbour is given, we set our initial position close to it.
@@ -50,8 +53,6 @@ Node::Node(const string& id, const string& label, const Node* neighbour, node_ty
 
     charge = INITIAL_CHARGE;
 
-    selected = false;
-    distance_to_selected = -1;
 }
 
 bool Node::operator< (const Node& node2) const {
