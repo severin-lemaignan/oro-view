@@ -194,7 +194,9 @@ void Graph::recurseUpdateDistances(Node* node, Node* parent, int distance) {
     TRACE("Node " << node->getID() << " is at " << distance << " nodes from selected");
 
     BOOST_FOREACH(Node* n, node->getConnectedNodes()){
-        if (n != parent && !n->distance_to_selected_updated) recurseUpdateDistances(n, node, distance + 1);
+        if (n != parent &&
+            (!n->distance_to_selected_updated || distance < n->distance_to_selected))
+                recurseUpdateDistances(n, node, distance + 1);
     }
 }
 
