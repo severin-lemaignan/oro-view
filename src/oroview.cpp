@@ -528,12 +528,15 @@ void OroView::draw(float t, float dt) {
         font.print(0,200,"Mouse Trace: %u ms", trace_time);
         font.print(0,220,"Draw Time: %u ms", SDL_GetTicks() - draw_time);
 
-        if(selectedNode != NULL) {
-            font.print(0,260,"%s selected.", selectedNode->getID().c_str());
-            font.print(30,280,"Speed: (%.2f, %.2f)", selectedNode->speed.x, selectedNode->speed.y);
-            font.print(30,300,"Charge: %.2f", selectedNode->charge);
-            font.print(30,320,"Kinetic energy: %.2f", selectedNode->kinetic_energy);
-            font.print(30,340,"Number of relations: %d", selectedNode->getRelations().size());
+        if(hoverNode != NULL) {
+            font.print(0,260,"Node %s:", hoverNode->getID().c_str());
+            font.print(30,280,"Speed: (%.2f, %.2f)", hoverNode->speed.x, hoverNode->speed.y);
+            font.print(30,300,"Charge: %.2f", hoverNode->charge);
+            font.print(30,320,"Kinetic energy: %.2f", hoverNode->kinetic_energy);
+            font.print(30,340,"Number of relations: %d", hoverNode->getRelations().size());
+            font.print(30,360,"Distance to selected node (%s): %d",
+                       (selectedNode == NULL) ? "none" : selectedNode->getID().c_str(),
+                        hoverNode->distance_to_selected);
         }
 
     }
@@ -722,7 +725,7 @@ void OroView::selectBackground() {
 }
 
 /** Nodes */
-//select a file, deselect current file/user
+//select a node, deselect current node
 void OroView::selectNode(Node* node) {
 
     //already selected do nothing
@@ -748,8 +751,10 @@ void OroView::selectNode(Node* node) {
 
     selectedNode = node;
 
-    //select node, lock on camera
+    //select node, lock on camera, recompute distances to this selected node
     selectedNode->setSelected(true);
+    g.selectedNode = node;
+    g.updateDistances();
 }
 
 //Add node

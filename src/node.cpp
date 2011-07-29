@@ -32,7 +32,9 @@
 using namespace std;
 using namespace boost;
 
-Node::Node(const string& id, const string& label, const Node* neighbour, node_type type) : id(id), renderer(NodeRenderer(hash_value(id), label, type))
+Node::Node(const string& id, const string& label, const Node* neighbour, node_type type) :
+    id(id),
+    renderer(NodeRenderer(hash_value(id), label, type))
 {
 
     //If a neighbour is given, we set our initial position close to it.
@@ -49,6 +51,7 @@ Node::Node(const string& id, const string& label, const Node* neighbour, node_ty
     charge = INITIAL_CHARGE;
 
     selected = false;
+    distance_to_selected = -1;
 }
 
 bool Node::operator< (const Node& node2) const {
@@ -188,7 +191,7 @@ void Node::step(Graph& g, float dt){
 void Node::render(rendering_mode mode, OroView& env, bool debug){
 
 #ifndef TEXT_ONLY
-        renderer.draw(pos, mode, env);
+        renderer.draw(pos, mode, env, distance_to_selected);
 
         if (debug) {
             vec4f col(1.0, 0.2, 0.2, 0.7);

@@ -24,7 +24,10 @@
 
 using namespace std;
 
-NodeRenderer::NodeRenderer(int tagid, string label, node_type type) : tagid(tagid), label(label), type(type)
+NodeRenderer::NodeRenderer(int tagid, string label, node_type type) :
+    tagid(tagid),
+    label(label),
+    type(type)
 {
 
     idle_time = 0.0;
@@ -85,7 +88,7 @@ void NodeRenderer::increment_idle_time(float dt) {
     else idle_time += dt;
 }
 
-void NodeRenderer::draw(const vec2f& pos, rendering_mode mode, OroView& env) {
+void NodeRenderer::draw(const vec2f& pos, rendering_mode mode, OroView& env, int distance_to_selected) {
 
     switch (mode) {
 
@@ -95,7 +98,9 @@ void NodeRenderer::draw(const vec2f& pos, rendering_mode mode, OroView& env) {
         break;
 
     case NAMES:
-        drawName(pos, env.font);
+        if (distance_to_selected < 3){
+            drawName(pos, env.font);
+        }
         break;
 
     case BLOOM:
@@ -125,9 +130,6 @@ void NodeRenderer::drawSimple(const vec2f& pos){
     float ratio = icon->h / (float) icon->w;
     float halfsize = node_size * 0.5f;
     vec2f offsetpos = pos - vec2f(halfsize, halfsize);
-
-
-    float alpha = getAlpha();
 
     glBindTexture(GL_TEXTURE_2D, getIcon()->textureid);
 

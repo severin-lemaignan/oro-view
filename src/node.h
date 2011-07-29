@@ -45,14 +45,18 @@ public:
 
     NodeRenderer renderer;
 
-    bool selected;
-
     float kinetic_energy;
     float charge;
     float mass;
     float damping;
     vec2f speed;
     vec2f pos;
+
+    bool selected;
+     /** The (minimum) amount of nodes that link me to the selected node.
+       If no node is selected, -1
+    **/
+    int distance_to_selected;
 
     vec2f hookeForce;
     vec2f coulombForce;

@@ -31,6 +31,7 @@ using namespace boost;
 
 Graph::Graph()
 {
+    selectedNode = NULL;
 }
 
 
@@ -116,6 +117,8 @@ Node& Graph::addNode(const string& id, const string& label, const Node* neighbou
     else
         TRACE("Added node " << id);
 
+    updateDistances();
+
     return getNode(id);
 }
 
@@ -127,9 +130,6 @@ void Graph::addEdge(Node& from, Node& to, const relation_type type, const std::s
 
     NodeRelation& rel = from.addRelation(to, type, label);
 
-
-
-
     //Don't add an edge if the relation is between the same node.
     //It could be actually useful, but it provokes a segfault somewhere :-/
     if (&from == &to) {
@@ -137,13 +137,15 @@ void Graph::addEdge(Node& from, Node& to, const relation_type type, const std::s
         return;
     }
 
-    //so now we are confident that there's no edge we can reuse. Let's create a new one.
     if (getEdgesBetween(from, to).size() == 0)
+        //so now we are confident that there's no edge we can reuse. Let's create a new one.
         edges.push_back(Edge(rel, label));
 
 
     return;
 }
+
+
 
 vector<const Edge*>  Graph::getEdgesFor(const Node& node) const{
     vector<const Edge*> res;
@@ -165,6 +167,33 @@ vector<Edge*>  Graph::getEdgesBetween(const Node& node1, const Node& node2){
             res.push_back(&e);
     }
     return res;
+}
+
+void Graph::updateDistances() {
+
+    // No node selected, set all distance to -1
+    if (selectedNode == NULL) {
+        // Renders nodes
+        BOOST_FOREACH(NodeMap::value_type& n, nodes) {
+            n.second.distance_to_selected = -1;
+        }
+
+        return;
+    }
+    cout << "Toto" << endl;
+    //Else, start from the selected node
+    recurseUpdateDistances(selectedNode, NULL, 0);
+
+}
+
+void Graph::recurseUpdateDistances(Node* node, Node* parent, int distance) {
+    node->distance_to_selected = distance;
+    //cout << node->getID() << " at distance " << distance << endl;
+    TRACE("Node " << node->getID() << " is at " << distance << " nodes from selected");
+
+    BOOST_FOREACH(Node* n, node->getConnectedNodes()){
+        if (n != parent) recurseUpdateDistances(n, node, distance + 1);
+    }
 }
 
 int Graph::nodesCount() {

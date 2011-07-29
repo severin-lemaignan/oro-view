@@ -35,7 +35,7 @@ class NodeRenderer
     std::string label;
 
     int tagid;
-    
+
     node_type type;
 
     TextureResource* icon;
@@ -64,7 +64,7 @@ public:
 
     vec4f col;
 
-    void draw(const vec2f& pos, rendering_mode mode, OroView& env);
+    void draw(const vec2f& pos, rendering_mode mode, OroView& env, int distance_to_selected = -1);
 
     /**
     If the node is not selected, will increment the idle time of this

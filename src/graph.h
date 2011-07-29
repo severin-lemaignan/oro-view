@@ -35,9 +35,9 @@ public:
       a map of nodes. The key is the node ID.
      */
     typedef std::map<int, Node> NodeMap;
-    
+
 private:
-    
+
     NodeMap nodes;
 
     typedef std::vector<Edge> EdgeVector;
@@ -69,7 +69,7 @@ public:
     const Node& getConstNode(const std::string& id) const;
 
     /**
-      Returns a reference to a node by its tagid, ie the hash value of its ID. Return a NULL pointer
+      Returns a pointer to a node by its tagid, ie the hash value of its ID. Return a NULL pointer
       if the node doesn't exists.
       */
     Node* getNodeByTagID(int tagid);
@@ -78,6 +78,12 @@ public:
       Returns a random node.
       */
     Node& getRandomNode();
+
+    /**
+      Stores a pointer to the currently selected node, or NULL is no node is currently
+      selected.
+      */
+    Node* selectedNode;
 
     /**
       Adds a new node to the graph (if it doesn't exist yet) and returns a reference to the new node.
@@ -94,6 +100,12 @@ public:
 
     std::vector<const Edge*> getEdgesFor(const Node& node) const;
     std::vector<Edge*> getEdgesBetween(const Node& node1, const Node& node2);
+
+    /**
+      Computes and update for each node the distance to the selected node.
+      */
+    void updateDistances();
+    void recurseUpdateDistances(Node* node, Node* parent, int distance);
 
     int nodesCount();
     int edgesCount();
