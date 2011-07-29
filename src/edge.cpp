@@ -33,8 +33,8 @@ using namespace std;
 using namespace boost;
 
 Edge::Edge(const NodeRelation& rel, const string& label) :
-    idNode1(rel.from->getID()),
-    idNode2(rel.to->getID()),
+    node1(rel.from),
+    node2(rel.to),
     renderer(EdgeRenderer(
             hash_value(rel.from->getID() + rel.to->getID()),
             label
@@ -90,15 +90,12 @@ Edge::Edge(const NodeRelation& rel, const string& label) :
 
 void Edge::step(Graph& g, float dt){
 
-    updateLength(g);
+    updateLength();
 
 #ifndef TEXT_ONLY
 
-    Node& node1 = g.getNode(idNode1);
-    Node& node2 = g.getNode(idNode2);
-
-    const vec2f& pos1 = node1.pos;
-    const vec2f& pos2 = node2.pos;
+    const vec2f& pos1 = node1->pos;
+    const vec2f& pos2 = node2->pos;
 
     //update the spline point
     vec2f td = (pos2 - pos1) * 0.5;
@@ -117,18 +114,19 @@ void Edge::step(Graph& g, float dt){
     td.normalize();
 
     vec2f out_of_node1_distance = td * (
-                (node1.selected ? NODE_SIZE * SELECT_SIZE_FACTOR : NODE_SIZE) / 2 + 2
+                (node1->selected ? NODE_SIZE * SELECT_SIZE_FACTOR : NODE_SIZE) / 2 + 2
                 );
 
     vec2f out_of_node2_distance = td * (
-                (node2.selected ? NODE_SIZE * SELECT_SIZE_FACTOR : NODE_SIZE) / 2 + 2
+                (node2->selected ? NODE_SIZE * SELECT_SIZE_FACTOR : NODE_SIZE) / 2 + 2
                 );
 
+    (node1->selected || node2->selected) ? renderer.selected = true : renderer.selected = false;
     //Update the age of the node renderer
     renderer.increment_idle_time(dt);
 
-    renderer.update(pos1 + out_of_node1_distance , node1.renderer.col,
-                    pos2  - out_of_node2_distance , node2.renderer.col, spos);
+    renderer.update(pos1 + out_of_node1_distance , node1->renderer.col,
+                    pos2  - out_of_node2_distance , node2->renderer.col, spos);
 
 #endif
     //TRACE("Edge between " << node1->getID() << " and " << node2->getID() << " updated.");
@@ -146,15 +144,15 @@ void Edge::render(rendering_mode mode, OroView& env){
 
 }
 
-void Edge::updateLength(Graph& g) {
+void Edge::updateLength() {
     //TODO: optimisation by using length2 here?
-    length = (g.getNode(idNode1).pos -  g.getNode(idNode2).pos).length();
+    length = (node1->pos -  node2->pos).length();
 }
 
 const string& Edge::getId1() const {
-    return idNode1;
+    return node1->getID();
 }
 
 const string& Edge::getId2() const {
-    return idNode2;
+    return node2->getID();
 }

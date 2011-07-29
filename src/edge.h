@@ -24,14 +24,15 @@
 #include "styles.h"
 
 class Graph;
+class Node;
 class NodeRelation;
 
 class Edge
 {
-    std::string idNode1;
-    std::string idNode2;
+    Node* node1;
+    Node* node2;
 
-    void updateLength(Graph& g);
+    void updateLength();
 
     vec2f spos;
 
