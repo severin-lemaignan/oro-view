@@ -27,19 +27,22 @@ EdgeRenderer::EdgeRenderer(int tagid, const string& label) :
     tagid(tagid),
     label(label),
     label_pos(vec2f(0.0, 0.0)),
-    idle_time(0.0)
+    idle_time(0.0),
+    current_distance_to_selected(-1)
 {
 }
 
-float EdgeRenderer::getAlpha(int distance) {
+float EdgeRenderer::getAlpha() {
 
     //This edge is connected to the selected node, don't fade it away.
     if (selected) return 1.0f;
 
-    return std::max(0.0f, FADE_TIME - (idle_time * std::max(1, distance)))/FADE_TIME;
+    return std::max(0.0f, FADE_TIME - (idle_time * std::max(1, current_distance_to_selected)))/FADE_TIME;
 }
 
 void EdgeRenderer::draw(rendering_mode mode, OroView& env, int distance_to_selected) {
+
+    current_distance_to_selected = distance_to_selected;
 
     switch (mode) {
     case NORMAL:
@@ -47,7 +50,7 @@ void EdgeRenderer::draw(rendering_mode mode, OroView& env, int distance_to_selec
         break;
 
     case NAMES:
-        drawName(env.font, distance_to_selected);
+        drawName(env.font);
         break;
 
     case SHADOWS:
@@ -75,14 +78,12 @@ void EdgeRenderer::increment_idle_time(float dt) {
     else idle_time += dt;
 }
 
-void EdgeRenderer::drawName(FXFont& font, int distance_to_selected){
-
-    float alpha = getAlpha(distance_to_selected);
+void EdgeRenderer::drawName(FXFont& font){
 
     glPushMatrix();
     glTranslatef(label_pos.x, label_pos.y, 0.0);
 
-    glColor4f(1.0, 1.0, 1.0, alpha);
+    glColor4f(1.0, 1.0, 1.0, getAlpha());
 
     vec3f screenpos = display.project(vec3f(0.0, 0.0, 0.0));
 

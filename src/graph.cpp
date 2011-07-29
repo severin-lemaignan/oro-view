@@ -180,7 +180,6 @@ void Graph::updateDistances() {
 
         return;
     }
-    cout << "Toto" << endl;
     //Else, start from the selected node
     recurseUpdateDistances(selectedNode, NULL, 0);
 
@@ -188,7 +187,6 @@ void Graph::updateDistances() {
 
 void Graph::recurseUpdateDistances(Node* node, Node* parent, int distance) {
     node->distance_to_selected = distance;
-    //cout << node->getID() << " at distance " << distance << endl;
     TRACE("Node " << node->getID() << " is at " << distance << " nodes from selected");
 
     BOOST_FOREACH(Node* n, node->getConnectedNodes()){

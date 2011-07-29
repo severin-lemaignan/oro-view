@@ -38,6 +38,7 @@ NodeRenderer::NodeRenderer(int tagid, string label, node_type type) :
 
     hovered = false;
     selected = false;
+    current_distance_to_selected = -1;
 
 #ifndef TEXT_ONLY
     if (type == CLASS_NODE) {
@@ -83,11 +84,11 @@ void NodeRenderer::setRenderingColour() {
     }
 }
 
-float NodeRenderer::getAlpha(int distance) {
+float NodeRenderer::getAlpha() {
 
-    if (distance <= 1) return 1.0f;
+    if (current_distance_to_selected <= 1) return 1.0f;
 
-    return std::max(0.0f, FADE_TIME - (idle_time * std::max(1, distance)))/FADE_TIME;
+    return std::max(0.0f, FADE_TIME - (idle_time * std::max(1, current_distance_to_selected)))/FADE_TIME;
 }
 
 void NodeRenderer::increment_idle_time(float dt) {
@@ -97,6 +98,8 @@ void NodeRenderer::increment_idle_time(float dt) {
 
 void NodeRenderer::draw(const vec2f& pos, rendering_mode mode, OroView& env, int distance_to_selected) {
 
+    current_distance_to_selected = distance_to_selected;
+
     switch (mode) {
 
     case NORMAL:
@@ -105,12 +108,12 @@ void NodeRenderer::draw(const vec2f& pos, rendering_mode mode, OroView& env, int
         break;
 
     case NAMES:
-        drawName(pos, env.font, distance_to_selected);
+        drawName(pos, env.font);
 
         break;
 
     case BLOOM:
-        drawBloom(pos, env.camera);
+        drawBloom(pos);
         break;
 
     case SHADOWS:
@@ -142,6 +145,8 @@ void NodeRenderer::drawSimple(const vec2f& pos){
     glPushMatrix();
     glTranslatef(offsetpos.x, offsetpos.y, 0.0f);
 
+    col.w = getAlpha();
+
     glColor4fv(col);
 
     glBegin(GL_QUADS);
@@ -164,14 +169,12 @@ void NodeRenderer::drawSimple(const vec2f& pos){
 
 }
 
-void NodeRenderer::drawName(const vec2f& pos, FXFont& font, int distance_to_selected){
-
-    float alpha = getAlpha(distance_to_selected);
+void NodeRenderer::drawName(const vec2f& pos, FXFont& font){
 
     glPushMatrix();
     glTranslatef(pos.x, pos.y, 0.0);
 
-    glColor4f(1.0, 1.0, 1.0, alpha);
+    glColor4f(1.0, 1.0, 1.0, getAlpha());
 
     vec3f screenpos = display.project(vec3f(0.0, 0.0, 0.0));
 
@@ -195,17 +198,13 @@ void NodeRenderer::drawName(const vec2f& pos, FXFont& font, int distance_to_sele
     glPopMatrix();
 }
 
-void NodeRenderer::drawBloom(const vec2f& pos, ZoomCamera& camera){
-
-    Frustum frustum(camera);
-
-    //if(isVisible() && frustum.boundsInFrustum(quadItemBounds)) {
+void NodeRenderer::drawBloom(const vec2f& pos){
 
     float bloom_radius = 50.0;
 
     vec4f bloom_col = col;
 
-    glColor4f(bloom_col.x, bloom_col.y, bloom_col.z, 1.0);
+    glColor4f(bloom_col.x, bloom_col.y, bloom_col.z, getAlpha());
 
     glPushMatrix();
     glTranslatef(pos.x, pos.y, 0.0);
@@ -221,8 +220,6 @@ void NodeRenderer::drawBloom(const vec2f& pos, ZoomCamera& camera){
     glVertex2f(-bloom_radius,bloom_radius);
     glEnd();
     glPopMatrix();
-
-    //}
 
 }
 
@@ -240,7 +237,7 @@ void NodeRenderer::drawShadow(const vec2f& pos){
     glPushMatrix();
     glTranslatef(offsetpos.x, offsetpos.y, 0.0f);
 
-    glColor4f(0.0, 0.0, 0.0, SHADOW_STRENGTH);
+    glColor4f(0.0, 0.0, 0.0, std::min(SHADOW_STRENGTH, getAlpha()));
 
     glBegin(GL_QUADS);
     glTexCoord2f(0.0f,0.0f);

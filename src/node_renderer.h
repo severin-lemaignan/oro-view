@@ -41,21 +41,22 @@ class NodeRenderer
     TextureResource* icon;
     float size;
 
-    float getAlpha(int distance_to_selected);
+    float getAlpha();
 
 
     TextureResource* getIcon() { return icon; }
 
     bool hovered;
     bool selected;
+    int current_distance_to_selected;
 
     vec4f base_col;
 
     void setRenderingColour();
 
     void drawSimple(const vec2f& pos);
-    void drawName(const vec2f& pos, FXFont& font, int distance_to_selected);
-    void drawBloom(const vec2f& pos, ZoomCamera& camera);
+    void drawName(const vec2f& pos, FXFont& font);
+    void drawBloom(const vec2f& pos);
     void drawShadow(const vec2f& pos);
 
 
