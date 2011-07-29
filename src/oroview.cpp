@@ -423,7 +423,6 @@ void OroView::draw(float t, float dt) {
     glLoadIdentity();
 
     camera.focus();
-
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
 
@@ -434,17 +433,15 @@ void OroView::draw(float t, float dt) {
     //Draw shadows for edges and then nodes
     g.render(SHADOWS, *this, advanced_debug);
 
-
     //Draw edges and then nodes
+    glBindTexture(GL_TEXTURE_2D, beamtex->textureid);
     g.render(NORMAL, *this, advanced_debug);
 
     //draw 'gourceian blur' around dirnodes
     glBlendFunc (GL_ONE, GL_ONE);
     glBindTexture(GL_TEXTURE_2D, bloomtex->textureid);
-
     //Draw Bloom
     g.render(BLOOM, *this, advanced_debug);
-
     glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
     //Draw names

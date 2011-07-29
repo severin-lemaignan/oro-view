@@ -102,16 +102,11 @@ void SplineEdge::draw() {
 
     int edges_count = spline_point.size() - 1;
 
-    glPolygonOffset(1.0f, 1.0f);
-    glEnable(GL_POLYGON_OFFSET_LINE);
-    //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
     glBegin(GL_QUAD_STRIP);
 
     for(int i=0;i<edges_count;i++) {
-        drawBeam(spline_point[i], spline_colour[i], spline_point[i+1], spline_colour[i+1], 2.5, i==0);
+        drawBeam(spline_point[i], spline_colour[i], spline_point[i+1], spline_colour[i+1], 1.5, i==0);
     }
 
     glEnd();
-    //glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-    glDisable(GL_POLYGON_OFFSET_LINE);
 }
