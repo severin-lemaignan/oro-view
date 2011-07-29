@@ -64,16 +64,18 @@ SplineEdge::SplineEdge(vec2f pos1, vec4f col1, vec2f pos2, vec4f col2, vec2f spo
     }
 }
 
-void SplineEdge::drawBeam(vec2f pos1, vec4f col1, vec2f pos2, vec4f col2, float radius) {
+void SplineEdge::drawBeam(vec2f pos1, vec4f col1, vec2f pos2, vec4f col2, float radius, bool first) {
 
     vec2f perp = (pos1 - pos2).perpendicular().normal() * radius;
 
-    // src point
-    glColor4fv(col1);
-    glTexCoord2f(0.0,0.0);
-    glVertex2f(pos1.x - perp.x, pos1.y - perp.y);
-    glTexCoord2f(1.0,0.0);
-    glVertex2f(pos1.x + perp.x, pos1.y + perp.y);
+    if (first) {
+        // src point
+        glColor4fv(col1);
+        glTexCoord2f(1.0,0.0);
+        glVertex2f(pos1.x + perp.x, pos1.y + perp.y);
+        glTexCoord2f(0.0,0.0);
+        glVertex2f(pos1.x - perp.x, pos1.y - perp.y);
+    }
 
     // dest point
     glColor4fv(col2);
@@ -87,10 +89,10 @@ void SplineEdge::drawShadow() {
 
     int edges_count = spline_point.size() - 1;
 
-    glBegin(GL_QUADS);
+    glBegin(GL_QUAD_STRIP);
 
     for(int i=0;i<edges_count;i++) {
-        drawBeam(spline_point[i] + SHADOW_OFFSET, vec4f(0.0, 0.0, 0.0, SHADOW_STRENGTH), spline_point[i+1] + SHADOW_OFFSET, vec4f(0.0, 0.0, 0.0, SHADOW_STRENGTH), 2.5);
+        drawBeam(spline_point[i] + SHADOW_OFFSET, vec4f(0.0, 0.0, 0.0, SHADOW_STRENGTH), spline_point[i+1] + SHADOW_OFFSET, vec4f(0.0, 0.0, 0.0, SHADOW_STRENGTH), 2.5, i==0);
     }
 
     glEnd();
@@ -100,11 +102,16 @@ void SplineEdge::draw() {
 
     int edges_count = spline_point.size() - 1;
 
-    glBegin(GL_QUADS);
+    glPolygonOffset(1.0f, 1.0f);
+    glEnable(GL_POLYGON_OFFSET_LINE);
+    //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+    glBegin(GL_QUAD_STRIP);
 
     for(int i=0;i<edges_count;i++) {
-        drawBeam(spline_point[i], spline_colour[i], spline_point[i+1], spline_colour[i+1], 2.5);
+        drawBeam(spline_point[i], spline_colour[i], spline_point[i+1], spline_colour[i+1], 2.5, i==0);
     }
 
     glEnd();
+    //glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+    glDisable(GL_POLYGON_OFFSET_LINE);
 }
