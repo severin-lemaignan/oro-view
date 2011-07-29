@@ -32,16 +32,16 @@
 using namespace std;
 using namespace boost;
 
-Edge::Edge(const NodeRelation& rel, const string& label) : 
-			idNode1(rel.from->getID()), 
-			idNode2(rel.to->getID()), 
-			renderer(EdgeRenderer(
-				hash_value(rel.from->getID() + rel.to->getID()),
-				label
-				))
+Edge::Edge(const NodeRelation& rel, const string& label) :
+    idNode1(rel.from->getID()),
+    idNode2(rel.to->getID()),
+    renderer(EdgeRenderer(
+            hash_value(rel.from->getID() + rel.to->getID()),
+            label
+            ))
 {
 
-//    addReferenceRelation(rel);
+    //    addReferenceRelation(rel);
 
     spring_constant = INITIAL_SPRING_CONSTANT;
     nominal_length = NOMINAL_EDGE_LENGTH;
@@ -90,41 +90,48 @@ Edge::Edge(const NodeRelation& rel, const string& label) :
 
 void Edge::step(Graph& g, float dt){
 
-	updateLength(g);
+    updateLength(g);
 
 #ifndef TEXT_ONLY
 
-	Node& node1 = g.getNode(idNode1);
-	Node& node2 = g.getNode(idNode2);
-	
-	const vec2f& pos1 = node1.pos;
-	const vec2f& pos2 = node2.pos;
+    Node& node1 = g.getNode(idNode1);
+    Node& node2 = g.getNode(idNode2);
 
-	//update the spline point
-	vec2f td = (pos2 - pos1) * 0.5;
-	
-	vec2f mid = pos1 + td;// - td.perpendicular() * pos.normal();// * 10.0;
+    const vec2f& pos1 = node1.pos;
+    const vec2f& pos2 = node2.pos;
 
-	vec2f delta = (mid - spos);
+    //update the spline point
+    vec2f td = (pos2 - pos1) * 0.5;
 
-	//dont let spos get more than half the length of the distance behind
-	if(delta.length2() > td.length2()) {
-	    spos += delta.normal() * (delta.length() - td.length());
-	}
+    vec2f mid = pos1 + td;// - td.perpendicular() * pos.normal();// * 10.0;
 
-	spos += delta * min(1.0, dt * 2.0);
+    vec2f delta = (mid - spos);
 
-	td.normalize();
-	
-	vec2f out_of_node_distance = td * (NODE_SIZE / 2 + 2);
-	
-	//Update the age of the node renderer
-	renderer.increment_idle_time(dt);
-	
-	renderer.update(pos1 + out_of_node_distance , node1.renderer.col, pos2  - out_of_node_distance , node2.renderer.col, spos);
+    //dont let spos get more than half the length of the distance behind
+    if(delta.length2() > td.length2()) {
+        spos += delta.normal() * (delta.length() - td.length());
+    }
+
+    spos += delta * min(1.0, dt * 2.0);
+
+    td.normalize();
+
+    vec2f out_of_node1_distance = td * (
+                (node1.selected ? NODE_SIZE * SELECT_SIZE_FACTOR : NODE_SIZE) / 2 + 2
+                );
+
+    vec2f out_of_node2_distance = td * (
+                (node2.selected ? NODE_SIZE * SELECT_SIZE_FACTOR : NODE_SIZE) / 2 + 2
+                );
+
+    //Update the age of the node renderer
+    renderer.increment_idle_time(dt);
+
+    renderer.update(pos1 + out_of_node1_distance , node1.renderer.col,
+                    pos2  - out_of_node2_distance , node2.renderer.col, spos);
 
 #endif
-	//TRACE("Edge between " << node1->getID() << " and " << node2->getID() << " updated.");
+    //TRACE("Edge between " << node1->getID() << " and " << node2->getID() << " updated.");
 
 }
 
@@ -133,9 +140,9 @@ void Edge::render(rendering_mode mode, OroView& env){
 
 
 #ifndef TEXT_ONLY
-        renderer.draw(mode, env);
+    renderer.draw(mode, env);
 #endif
-	//TRACE("Edge between " << node1->getID() << " and " << node2->getID() << " rendered.");
+    //TRACE("Edge between " << node1->getID() << " and " << node2->getID() << " rendered.");
 
 }
 

@@ -33,8 +33,6 @@ class Node
 {
     std::vector<NodeRelation> relations;
 
-    bool selected;
-
     std::string id;
 
     void updateKineticEnergy();
@@ -46,6 +44,8 @@ public:
     bool operator< (const Node& node) const;
 
     NodeRenderer renderer;
+
+    bool selected;
 
     float kinetic_energy;
     float charge;
