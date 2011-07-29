@@ -67,6 +67,26 @@ std::vector<NodeRelation>& Node::getRelations() {
     return relations;
 }
 
+vector<Node*>  Node::getConnectedNodes(){
+    vector<Node*> res;
+
+    BOOST_FOREACH(NodeRelation& rel, relations) {
+        if (rel.to == this)
+            res.push_back(rel.from);
+        else
+            res.push_back(rel.to);
+    }
+    return res;
+}
+
+bool Node::isConnectedTo(Node* node) {
+    BOOST_FOREACH(NodeRelation& rel, relations) {
+        if (rel.to == node || rel.from == node)
+            return true;
+    }
+    return false;
+}
+
 NodeRelation& Node::addRelation(Node& to, const relation_type type, const std::string& label) {
 
     //When adding a new relation, we create as well an initial UNDEFINED reciprocal relation if
@@ -84,6 +104,10 @@ NodeRelation& Node::addRelation(Node& to, const relation_type type, const std::s
     vector<const NodeRelation*> rels = getRelationTo(to);
 
     relations.push_back(NodeRelation(this, &to, type, label)); //Add a new relation
+
+    if (!to.isConnectedTo(this)){
+        to.addRelation(*this, UNDEFINED, "");
+    }
 
     if(rels.size() == 1 && rels[0]->type == UNDEFINED) { //I had already an undefined relation to the destination node
 

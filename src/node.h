@@ -59,6 +59,16 @@ public:
 
     const std::string& getID() const;
 
+    /**
+      Returns a vector of all nodes connected to myself.
+      */
+    std::vector<Node*> getConnectedNodes();
+
+    bool isConnectedTo(Node* node);
+
+    /**
+      Returns a vector of all relations this node has with other nodes.
+      */
     std::vector<NodeRelation>& getRelations();
 
     NodeRelation& addRelation(Node& to, const relation_type type, const std::string& label);
