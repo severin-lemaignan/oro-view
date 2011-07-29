@@ -192,6 +192,8 @@ void Node::step(Graph& g, float dt){
 void Node::render(rendering_mode mode, OroView& env, bool debug){
 
 #ifndef TEXT_ONLY
+        if (distance_to_selected >= MAX_NODE_LEVELS) return;
+
         renderer.draw(pos, mode, env, distance_to_selected);
 
         if (debug) {

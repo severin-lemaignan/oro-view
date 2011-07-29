@@ -88,11 +88,20 @@ float NodeRenderer::getAlpha() {
 
     if (current_distance_to_selected <= 1) return 1.0f;
 
-    return std::max(0.0f, FADE_TIME - (idle_time * std::max(1, current_distance_to_selected)))/FADE_TIME;
+    int distance = std::max(1, current_distance_to_selected);
+    //float level =  FADE_TIME - (idle_time * distance)/FADE_TIME;
+
+    // We use a function in (1-x^4) to smooth the fading of nodes
+    #define MAX_DISTANCE_4 (MAX_NODE_LEVELS * MAX_NODE_LEVELS * MAX_NODE_LEVELS)
+
+    float fading = (FADE_TIME - idle_time) / FADE_TIME;
+    float level =  1.0f - (std::pow(distance, 3)/MAX_DISTANCE_4);
+
+    return std::max(0.0f, level * fading);
 }
 
 void NodeRenderer::increment_idle_time(float dt) {
-    if (selected || hovered) idle_time = 0.0;
+    if (selected || hovered || current_distance_to_selected <= 1) idle_time = 0.0;
     else idle_time += dt;
 }
 

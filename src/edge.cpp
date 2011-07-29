@@ -138,7 +138,9 @@ void Edge::render(rendering_mode mode, OroView& env){
 
 
 #ifndef TEXT_ONLY
-    renderer.draw(mode, env, std::min(node1->distance_to_selected, node2->distance_to_selected));
+    int distance = std::min(node1->distance_to_selected, node2->distance_to_selected);
+    if (distance >= MAX_NODE_LEVELS - 1) return;
+    renderer.draw(mode, env, distance);
 #endif
     //TRACE("Edge between " << node1->getID() << " and " << node2->getID() << " rendered.");
 
