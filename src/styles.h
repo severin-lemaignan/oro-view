@@ -31,12 +31,17 @@ static const float FADE_TIME = 25.0; //idle time (in sec) before labels vanish
 static const float SHADOW_STRENGTH = 0.5; //intensity of shadows (from 0.0 to 1.0)
 static const vec2f SHADOW_OFFSET(1.0, 1.0); //offset of shadows
 
-static const vec4f HOVERED_COLOUR(1.0, 0.2, 0.5, 1.0);
-static const vec4f SELECTED_COLOUR(0.2, 1.0, 0.5, 1.0);
+static const vec4f HOVERED_COLOUR(0.8, 0.2, 0.5, 1.0);
+static const vec4f SELECTED_COLOUR(0.2, 0.8, 0.5, 1.0);
 
-static const vec4f CLASSES_COLOUR(0.58, 0.82, 0.86, 1.0);
-static const vec4f INSTANCES_COLOUR(0.72, 0.55, 0.79, 1.0);
-static const vec4f LITERAL_COLOUR(0.57, 0.3, 0.48, 1.0);
+// "EGA" color scheme
+//static const vec4f CLASSES_COLOUR(0.58, 0.82, 0.86, 1.0);
+//static const vec4f INSTANCES_COLOUR(0.72, 0.55, 0.79, 1.0);
+//static const vec4f LITERAL_COLOUR(0.57, 0.3, 0.48, 1.0);
 
+// "Prune/Kaki" color scheme
+static const vec4f CLASSES_COLOUR(0.36, 0.21, 0.4, 1.0);
+static const vec4f INSTANCES_COLOUR(0.32, 0.4, 0.21, 1.0);
+static const vec4f LITERAL_COLOUR(0.21, 0.4, 0.25, 1.0);
 
 #endif // STYLES_H
