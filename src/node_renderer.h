@@ -31,6 +31,9 @@ class NodeRenderer
 {
 
     float idle_time;
+    // Time counter for decaying
+    float decayTime;
+    bool decaying;
 
     std::string label;
 
@@ -39,7 +42,6 @@ class NodeRenderer
     node_type type;
 
     TextureResource* icon;
-    float size;
 
     float getAlpha();
 
@@ -51,8 +53,12 @@ class NodeRenderer
     int current_distance_to_selected;
 
     vec4f base_col;
+    float base_size;
 
-    void setRenderingColour();
+    void computeColourSize();
+    void decay();
+
+    void computeSize();
 
     void drawSimple(const vec2f& pos);
     void drawName(const vec2f& pos, FXFont& font);
@@ -64,6 +70,10 @@ public:
     NodeRenderer(int tagid, std::string label, node_type type = CLASS_NODE);
 
     vec4f col;
+    float size;
+
+    // Speed factor, used to decay slower after tickling
+    float decaySpeed;
 
     void draw(const vec2f& pos, rendering_mode mode, OroView& env, int distance_to_selected = -1);
 

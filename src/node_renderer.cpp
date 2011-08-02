@@ -27,18 +27,18 @@ using namespace std;
 NodeRenderer::NodeRenderer(int tagid, string label, node_type type) :
     tagid(tagid),
     label(label),
-    type(type)
+    type(type),
+    idle_time(0.0),
+    decayTime(0.0),
+    decaySpeed(1.0),
+    decaying(true),
+    hovered(false),
+    selected(false),
+    current_distance_to_selected(-1),
+    base_size(NODE_SIZE)
 {
 
-    idle_time = 0.0;
-
-    size = NODE_SIZE;
-
-    col = vec4f(1.0, 1.0, 1.0, 1.0);
-
-    hovered = false;
-    selected = false;
-    current_distance_to_selected = -1;
+    size = base_size * 1.2;
 
 #ifndef TEXT_ONLY
     if (type == CLASS_NODE) {
@@ -69,19 +69,63 @@ NodeRenderer::NodeRenderer(int tagid, string label, node_type type) :
         base_col = vec4f(1.0, 1.0, 1.0, 1.0);
         icon = texturemanager.grab("instances.png");
     }
+
+    col = base_col * 1.2;
 #endif
+
+
 }
 
 void NodeRenderer::setColour(vec4f col) {
     base_col = col;
 }
 
-void NodeRenderer::setRenderingColour() {
-    if (selected) col = SELECTED_COLOUR;
-    else {
-        if (hovered) col = HOVERED_COLOUR;
-        else col = base_col;
+void NodeRenderer::computeColourSize() {
+    if (selected) {
+        col = SELECTED_COLOUR;
+        size = base_size * SELECT_SIZE_FACTOR;
     }
+    else {
+        base_size = NODE_SIZE * max(0.6f, getAlpha()); //scales nodes depending on their 'visibility' (mix of idle time + distance to selected node)
+        decay();
+
+        if (hovered) col = HOVERED_COLOUR;
+    }
+}
+
+void NodeRenderer::decay() {
+
+    if (  abs(col.x - base_col.x) > 0.001
+       || abs(col.y - base_col.y) > 0.001
+       || abs(col.z - base_col.z) > 0.001 //do not compare alpha values
+       || abs(size - base_size) > 0.001 ) {
+        decaying = true;
+
+        // At start, ratio = 1.0 => 100% 'new color/size'
+        // At end, ratio = 0.0 => 100% 'base color/size'
+        float decayRatio = 1.0 - decayTime / (COLOUR_DECAY_TIME * 100.0 / decaySpeed);
+
+        if (decayRatio < 0.0) {
+            // End of decay period
+            decaying = false;
+            decayTime = 0.0;
+            decaySpeed = 1.0;
+            col = base_col;
+            size = base_size;
+            return;
+        }
+
+        col = base_col + ((col - base_col) * decayRatio);
+        size = base_size + ((size - base_size) * decayRatio);
+
+        return;
+
+    }
+
+    // Default: no decaying
+    decaying = false;
+    col = base_col;
+    size = base_size;
 }
 
 float NodeRenderer::getAlpha() {
@@ -91,11 +135,11 @@ float NodeRenderer::getAlpha() {
     int distance = std::max(1, current_distance_to_selected);
     //float level =  FADE_TIME - (idle_time * distance)/FADE_TIME;
 
-    // We use a function in (1-x^4) to smooth the fading of nodes
-    #define MAX_DISTANCE_4 (MAX_NODE_LEVELS * MAX_NODE_LEVELS * MAX_NODE_LEVELS)
+    // We use a function in (1-x^3) to smooth the fading of nodes
+    #define MAX_DISTANCE_3 (MAX_NODE_LEVELS * MAX_NODE_LEVELS * MAX_NODE_LEVELS)
 
     float fading = (FADE_TIME - idle_time) / FADE_TIME;
-    float level =  1.0f - (std::pow(distance, 3)/MAX_DISTANCE_4);
+    float level =  1.0f - (std::pow(distance, 3)/MAX_DISTANCE_3);
 
     return std::max(0.0f, level * fading);
 }
@@ -103,16 +147,21 @@ float NodeRenderer::getAlpha() {
 void NodeRenderer::increment_idle_time(float dt) {
     if (selected || hovered || current_distance_to_selected <= 1) idle_time = 0.0;
     else idle_time += dt;
+
+    if (decaying) decayTime += dt;
 }
 
 void NodeRenderer::draw(const vec2f& pos, rendering_mode mode, OroView& env, int distance_to_selected) {
 
     current_distance_to_selected = distance_to_selected;
 
+
     switch (mode) {
 
     case NORMAL:
     case SIMPLE:
+        computeColourSize();
+
         drawSimple(pos);
         break;
 
@@ -136,10 +185,6 @@ void NodeRenderer::draw(const vec2f& pos, rendering_mode mode, OroView& env, int
 
 void NodeRenderer::drawSimple(const vec2f& pos){
 
-    setRenderingColour();
-
-    float node_size = selected ? size * SELECT_SIZE_FACTOR : size;
-    node_size = node_size * std::max(0.5f, getAlpha()); //scales nodes depending on their 'visibility' (mix of idle time + distance to selected node)
 
     glLoadName(tagid);
 
@@ -147,7 +192,7 @@ void NodeRenderer::drawSimple(const vec2f& pos){
     glEnable(GL_TEXTURE_2D);
 
     float ratio = icon->h / (float) icon->w;
-    float halfsize = node_size * 0.5f;
+    float halfsize = size * 0.5f;
     vec2f offsetpos = pos - vec2f(halfsize, halfsize);
 
     glBindTexture(GL_TEXTURE_2D, getIcon()->textureid);
@@ -164,13 +209,13 @@ void NodeRenderer::drawSimple(const vec2f& pos){
     glVertex2f(0.0f, 0.0f);
 
     glTexCoord2f(1.0f,0.0f);
-    glVertex2f(node_size, 0.0f);
+    glVertex2f(size, 0.0f);
 
     glTexCoord2f(1.0f,1.0f);
-    glVertex2f(node_size, node_size*ratio);
+    glVertex2f(size, size*ratio);
 
     glTexCoord2f(0.0f,1.0f);
-    glVertex2f(0.0f, node_size*ratio);
+    glVertex2f(0.0f, size*ratio);
     glEnd();
 
     glPopMatrix();
@@ -238,11 +283,8 @@ void NodeRenderer::drawShadow(const vec2f& pos){
     glEnable(GL_BLEND);
     glEnable(GL_TEXTURE_2D);
 
-    float node_size = selected ? size * SELECT_SIZE_FACTOR : size;
-    node_size = node_size * std::max(0.5f, getAlpha()); //scales nodes depending on their 'visibility' (mix of idle time + distance to selected node)
-
     float ratio = icon->h / (float) icon->w;
-    float halfsize = node_size * 0.5f;
+    float halfsize = size * 0.5f;
     vec2f offsetpos = pos - vec2f(halfsize, halfsize) + SHADOW_OFFSET;;
 
     glBindTexture(GL_TEXTURE_2D, getIcon()->textureid);
@@ -257,13 +299,13 @@ void NodeRenderer::drawShadow(const vec2f& pos){
     glVertex2f(0.0f, 0.0f);
 
     glTexCoord2f(1.0f,0.0f);
-    glVertex2f(node_size, 0.0f);
+    glVertex2f(size, 0.0f);
 
     glTexCoord2f(1.0f,1.0f);
-    glVertex2f(node_size, node_size*ratio);
+    glVertex2f(size, size*ratio);
 
     glTexCoord2f(0.0f,1.0f);
-    glVertex2f(0.0f, node_size*ratio);
+    glVertex2f(0.0f, size*ratio);
     glEnd();
 
     glPopMatrix();
