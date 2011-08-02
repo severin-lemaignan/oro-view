@@ -20,6 +20,7 @@
 
 #include <map>
 #include <vector>
+#include <set>
 
 #include "oroview_exceptions.h"
 
@@ -42,6 +43,11 @@ private:
 
     typedef std::vector<Edge> EdgeVector;
     EdgeVector edges;
+
+    /**
+      Stores pointers to the currently selected nodes
+      */
+    std::set<Node*> selectedNodes;
 
 public:
     Graph();
@@ -79,11 +85,13 @@ public:
       */
     Node& getRandomNode();
 
-    /**
-      Stores a pointer to the currently selected node, or NULL is no node is currently
-      selected.
+    void select(Node* node);
+    void deselect(Node* node);
+    void clearSelect();
+
+    /** If and only if ONE node is selected, return it. Else, returns NULL
       */
-    Node* selectedNode;
+    Node* getSelected();
 
     /**
       Adds a new node to the graph (if it doesn't exist yet) and returns a reference to the new node.
@@ -102,7 +110,7 @@ public:
     std::vector<Edge*> getEdgesBetween(const Node& node1, const Node& node2);
 
     /**
-      Computes and update for each node the distance to the selected node.
+      Computes and update for each node the distance to the closest selected node.
       */
     void updateDistances();
     void recurseUpdateDistances(Node* node, Node* parent, int distance);

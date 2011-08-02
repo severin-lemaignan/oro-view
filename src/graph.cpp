@@ -31,7 +31,6 @@ using namespace boost;
 
 Graph::Graph()
 {
-    selectedNode = NULL;
 }
 
 
@@ -104,6 +103,44 @@ Node& Graph::getRandomNode() {
     return it->second;
 }
 
+void Graph::select(Node *node) {
+
+   //Already selected?
+    if (node->selected) return;
+
+    node->setSelected(true);
+    selectedNodes.insert(node);
+
+    updateDistances();
+}
+
+void Graph::deselect(Node *node){
+
+    //Already deselected?
+    if (!node->selected) return;
+
+    node->setSelected(false);
+    selectedNodes.erase(node);
+
+    updateDistances();
+}
+
+void Graph::clearSelect(){
+    BOOST_FOREACH(Node* node, selectedNodes) {
+        node->setSelected(false);
+    }
+
+    selectedNodes.clear();
+
+    updateDistances();
+}
+
+Node* Graph::getSelected() {
+    if (selectedNodes.size() == 1)
+        return *selectedNodes.begin();
+
+    return NULL;
+}
 
 Node& Graph::addNode(const string& id, const string& label, const Node* neighbour, node_type type) {
 
@@ -172,7 +209,7 @@ vector<Edge*>  Graph::getEdgesBetween(const Node& node1, const Node& node2){
 void Graph::updateDistances() {
 
     // No node selected, set all distance to -1
-    if (selectedNode == NULL) {
+    if (selectedNodes.empty()) {
         // Renders nodes
         BOOST_FOREACH(NodeMap::value_type& n, nodes) {
             n.second.distance_to_selected = -1;
@@ -184,14 +221,17 @@ void Graph::updateDistances() {
     BOOST_FOREACH(NodeMap::value_type& n, nodes) {
         n.second.distance_to_selected_updated = false;
     }
-    recurseUpdateDistances(selectedNode, NULL, 0);
+
+    BOOST_FOREACH(Node* node, selectedNodes) {
+        recurseUpdateDistances(node, NULL, 0);
+    }
 
 }
 
 void Graph::recurseUpdateDistances(Node* node, Node* parent, int distance) {
     node->distance_to_selected = distance;
     node->distance_to_selected_updated = true;
-    TRACE("Node " << node->getID() << " is at " << distance << " nodes from selected");
+    TRACE("Node " << node->getID() << " is at " << distance << " nodes from closest selected");
 
     BOOST_FOREACH(Node* n, node->getConnectedNodes()){
         if (n != parent &&

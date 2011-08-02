@@ -64,8 +64,8 @@ class OroView : public SDLApp {
     //Nodes & users
 
     Node* hoverNode;
-    Node* selectedNode;
     void selectNode(Node* node);
+    void addSelectedNode(Node* node);
     Bounds2D nodesBounds;
     bool display_node_infos;
 
@@ -78,7 +78,8 @@ class OroView : public SDLApp {
     GLint mouse_hits;
 
     bool mousemoved;
-    bool mouseclicked;
+    bool mouseleftclicked;
+    bool mouserightclicked;
     bool mousedragged;
 
     float mouse_inactivity;
@@ -100,14 +101,14 @@ class OroView : public SDLApp {
 
     /**
      * When true, display in the application debug infos like framerate.
-     * 
+     *
      * Normally, activated by pushing on D during runtime
      */
     bool debug;
-    
+
     /**
      * When true, display advanced debug infos like force vectors
-     * 
+     *
      * Normally, activated by pushing two times on D during runtime
      */
     bool advanced_debug;
@@ -132,7 +133,6 @@ class OroView : public SDLApp {
     //Camera
 
     void updateCamera(float dt);
-    void toggleCameraMode();
     void zoom(bool zoomin);
 
     //Testing

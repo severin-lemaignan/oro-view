@@ -45,7 +45,6 @@ OroView::OroView()
     //Nodes & users
 
     hoverNode = NULL;
-    selectedNode = NULL;
 
     track_users = false;
     selectedUser = NULL;
@@ -53,7 +52,8 @@ OroView::OroView()
     //Mouse
 
     mousemoved = false;
-    mouseclicked = false;
+    mouseleftclicked = false;
+    mouserightclicked = false;
     mousedragged = false;
 
     backgroundSelected = false;
@@ -125,10 +125,6 @@ void OroView::keyPress(SDL_KeyboardEvent *e) {
         //            gGourceQuadTreeDebug = !gGourceQuadTreeDebug;
         //        }
 
-        if (e->keysym.sym == SDLK_c) {
-            toggleCameraMode();
-        }
-
         if (e->keysym.sym == SDLK_SPACE) {
             //addRandomNodes(2, 2);
             updateCurrentNode();
@@ -183,20 +179,25 @@ void OroView::mouseClick(SDL_MouseButtonEvent *e) {
     }
 
     if(e->button == SDL_BUTTON_RIGHT) {
-        toggleCameraMode();
+        mousepos = vec2f(e->x, e->y);
+        mouserightclicked=true;
+
         return;
     }
 
     if(e->button == SDL_BUTTON_LEFT) {
 
         mousepos = vec2f(e->x, e->y);
-        mouseclicked=true;
+        mouseleftclicked=true;
     }
+
 }
 
 void OroView::mouseMove(SDL_MouseMotionEvent *e) {
 
     mousepos = vec2f(e->x, e->y);
+
+    Node* selectedNode = g.getSelected();
 
     //move camera in direction the user dragged the mouse
     if(mousedragged) {
@@ -266,7 +267,7 @@ void OroView::logic(float t, float dt) {
 
     //check if mouse has been inactive for 3 seconds
     //and if so hide it.
-    if(!mouseclicked && mouse_inactivity<3.0) {
+    if(!mouseleftclicked && !mouserightclicked && mouse_inactivity<3.0) {
         mouse_inactivity += dt;
 
         if(mouse_inactivity>=3.0) {
@@ -389,16 +390,22 @@ void OroView::mouseTrace(Frustum& frustum, float dt) {
         //	hoverUser=0;
     }
 
-    if(mouseclicked) {
+    if(mouseleftclicked) {
         mousedragged=true;
         if(hoverNode!=NULL) selectNode(hoverNode);
         //	else if(hoverUser!=0) selectUser(hoverUser);
         else selectBackground();
     }
+
+    if(mouserightclicked) {
+        if(hoverNode!=NULL) addSelectedNode(hoverNode);
+    }
 }
 
 /** Drawing */
 void OroView::draw(float t, float dt) {
+
+    Node* selectedNode = g.getSelected();
 
 #ifndef TEXT_ONLY
 
@@ -534,8 +541,8 @@ void OroView::draw(float t, float dt) {
             font.print(30,300,"Charge: %.2f", hoverNode->charge);
             font.print(30,320,"Kinetic energy: %.2f", hoverNode->kinetic_energy);
             font.print(30,340,"Number of relations: %d", hoverNode->getRelations().size());
-            font.print(30,360,"Distance to selected node (%s): %d",
-                       (selectedNode == NULL) ? "none" : selectedNode->getID().c_str(),
+            font.print(30,360,"Distance to closest selected node (%s): %d",
+                       (selectedNode == NULL) ? "N/A" : selectedNode->getID().c_str(),
                         hoverNode->distance_to_selected);
         }
 
@@ -555,7 +562,8 @@ void OroView::draw(float t, float dt) {
 
 
     mousemoved=false;
-    mouseclicked=false;
+    mouseleftclicked=false;
+    mouserightclicked=false;
 #endif
 
 }
@@ -640,6 +648,8 @@ void OroView::updateCamera(float dt) {
 
     //camera tracking
 
+    Node* selectedNode = g.getSelected();
+
     if(backgroundSelected) {
         Bounds2D mousebounds;
         mousebounds.update(backgroundPos);
@@ -667,10 +677,6 @@ void OroView::setCameraMode(bool track_users) {
     this->track_users = track_users;
     if(selectedUser!=NULL) camera.lockOn(track_users);
     backgroundSelected=false;
-}
-
-void OroView::toggleCameraMode() {
-    setCameraMode(!track_users);
 }
 
 void OroView::zoom(bool zoomin) {
@@ -728,33 +734,19 @@ void OroView::selectBackground() {
 //select a node, deselect current node
 void OroView::selectNode(Node* node) {
 
-    //already selected do nothing
-    if(node!=NULL && selectedNode==node) return;
+    backgroundSelected=false;
+
+    g.clearSelect();
+    g.select(node);
+}
+
+//select a node, keep currently selected node
+void OroView::addSelectedNode(Node* node) {
 
     backgroundSelected=false;
-    //
-    //    if(selectedUser != 0) {
-    //        selectedUser->setSelected(false);
-    //        selectedUser = 0;
-    //    }
 
-    // deselect current node
-    if(selectedNode != NULL) {
-        selectedNode->setSelected(false);
-        selectedNode = NULL;
-    }
-
-    //if no file return
-    if(node == NULL) {
-        return;
-    }
-
-    selectedNode = node;
-
-    //select node, lock on camera, recompute distances to this selected node
-    selectedNode->setSelected(true);
-    g.selectedNode = node;
-    g.updateDistances();
+    if (node->selected) g.deselect(node);
+    else g.select(node);
 }
 
 //Add node
@@ -845,8 +837,13 @@ Node& OroView::getNode(const std::string &id) {
 }
 
 void OroView::updateCurrentNode() {
-    cout << "Updating node " << selectedNode->getID() << endl;
-    oro.walkThroughOntology(selectedNode->getID(), 1, this);
+    Node* selectedNode = g.getSelected();
+
+    if (selectedNode != NULL) {
+        cout << "Updating node " << selectedNode->getID() << endl;
+        oro.walkThroughOntology(selectedNode->getID(), 1, this);
+    }
+    else cout << "Select only one node to expand it." << endl;
 }
 
 /** Testing */
