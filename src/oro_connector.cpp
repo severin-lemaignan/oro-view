@@ -31,7 +31,8 @@ using namespace boost;
 
 
 
-OntologyConnector::OntologyConnector() : sc("localhost", "6969")
+OntologyConnector::OntologyConnector(const string& host, const string& port) : 
+    sc(host, port)
 {
 
     oro = Ontology::createWithConnector(sc);

@@ -33,9 +33,12 @@
 using namespace std;
 
 OroView::OroView(const Json::Value& config):
-    config(config)
+    config(config),
+    oro(config.get("oro_host", "localhost").asString(),
+        config.get("oro_port", "6969").asString())
 {
 
+    
     time_scale = 1.0f;
     runtime = 0.0f;
     framecount = 0;

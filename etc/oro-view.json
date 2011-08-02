@@ -1,4 +1,6 @@
 //This is the default configuration file for oro-view
 {
-  "initial_concept": "myself"
+  "initial_concept": "myself",
+  "oro_host": "localhost",
+  "oro_port": "6969"
 }

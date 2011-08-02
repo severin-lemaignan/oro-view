@@ -32,7 +32,7 @@ class OroView;
 class OntologyConnector : public oro::OroEventObserver {
 
 public:
-    OntologyConnector();
+    OntologyConnector(const std::string& host, const std::string& port);
 
     void walkThroughOntology(const std::string& from_node, int depth, OroView* graph);
 
