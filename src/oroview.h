@@ -19,6 +19,8 @@
 #ifndef OROVIEW_H
 #define OROVIEW_H
 
+#include <json/json.h>
+
 #include "core/display.h"
 #include "core/sdlapp.h"
 #include "core/frustum.h"
@@ -36,6 +38,9 @@
 class Node;
 
 class OroView : public SDLApp {
+
+    //General configuration
+    Json::Value config;
 
     //Graph
     Graph g;
@@ -146,7 +151,7 @@ class OroView : public SDLApp {
 
 
 public:
-    OroView();
+    OroView(const Json::Value& config);
 
     //Public resources
     FXFont font, fontlarge, fontmedium;

@@ -16,7 +16,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-
+#include <json/json.h>
 #include "macros.h"
 
 #include "core/sdlapp.h"
@@ -26,12 +26,34 @@
 
 using namespace std;
 
+/** Reads a file to a string. Borrowed from jsoncpp test suite
+ */
+static std::string readConfigurationFile( const char *path )
+{
+   FILE *file = fopen( path, "rb" );
+   if ( !file )
+      return std::string("");
+   fseek( file, 0, SEEK_END );
+   long size = ftell( file );
+   fseek( file, 0, SEEK_SET );
+   std::string text;
+   char *buffer = new char[size+1];
+   buffer[size] = 0;
+   if ( fread( buffer, 1, size, file ) == (unsigned long)size )
+      text = buffer;
+   fclose( file );
+   delete[] buffer;
+   return text;
+}
+
+
 void usage() {
-	cout << "Usage: oro-view [OPTION...]" << endl << endl;
+	cout << "Usage: oro-view [OPTION...] [configuration]" << endl << endl;
 	cout << "  -h          display this message and exits" << endl;
 	cout << "  -i file     load an input file" << endl;
 	cout << "  -f          fullscreen mode" << endl;
 	cout << "  -LxH        windowed mode, LxH pixels window" << endl;
+	cout << "  configuration a configuration file, in JSON format" << endl;
 	cout << endl;
 	cout << "oro-view is an OpenGL-based visualization tool for RDF/OWL";
 	cout << " ontologies" << endl;
@@ -42,12 +64,14 @@ void usage() {
 
 int main(int argc, char *argv[]) {
 	
-	if (argc > 1 && !strcmp(argv[1],"-h")) {
-		usage();
-		exit(0);
-	}
+    Json::Value config;
+    
+    if (argc > 1 && !strcmp(argv[1],"-h")) {
+	usage();
+	exit(0);
+   }
 
-	string file_path  = "";
+    string file_path  = "";
     int width  = 1024;
     int height = 768;
     bool fullscreen=false;
@@ -71,7 +95,19 @@ int main(int argc, char *argv[]) {
 
 	if (file_path != "")
 		cout << "Using input file " << file_path << endl;
-		
+	
+	if (!arguments.empty()) {
+		cout << "Using configuration file " << arguments[0] << endl;
+		Json::Reader reader;
+		bool parsingOk = reader.parse(readConfigurationFile(arguments[0].c_str()), config);
+		if (!parsingOk) {
+			cout << "Error while parsing the configuration file!\n" 
+			     //<< reader.getFormattedErrorMessages();
+				<<endl;
+			exit(1);
+		}
+	}
+	
 #ifndef TEXT_ONLY
 
 	// this causes corruption on some video drivers
@@ -98,7 +134,7 @@ int main(int argc, char *argv[]) {
     OroView* oroview = NULL;
 
     try {
-	oroview = new OroView();
+	oroview = new OroView(config);
 
 	 if(camera_mode == "track") {
 	    oroview->setCameraMode(true);

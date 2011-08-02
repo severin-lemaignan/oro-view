@@ -21,6 +21,8 @@
 #include <boost/foreach.hpp>
 #include <boost/algorithm/string/predicate.hpp>
 
+#include <json/json.h>
+
 #include "macros.h"
 #include "oroview.h"
 
@@ -30,7 +32,8 @@
 
 using namespace std;
 
-OroView::OroView()
+OroView::OroView(const Json::Value& config):
+    config(config)
 {
 
     time_scale = 1.0f;
@@ -93,13 +96,17 @@ void OroView::init(){
 
     TRACE("*** Initialization ***");
 
-    g.addNode(ROOT_CONCEPT, ROOT_CONCEPT, NULL, INSTANCE_NODE);
+    string root = config.get("initial_concept", ROOT_CONCEPT).asString();
+
+    g.addNode(ROOT_CONCEPT, ROOT_CONCEPT, NULL, CLASS_NODE);
+
+    cout << "Starting with concept " << root << endl;
 
     //addRandomNodes(3, 2);
 
     //addNodeConnectedTo("Animal", ROOT_CONCEPT, SUBCLASS, "subclass");
 
-    oro.walkThroughOntology(ROOT_CONCEPT, 2, this);
+    oro.walkThroughOntology(root, 2, this);
 
     TRACE("*** Graph created and populated ***");
     TRACE("*** STARTING MAIN LOOP ***");

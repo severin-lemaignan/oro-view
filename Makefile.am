@@ -39,12 +39,7 @@ CPPFLAGS = -DSDLAPP_RESOURCE_DIR=\"$(pkgdatadir)\"
 
 dist_pkgdata_DATA = data/beam.png data/bloom.tga data/classes.png data/instances.png data/literals.png data/no_photo.png data/gource.style data/yes.png data/no.png data/comment.png
 
-install-data-hook:
-	mkdir -p -m 755 ${DESTDIR}/$(mandir)/man1
-	gzip -cf9 data/oroview.1 > $(DESTDIR)$(mandir)/man1/oroview.1.gz
-
-uninstall-hook:
-	rm -f $(DESTDIR)$(mandir)/man1/oroview.1.gz
+dist_sysconf_DATA = etc/oro-view.json
 
 if FONTDIR
 CPPFLAGS += -DSDLAPP_FONT_DIR=\"$(oroviewfontdir)\"
