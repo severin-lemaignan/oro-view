@@ -18,24 +18,37 @@
 #ifndef ORO_CONNECTOR_H
 #define ORO_CONNECTOR_H
 
+#include <set>
+#include <string>
+
+#include <boost/thread/mutex.hpp>
+
 #include "oro.h"
 #include "socket_connector.h"
 #include "constants.h"
 
 class OroView;
 
-class OntologyConnector {
-    
+class OntologyConnector : public oro::OroEventObserver {
+
 public:
     OntologyConnector();
-    
+
     void walkThroughOntology(const std::string& from_node, int depth, OroView* graph);
-    
+
+    const std::set<std::string> popActiveConceptsId();
+
+    // Callback for oro events
+    void operator()(const oro::OroEvent& evt);
 private:
+
+    std::set<std::string> active_concepts_id;
     oro::Ontology *oro;
     oro::SocketConnector sc;
-    
-    const std::string get_edge_label(relation_type type, const std::string& original_label);
+
+    mutable boost::mutex active_concept_mutex;
+
+    const std::string getEdgeLabel(relation_type type, const std::string& original_label);
 };
 
 #endif // ORO_CONNECTOR_H

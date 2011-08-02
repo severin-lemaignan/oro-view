@@ -17,6 +17,8 @@
 */
 
 #include <string>
+
+#include <boost/foreach.hpp>
 #include <boost/algorithm/string/predicate.hpp>
 
 #include "macros.h"
@@ -276,6 +278,19 @@ void OroView::logic(float t, float dt) {
 
         if(mouse_inactivity>=3.0) {
             SDL_ShowCursor(false);
+        }
+    }
+
+    BOOST_FOREACH(string id, oro.popActiveConceptsId()) {
+        try {
+            g.getNode(id).tickle();
+        }
+        catch(OroViewException& exception) {
+            cout << "One of the active concept do not exist yet: " << id << ". Creating it." << endl;
+            addNodeConnectedTo(id, id, ROOT_CONCEPT, UNDEFINED, "");
+            g.getNode(id).tickle();
+            oro.walkThroughOntology(id, 1, this);
+
         }
     }
 
