@@ -98,6 +98,10 @@ public:
 
     void setColour(vec4f col);
 
+    /** 'Activates' the node by briefly changing its color, and fading back to
+      the original hue.
+      */
+    void tickle();
     void setSelected(bool selected);
 };
 

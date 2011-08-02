@@ -208,6 +208,12 @@ void Node::render(rendering_mode mode, OroView& env, bool debug){
 
 }
 
+void Node::tickle() {
+    renderer.decaySpeed = 0.2;
+    renderer.col = SELECTED_COLOUR;
+    renderer.size = NODE_SIZE * SELECT_SIZE_FACTOR * 2.0;
+}
+
 void Node::setSelected(bool select) {
 
     if ((select && selected)||

@@ -130,6 +130,10 @@ void OroView::keyPress(SDL_KeyboardEvent *e) {
             updateCurrentNode();
         }
 
+        if (e->keysym.sym == SDLK_t) {
+            g.getRandomNode().tickle();
+        }
+
         if (e->keysym.sym == SDLK_p) {
             paused = !paused;
         }
