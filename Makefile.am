@@ -37,7 +37,7 @@ oroview_SOURCES = \
 
 CPPFLAGS = -DSDLAPP_RESOURCE_DIR=\"$(pkgdatadir)\"
 
-dist_pkgdata_DATA = data/beam.png data/bloom.tga data/classes.png data/instances.png data/literals.png data/no_photo.png data/gource.style
+dist_pkgdata_DATA = data/beam.png data/bloom.tga data/classes.png data/instances.png data/literals.png data/no_photo.png data/gource.style data/yes.png data/no.png data/comment.png
 
 install-data-hook:
 	mkdir -p -m 755 ${DESTDIR}/$(mandir)/man1
