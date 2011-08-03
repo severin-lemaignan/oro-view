@@ -101,13 +101,8 @@ void OroView::init(){
 
     string root = config.get("initial_concept", ROOT_CONCEPT).asString();
 
-    g.addNode(ROOT_CONCEPT, ROOT_CONCEPT, NULL, CLASS_NODE);
-
+    oro.addNode(root, g);
     cout << "Starting with concept " << root << endl;
-
-    //addRandomNodes(3, 2);
-
-    //addNodeConnectedTo("Animal", ROOT_CONCEPT, SUBCLASS, "subclass");
 
     oro.walkThroughOntology(root, 2, this);
 

@@ -26,6 +26,7 @@
 #include "oro.h"
 #include "socket_connector.h"
 #include "constants.h"
+#include "graph.h"
 
 class OroView;
 
@@ -34,6 +35,7 @@ class OntologyConnector : public oro::OroEventObserver {
 public:
     OntologyConnector(const std::string& host, const std::string& port);
 
+    void addNode(const std::string& id, Graph& g);
     void walkThroughOntology(const std::string& from_node, int depth, OroView* graph);
 
     const std::set<std::string> popActiveConceptsId();

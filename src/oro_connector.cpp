@@ -31,7 +31,7 @@ using namespace boost;
 
 
 
-OntologyConnector::OntologyConnector(const string& host, const string& port) : 
+OntologyConnector::OntologyConnector(const string& host, const string& port) :
     sc(host, port)
 {
 
@@ -85,6 +85,21 @@ const set<string> OntologyConnector::popActiveConceptsId()
     return res;
 }
 
+void OntologyConnector::addNode(const string& id, Graph& g) {
+
+    string label = oro->getLabel(id);
+    string type = oro->lookup(id)[id];
+
+    node_type ntype;
+
+    if (type == "INSTANCE") ntype = INSTANCE_NODE;
+    else if (type == "CLASS") ntype = CLASS_NODE;
+
+    cout << "Adding node " << id << " of type " << type << " with label " << label <<endl;
+
+    g.addNode(id, label, NULL, ntype);
+}
+
 void OntologyConnector::walkThroughOntology(const string& from_node, int depth, OroView* graph) {
 
     if (depth == 0) return;
@@ -92,7 +107,6 @@ void OntologyConnector::walkThroughOntology(const string& from_node, int depth, 
     //We need a collate object to compute hashes of literals
     locale loc;                 // the "C" locale
     const collate<char>& coll = use_facet<collate<char> >(loc);
-
 
     string details;
     string id;
