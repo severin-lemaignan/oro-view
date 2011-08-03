@@ -45,6 +45,6 @@ if FONTDIR
 CPPFLAGS += -DSDLAPP_FONT_DIR=\"$(oroviewfontdir)\"
 else
 fontsdir = $(pkgdatadir)/fonts
-dist_fonts_DATA = data/fonts/README data/fonts/FreeSans.ttf
+dist_fonts_DATA = data/fonts/Aller_Lt.ttf data/fonts/Aller_Bd.ttf
 endif
 
