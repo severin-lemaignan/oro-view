@@ -100,6 +100,12 @@ class OroView : public SDLApp {
 
     void selectBackground();
 
+    //Footer content maps a text to write to it's X coordinate.
+    std::map<std::string, int> footer_content;
+    void queueInFooter(const std::string& text);
+    void queueNodeInFooter(const std::string& id);
+    void drawFooter();
+
     //Loading screen
     bool draw_loading;
     void loadingScreen();

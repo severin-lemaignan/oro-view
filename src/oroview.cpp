@@ -38,7 +38,7 @@ OroView::OroView(const Json::Value& config):
         config.get("oro_port", "6969").asString())
 {
 
-    
+
     time_scale = 1.0f;
     runtime = 0.0f;
     framecount = 0;
@@ -289,11 +289,13 @@ void OroView::logic(float t, float dt) {
     BOOST_FOREACH(string id, oro.popActiveConceptsId()) {
         try {
             g.getNode(id).tickle();
+            queueNodeInFooter(id);
         }
         catch(OroViewException& exception) {
             cout << "One of the active concept do not exist yet: " << id << ". Creating it." << endl;
-            addNodeConnectedTo(id, id, ROOT_CONCEPT, UNDEFINED, "");
+            oro.addNode(id, g);
             g.getNode(id).tickle();
+            queueNodeInFooter(id);
             oro.walkThroughOntology(id, 1, this);
 
         }
@@ -572,15 +574,7 @@ void OroView::draw(float t, float dt) {
 
     }
 
-    if(selectedNode != NULL && display_node_infos) {
-        vec3f campos = camera.getPos();
-
-        glDisable(GL_TEXTURE_2D);
-        glColor4f(1.0f, 1.0f, 0.8f, 0.7f);
-
-        fontmedium.print(40,640, "%s   (ID = %s)", selectedNode->renderer.getLabel().c_str(), selectedNode->getID().c_str());
-
-    }
+    drawFooter();
 
     glDisable(GL_TEXTURE_2D);
 
@@ -595,6 +589,46 @@ void OroView::draw(float t, float dt) {
 void OroView::drawBackground(float dt) {
     display.setClearColour(background_colour);
     display.clear();
+}
+
+void OroView::queueNodeInFooter(const string& id) {
+    queueInFooter(g.getNode(id).renderer.getLabel());
+}
+void OroView::queueInFooter(const string& text) {
+
+    int max_x = display.width + 10;
+
+    // Ensure we do not overlap with previous text
+    typedef pair<const string, int> mypair;
+    BOOST_FOREACH(mypair elem, footer_content) {
+        int x = elem.second + fontlarge.getWidth(elem.first);
+        max_x = max(x + 50, max_x);
+    }
+
+    footer_content[text] = max_x;
+}
+
+void OroView::drawFooter() {
+
+    glColor4f(1.0f, 1.0f, 0.8f, 0.7f);
+
+    for( map<string, int>::iterator iter = footer_content.begin() ;
+         iter != footer_content.end() ;
+         ) {
+
+        if (iter->second < -fontlarge.getWidth(iter->first)) {
+            map<string, int>::iterator elem_to_remove = iter++;
+            footer_content.erase(elem_to_remove);
+            continue;
+        }
+
+        fontlarge.print(iter->second,display.height - fontlarge.getFontSize() - 20, "%s", iter->first.c_str());
+
+        iter->second -= FOOTER_SPEED;
+
+        iter++;
+    }
+
 }
 
 void OroView::loadingScreen() {
@@ -758,10 +792,14 @@ void OroView::selectBackground() {
 //select a node, deselect current node
 void OroView::selectNode(Node* node) {
 
+    if (node->selected) return;
+
     backgroundSelected=false;
 
     g.clearSelect();
     g.select(node);
+
+    queueNodeInFooter(node->getID());
 }
 
 //select a node, keep currently selected node
@@ -770,7 +808,10 @@ void OroView::addSelectedNode(Node* node) {
     backgroundSelected=false;
 
     if (node->selected) g.deselect(node);
-    else g.select(node);
+    else {
+        g.select(node);
+        queueNodeInFooter(node->getID());
+    }
 }
 
 //Add node
