@@ -92,7 +92,7 @@ float FXFont::getWidth(std::string text) {
     return width;
 }
 
-void FXFont::render(float x, float y, std::string text) {
+void FXFont::render(float x, float y, const std::string& text) {
 
 
     if(round) {
@@ -121,7 +121,7 @@ void FXFont::print(float x, float y, const char *str, ...) {
     draw(x, y, text);
 }
 
-void FXFont::draw(float x, float y, std::string text) {
+void FXFont::draw(float x, float y, const std::string& text) {
 
     if(align_right) {
         x -= getWidth(text);

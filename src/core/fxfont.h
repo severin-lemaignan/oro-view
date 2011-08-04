@@ -56,7 +56,7 @@ class FXFont {
 
     bool align_right, align_top;
 
-    void render(float x, float y, std::string text);
+    void render(float x, float y, const std::string& text);
     void init();
 public:
     FXFont();
@@ -65,7 +65,7 @@ public:
     FTFont* getFTFont();
 
     void print(float x, float y, const char *str, ...);
-    void draw(float x, float y, std::string text);
+    void draw(float x, float y, const std::string& text);
 
     float getWidth(std::string text);
 

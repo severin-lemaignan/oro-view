@@ -50,7 +50,7 @@ void EdgeRenderer::draw(rendering_mode mode, OroView& env, int distance_to_selec
         break;
 
     case NAMES:
-        drawName(env.font);
+        if (!label.empty()) drawName(env.font);
         break;
 
     case SHADOWS:

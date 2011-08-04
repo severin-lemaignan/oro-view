@@ -166,7 +166,7 @@ void NodeRenderer::draw(const vec2f& pos, rendering_mode mode, OroView& env, int
         break;
 
     case NAMES:
-        drawName(pos, env.font);
+        if(!label.empty()) drawName(pos, env.font);
 
         break;
 
