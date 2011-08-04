@@ -30,46 +30,46 @@ using namespace std;
  */
 static std::string readConfigurationFile( const char *path )
 {
-   FILE *file = fopen( path, "rb" );
-   if ( !file )
-      return std::string("");
-   fseek( file, 0, SEEK_END );
-   long size = ftell( file );
-   fseek( file, 0, SEEK_SET );
-   std::string text;
-   char *buffer = new char[size+1];
-   buffer[size] = 0;
-   if ( fread( buffer, 1, size, file ) == (unsigned long)size )
-      text = buffer;
-   fclose( file );
-   delete[] buffer;
-   return text;
+    FILE *file = fopen( path, "rb" );
+    if ( !file )
+        return std::string("");
+    fseek( file, 0, SEEK_END );
+    long size = ftell( file );
+    fseek( file, 0, SEEK_SET );
+    std::string text;
+    char *buffer = new char[size+1];
+    buffer[size] = 0;
+    if ( fread( buffer, 1, size, file ) == (unsigned long)size )
+        text = buffer;
+    fclose( file );
+    delete[] buffer;
+    return text;
 }
 
 
 void usage() {
-	cout << "Usage: oro-view [OPTION...] [configuration]" << endl << endl;
-	cout << "  -h          display this message and exits" << endl;
-	cout << "  -i file     load an input file" << endl;
-	cout << "  -f          fullscreen mode" << endl;
-	cout << "  -LxH        windowed mode, LxH pixels window" << endl;
-	cout << "  configuration a configuration file, in JSON format" << endl;
-	cout << endl;
-	cout << "oro-view is an OpenGL-based visualization tool for RDF/OWL";
-	cout << " ontologies" << endl;
-	cout << "Séverin Lemaignan, LAAS-CNRS 2010, based on Gource by ";
-	cout << "Andrew Caudwell" << endl << endl;
-	cout << "Report bugs to openrobots@laas.fr" << endl;
+    cout << "Usage: oro-view [OPTION...] [configuration]" << endl << endl;
+    cout << "  -h          display this message and exits" << endl;
+    cout << "  -i file     load an input file" << endl;
+    cout << "  -f          fullscreen mode" << endl;
+    cout << "  -LxH        windowed mode, LxH pixels window" << endl;
+    cout << "  configuration a configuration file, in JSON format" << endl;
+    cout << endl;
+    cout << "oro-view is an OpenGL-based visualization tool for RDF/OWL";
+    cout << " ontologies" << endl;
+    cout << "Séverin Lemaignan, LAAS-CNRS 2010, based on Gource by ";
+    cout << "Andrew Caudwell" << endl << endl;
+    cout << "Report bugs to openrobots@laas.fr" << endl;
 }
 
 int main(int argc, char *argv[]) {
-	
+
     Json::Value config;
-    
+
     if (argc > 1 && !strcmp(argv[1],"-h")) {
-	usage();
-	exit(0);
-   }
+        usage();
+        exit(0);
+    }
 
     string file_path  = "";
     int width  = 1024;
@@ -92,26 +92,25 @@ int main(int argc, char *argv[]) {
 
     SDLAppParseArgs(argc, argv, file_path, &width, &height, &fullscreen, &arguments);
 
-	if (file_path != "")
-		cout << "Using input file " << file_path << endl;
-	
-	if (!arguments.empty()) {
-		cout << "Using configuration file " << arguments[0] << endl;
-		Json::Reader reader;
-		bool parsingOk = reader.parse(readConfigurationFile(arguments[0].c_str()), config);
-		if (!parsingOk) {
-			cout << "Error while parsing the configuration file!\n" 
-			     //<< reader.getFormattedErrorMessages();
-				<<endl;
-			exit(1);
-		}
-	}
-	
+    if (file_path != "")
+        cout << "Using input file " << file_path << endl;
+
+    if (!arguments.empty()) {
+        cout << "Using configuration file " << arguments[0] << endl;
+        Json::Reader reader;
+        bool parsingOk = reader.parse(readConfigurationFile(arguments[0].c_str()), config);
+        if (!parsingOk) {
+            cout << "Error while parsing the configuration file!\n"
+                 << reader.getFormatedErrorMessages();
+            exit(1);
+        }
+    }
+
 #ifndef TEXT_ONLY
 
-	// this causes corruption on some video drivers
+    // this causes corruption on some video drivers
     if(multisample) {
-	display.multiSample(4);
+        display.multiSample(4);
     }
 
     //enable vsync
@@ -119,11 +118,11 @@ int main(int argc, char *argv[]) {
 
     try {
 
-	display.init("ORO View", width, height, fullscreen);
+        display.init("ORO View", width, height, fullscreen);
 
     } catch(SDLInitException& exception) {
 
-	throw OroViewException(string("SDL initialization failed ") + exception.what());
+        throw OroViewException(string("SDL initialization failed ") + exception.what());
     }
 
     if(multisample) glEnable(GL_MULTISAMPLE_ARB);
@@ -133,19 +132,19 @@ int main(int argc, char *argv[]) {
     OroView* oroview = NULL;
 
     try {
-    oroview = new OroView(config);
+        oroview = new OroView(config);
 
-     if(camera_mode == "track") {
-        oroview->setCameraMode(true);
-    }
+        if(camera_mode == "track") {
+            oroview->setCameraMode(true);
+        }
 
-    oroview->run();
+        oroview->run();
 
     } catch(ResourceException& exception) {
 
-    if (oroview != NULL) delete oroview;
+        if (oroview != NULL) delete oroview;
 
-    throw OroViewException(string("failed to load resource ") + exception.what());
+        throw OroViewException(string("failed to load resource ") + exception.what());
 
     }
 
