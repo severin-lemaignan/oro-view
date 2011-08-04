@@ -31,9 +31,6 @@ class NodeRenderer
 {
 
     float idle_time;
-    // Time counter for decaying
-    float decayTime;
-    bool decaying;
 
     std::string label;
 
@@ -71,9 +68,8 @@ public:
 
     vec4f col;
     float size;
+    float decayRatio;
 
-    // Speed factor, used to decay slower after tickling
-    float decaySpeed;
 
     void draw(const vec2f& pos, rendering_mode mode, OroView& env, int distance_to_selected = -1);
 

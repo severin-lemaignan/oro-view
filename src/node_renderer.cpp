@@ -29,9 +29,6 @@ NodeRenderer::NodeRenderer(int tagid, string label, node_type type) :
     label(label),
     type(type),
     idle_time(0.0),
-    decayTime(0.0),
-    decaySpeed(1.0),
-    decaying(true),
     hovered(false),
     selected(false),
     current_distance_to_selected(-1),
@@ -95,37 +92,10 @@ void NodeRenderer::computeColourSize() {
 
 void NodeRenderer::decay() {
 
-    if (  abs(col.x - base_col.x) > 0.001
-       || abs(col.y - base_col.y) > 0.001
-       || abs(col.z - base_col.z) > 0.001 //do not compare alpha values
-       || abs(size - base_size) > 0.001 ) {
-        decaying = true;
-
-        // At start, ratio = 1.0 => 100% 'new color/size'
-        // At end, ratio = 0.0 => 100% 'base color/size'
-        float decayRatio = 1.0 - decayTime / (COLOUR_DECAY_TIME * 100.0 / decaySpeed);
-
-        if (decayRatio < 0.0) {
-            // End of decay period
-            decaying = false;
-            decayTime = 0.0;
-            decaySpeed = 1.0;
-            col = base_col;
-            size = base_size;
-            return;
-        }
-
+    if (decayRatio > 0.0) {
         col = base_col + ((col - base_col) * decayRatio);
         size = base_size + ((size - base_size) * decayRatio);
-
-        return;
-
     }
-
-    // Default: no decaying
-    decaying = false;
-    col = base_col;
-    size = base_size;
 }
 
 float NodeRenderer::getAlpha() {
@@ -147,8 +117,6 @@ float NodeRenderer::getAlpha() {
 void NodeRenderer::increment_idle_time(float dt) {
     if (selected || hovered || current_distance_to_selected <= 1) idle_time = 0.0;
     else idle_time += dt;
-
-    if (decaying) decayTime += dt;
 }
 
 void NodeRenderer::draw(const vec2f& pos, rendering_mode mode, OroView& env, int distance_to_selected) {

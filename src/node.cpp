@@ -36,8 +36,13 @@ Node::Node(const string& id, const string& label, const Node* neighbour, node_ty
     id(id),
     renderer(NodeRenderer(hash_value(id), label, type)),
     selected(false),
+    decayTime(0.0),
+    decaySpeed(1.0),
+    decaying(true),
     distance_to_selected(-1),
-    distance_to_selected_updated(false)
+    distance_to_selected_updated(false),
+    base_charge(INITIAL_CHARGE),
+    charge(INITIAL_CHARGE)
 {
 
     //If a neighbour is given, we set our initial position close to it.
@@ -51,7 +56,6 @@ Node::Node(const string& id, const string& label, const Node* neighbour, node_ty
     mass = INITIAL_MASS;
     damping = INITIAL_DAMPING;
 
-    charge = INITIAL_CHARGE;
 
 }
 
@@ -179,6 +183,8 @@ void Node::step(Graph& g, float dt){
         pos += speed * dt;
     }
 
+        if (decaying) decayTime += dt;
+        decay();
         //Update the age of the node renderer
         renderer.increment_idle_time(dt);
 
@@ -208,10 +214,31 @@ void Node::render(rendering_mode mode, OroView& env, bool debug){
 
 }
 
+void Node::decay() {
+
+    if(decaying) {
+        float decayRatio = 1.0 - decayTime / (DECAY_TIME * 100.0 / decaySpeed);
+
+        if (decayRatio < 0.0) {
+            // End of decay period
+            decayRatio = 0.0;
+            decaying = false;
+            decayTime = 0.0;
+            decaySpeed = 1.0;
+        }
+
+        renderer.decayRatio = decayRatio;
+
+        charge = base_charge + ((charge - base_charge) * decayRatio);
+    }
+}
+
 void Node::tickle() {
-    renderer.decaySpeed = 0.2;
+    decaying = true;
+    decaySpeed = 0.2;
     renderer.col = SELECTED_COLOUR;
     renderer.size = NODE_SIZE * SELECT_SIZE_FACTOR * 2.0;
+    charge *= 50;
 }
 
 void Node::setSelected(bool select) {

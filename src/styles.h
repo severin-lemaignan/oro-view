@@ -30,7 +30,7 @@ static const int MAX_NODE_LEVELS = 6; //how many levels of nodes are displayed a
 static const int FOOTER_SPEED = 4; //how fast item names move on the bottom of the screen
 
 static const float FADE_TIME = 25.0; //idle time (in sec) before labels vanish
-static const float COLOUR_DECAY_TIME = 2.0; //idle time (in sec) before labels vanish
+static const float DECAY_TIME = 2.0; //idle time (in sec) before labels vanish
 static const float SHADOW_STRENGTH = 0.5; //intensity of shadows (from 0.0 to 1.0)
 static const vec2f SHADOW_OFFSET(1.0, 1.0); //offset of shadows
 

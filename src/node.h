@@ -31,6 +31,14 @@ class Graph;
 
 class Node
 {
+    // Time counter for decaying
+    float decayTime;
+    bool decaying;
+    // Speed factor, used to decay slower after tickling
+    float decaySpeed;
+
+    float base_charge;
+
     std::vector<NodeRelation> relations;
 
     std::string id;
@@ -95,6 +103,8 @@ public:
       primitive in OpenGL GL_SELECT mode.
       */
     void render(rendering_mode mode, OroView& env, bool debug = false);
+
+    void decay();
 
     void setColour(vec4f col);
 
