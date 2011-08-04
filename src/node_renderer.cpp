@@ -50,11 +50,11 @@ NodeRenderer::NodeRenderer(int tagid, string label, node_type type) :
         icon = texturemanager.grab("instances.png");
     }
     else if (type == LITERAL_NODE) {
-        base_col = LITERAL_COLOUR;
+        base_col = LITERALS_COLOUR;
         icon = texturemanager.grab("literals.png");
     }
     else if (type == COMMENT_NODE) {
-        base_col = LITERAL_COLOUR;
+        base_col = LITERALS_COLOUR;
         icon = texturemanager.grab("comment.png");
     }
     else if (type == TRUE_NODE) {

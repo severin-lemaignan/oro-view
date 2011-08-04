@@ -32,6 +32,7 @@ oroview_SOURCES = \
 	src/edge.cpp src/edge.h \
 	src/edge_renderer.cpp src/edge_renderer.h \
 	src/spline.cpp src/spline.h \
+	src/styles.cpp src/styles.h \
 	src/graph.cpp src/graph.h \
 	src/zoomcamera.cpp src/zoomcamera.h
 

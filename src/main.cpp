@@ -76,7 +76,6 @@ int main(int argc, char *argv[]) {
     int height = 768;
     bool fullscreen=false;
     bool multisample=false;
-    vec3f background = vec3f(0.1, 0.1, 0.1);
 
     int video_framerate = 60;
 
@@ -134,21 +133,19 @@ int main(int argc, char *argv[]) {
     OroView* oroview = NULL;
 
     try {
-	oroview = new OroView(config);
+    oroview = new OroView(config);
 
-	 if(camera_mode == "track") {
-	    oroview->setCameraMode(true);
-	}
+     if(camera_mode == "track") {
+        oroview->setCameraMode(true);
+    }
 
-	oroview->setBackground(background);
-
-	oroview->run();
+    oroview->run();
 
     } catch(ResourceException& exception) {
 
-	if (oroview != NULL) delete oroview;
+    if (oroview != NULL) delete oroview;
 
-	throw OroViewException(string("failed to load resource ") + exception.what());
+    throw OroViewException(string("failed to load resource ") + exception.what());
 
     }
 

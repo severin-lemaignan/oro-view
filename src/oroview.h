@@ -155,6 +155,8 @@ class OroView : public SDLApp {
     void updateCurrentNode();
 
 
+    void stylesSetup(const Json::Value& config);
+    vec4f convertRGBA2Float(const Json::Value& color);
 
 public:
     OroView(const Json::Value& config);

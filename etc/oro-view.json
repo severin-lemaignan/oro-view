@@ -1,6 +1,17 @@
-//This is the default configuration file for oro-view
+// This is the default configuration file for oro-view
+// (values in this files match oro-view defaults)
 {
-  "initial_concept": "myself",
+  "initial_concept": "owl:Thing",
   "oro_host": "localhost",
-  "oro_port": "6969"
+  "oro_port": "6969",
+
+  // Colours are specified as RGBA values between 0 and 255
+  "colours": {
+	  "background":	[0, 0, 0, 0], // Background colour (alpha is discarded)
+	  "selected":   [252, 175, 62, 255], // Colours of selected nodes
+	  "hovered":   [140, 25, 25, 255], // Colours of nodes hovered by the mouse
+	  "classes":   [92, 53, 102, 255], // Colours of 'class' nodes
+	  "instances":   [82, 102, 53, 255], // Colours of 'instance' nodes
+	  "literals":   [53, 102, 63, 255] // Colours of 'literal' nodes
+  }
 }

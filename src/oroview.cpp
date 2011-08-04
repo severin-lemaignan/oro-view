@@ -23,8 +23,10 @@
 
 #include <json/json.h>
 
-#include "macros.h"
 #include "oroview.h"
+
+#include "macros.h"
+#include "styles.h"
 
 #include "node_relation.h"
 
@@ -66,7 +68,6 @@ OroView::OroView(const Json::Value& config):
 
     backgroundSelected = false;
 
-    background_colour = vec3f(0.0, 0.0, 0.0);
 
     draw_loading = true;
     display_node_infos = true;
@@ -92,6 +93,49 @@ OroView::OroView(const Json::Value& config):
     bloomtex = texturemanager.grab("bloom.tga");
     beamtex  = texturemanager.grab("beam.png");
 #endif
+
+    stylesSetup(config);
+
+    background_colour = BACKGROUND_COLOUR.truncate();
+}
+
+void OroView::stylesSetup(const Json::Value& config) {
+
+    Json::Value colors = config["colours"];
+
+    if (colors == Json::nullValue) return; // Uses defaults, as specified in styles.h
+
+    cout << "Setting customs colors from config file." << endl;
+    if (colors["selected"] != Json::nullValue) {
+        cout << "Setting selected color to " << colors["selected"] << endl;
+        SELECTED_COLOUR = convertRGBA2Float(colors["selected"]);
+    }
+
+    if (colors["hovered"] != Json::nullValue)
+        HOVERED_COLOUR = convertRGBA2Float(colors["hovered"]);
+
+    if (colors["classes"] != Json::nullValue)
+        CLASSES_COLOUR = convertRGBA2Float(colors["classes"]);
+
+    if (colors["instances"] != Json::nullValue)
+        INSTANCES_COLOUR = convertRGBA2Float(colors["instances"]);
+
+    if (colors["literals"] != Json::nullValue)
+        LITERALS_COLOUR = convertRGBA2Float(colors["literals"]);
+
+    if (colors["background"] != Json::nullValue){
+        cout << "Setting background color to " << colors["background"] << endl;
+        BACKGROUND_COLOUR = convertRGBA2Float(colors["background"]);
+    }
+
+
+}
+
+vec4f OroView::convertRGBA2Float(const Json::Value& color) {
+    return vec4f(color[0u].asInt()/255.0,
+                 color[1u].asInt()/255.0,
+                 color[2u].asInt()/255.0,
+                 color[3u].asInt()/255.0);
 }
 
 /** Initialization */

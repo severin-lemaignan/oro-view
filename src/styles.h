@@ -34,19 +34,25 @@ static const float COLOUR_DECAY_TIME = 2.0; //idle time (in sec) before labels v
 static const float SHADOW_STRENGTH = 0.5; //intensity of shadows (from 0.0 to 1.0)
 static const vec2f SHADOW_OFFSET(1.0, 1.0); //offset of shadows
 
-//static const vec4f HOVERED_COLOUR(0.8, 0.2, 0.5, 1.0); // Rose
-static const vec4f HOVERED_COLOUR(0.55, 0.1, 0.1, 1.0); // Dark red
-//static const vec4f SELECTED_COLOUR(0.2, 0.8, 0.5, 1.0); //Turquoise
-static const vec4f SELECTED_COLOUR(0.99, 0.69, 0.24, 1.0); //Bright orange
-
-// "EGA" color scheme
-//static const vec4f CLASSES_COLOUR(0.58, 0.82, 0.86, 1.0);
-//static const vec4f INSTANCES_COLOUR(0.72, 0.55, 0.79, 1.0);
-//static const vec4f LITERAL_COLOUR(0.57, 0.3, 0.48, 1.0);
+static const vec4f DEFAULT_HOVERED_COLOUR(0.55, 0.1, 0.1, 1.0); // Dark red
+static const vec4f DEFAULT_SELECTED_COLOUR(0.99, 0.69, 0.24, 1.0); //Bright orange
 
 // "Prune/Kaki" color scheme
-static const vec4f CLASSES_COLOUR(0.36, 0.21, 0.4, 1.0);
-static const vec4f INSTANCES_COLOUR(0.32, 0.4, 0.21, 1.0);
-static const vec4f LITERAL_COLOUR(0.21, 0.4, 0.25, 1.0);
+static const vec4f DEFAULT_CLASSES_COLOUR(0.36, 0.21, 0.4, 1.0);
+static const vec4f DEFAULT_INSTANCES_COLOUR(0.32, 0.4, 0.21, 1.0);
+static const vec4f DEFAULT_LITERALS_COLOUR(0.21, 0.4, 0.25, 1.0);
+
+static const vec4f DEFAULT_BACKGROUND_COLOUR(0.0, 0.0, 0.0);
+
+/******************************************************************************/
+
+// Colours are defined as global variables
+extern vec4f HOVERED_COLOUR;
+extern vec4f SELECTED_COLOUR;
+extern vec4f CLASSES_COLOUR;
+extern vec4f INSTANCES_COLOUR;
+extern vec4f LITERALS_COLOUR;
+extern vec4f BACKGROUND_COLOUR;
+
 
 #endif // STYLES_H
