@@ -92,7 +92,10 @@ void SplineEdge::drawShadow() {
     glBegin(GL_QUAD_STRIP);
 
     for(int i=0;i<edges_count;i++) {
-        drawBeam(spline_point[i] + SHADOW_OFFSET, vec4f(0.0, 0.0, 0.0, SHADOW_STRENGTH), spline_point[i+1] + SHADOW_OFFSET, vec4f(0.0, 0.0, 0.0, SHADOW_STRENGTH), 2.5, i==0);
+        drawBeam(spline_point[i] + SHADOW_OFFSET,
+                 vec4f(0.0, 0.0, 0.0, SHADOW_STRENGTH * spline_colour[i].w),
+                 spline_point[i+1] + SHADOW_OFFSET,
+                 vec4f(0.0, 0.0, 0.0, SHADOW_STRENGTH * spline_colour[i+1].w), 2.5, i==0);
     }
 
     glEnd();

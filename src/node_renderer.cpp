@@ -259,7 +259,11 @@ void NodeRenderer::drawBloom(const vec2f& pos){
 
     vec4f bloom_col = col;
 
-    glColor4f(bloom_col.x, bloom_col.y, bloom_col.z, getAlpha());
+    float alpha = getAlpha();
+    glColor4f(bloom_col.x *  alpha,
+              bloom_col.y * alpha,
+              bloom_col.z * alpha,
+              1.0);
 
     glPushMatrix();
     glTranslatef(pos.x, pos.y, 0.0);
@@ -292,7 +296,7 @@ void NodeRenderer::drawShadow(const vec2f& pos){
     glPushMatrix();
     glTranslatef(offsetpos.x, offsetpos.y, 0.0f);
 
-    glColor4f(0.0, 0.0, 0.0, std::min(SHADOW_STRENGTH, getAlpha()));
+    glColor4f(0.0, 0.0, 0.0, SHADOW_STRENGTH * getAlpha());
 
     glBegin(GL_QUADS);
     glTexCoord2f(0.0f,0.0f);
