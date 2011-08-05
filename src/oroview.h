@@ -158,6 +158,8 @@ class OroView : public SDLApp {
     void stylesSetup(const Json::Value& config);
     vec4f convertRGBA2Float(const Json::Value& color);
 
+    bool only_labelled_nodes;
+
 public:
     OroView(const Json::Value& config);
 
@@ -189,8 +191,12 @@ public:
     static void drawVector(vec2f vec, vec2f pos, vec4f col);
 
 
-    //Add node
-    void addNodeConnectedTo(const std::string& id,
+    /** Add node.
+
+      @return true if the node has been added, false else (can be false for nodes
+      without label is only_labelled_node is true)
+      */
+    bool addNodeConnectedTo(const std::string& id,
                             const std::string& node_label,
                             const std::string& to,
                             relation_type type,

@@ -9,30 +9,28 @@
 #include <iterator>
 #include <locale>
 
+#include <json/json.h>
+
 #include <boost/foreach.hpp>
 #include <boost/variant.hpp>
 #include <boost/thread/locks.hpp>
 #include <boost/thread/mutex.hpp>
+
+#include <liboro/oro_exceptions.h>
 
 #include "oro_connector.h"
 
 #include "oroview.h"
 #include "node_relation.h"
 
-#include "oro_exceptions.h"
-
-
-#include "json/json.h"
-
 
 using namespace std;
 using namespace oro;
 using namespace boost;
 
-
-
-OntologyConnector::OntologyConnector(const string& host, const string& port) :
-    sc(host, port)
+OntologyConnector::OntologyConnector(const string& host, const string& port, bool only_labelled_nodes) :
+    sc(host, port),
+    only_labelled_nodes(only_labelled_nodes)
 {
 
     oro = Ontology::createWithConnector(sc);
@@ -85,7 +83,7 @@ const set<string> OntologyConnector::popActiveConceptsId()
     return res;
 }
 
-void OntologyConnector::addNode(const string& id, Graph& g) {
+bool OntologyConnector::addNode(const string& id, Graph& g) {
 
     string label = oro->getLabel(id);
     string type = oro->lookup(id)[id];
@@ -95,9 +93,20 @@ void OntologyConnector::addNode(const string& id, Graph& g) {
     if (type == "INSTANCE") ntype = INSTANCE_NODE;
     else if (type == "CLASS") ntype = CLASS_NODE;
 
+
+    if (only_labelled_nodes &&
+        ntype == CLASS_NODE &&
+        label == id) { //no a very robust way to check if a node has a label, but it's fast
+
+        cout << "Node " << id << " has not label, discarding it." <<endl;
+        return false;
+    }
+
     cout << "Adding node " << id << " of type " << type << " with label " << label <<endl;
 
     g.addNode(id, label, NULL, ntype);
+
+    return true;
 }
 
 void OntologyConnector::walkThroughOntology(const string& from_node, int depth, OroView* graph) {
@@ -157,6 +166,7 @@ void OntologyConnector::walkThroughOntology(const string& from_node, int depth, 
             string to_label = values[index]["name"].asString();
             string to_id = values[index]["id"].asString();
 
+
             //cout << "  - " << to_label << endl;
 
             if (to_id == "literal") { //build a hash for each literal based on "full name": current node + predicate + literal value
@@ -166,55 +176,19 @@ void OntologyConnector::walkThroughOntology(const string& from_node, int depth, 
                 to_id = o.str();
             }
 
-            graph->addNodeConnectedTo(
+            if (graph->addNodeConnectedTo(
                     to_id,
                     to_label,
                     from_node,
                     type,
-                    getEdgeLabel(type, oroType));
-
-            walkThroughOntology(to_id,
-                                depth - 1,
-                                graph);
+                    getEdgeLabel(type, oroType)))
+            {
+                walkThroughOntology(to_id,
+                                    depth - 1,
+                                    graph);
+            }
         }
     }
 
 }
 
-/*
-int main(void) {
-    set<Concept> result;
-    string details;
-
-    SocketConnector connector("localhost", "7000");
-    Ontology *oro = Ontology::createWithConnector(connector);
-
-    oro->getResourceDetails("baboon", details);
-
-    Json::Value root;   // will contains the root value after parsing.
-    Json::Reader reader;
-    bool parsingSuccessful = reader.parse( details, root );
-    if ( !parsingSuccessful )
-    {
-        // report to the user the failure and their locations in the document.
-        cout  << "Failed to parse configuration\n"
-                   << reader.getFormatedErrorMessages();
-        return 0;
-    }
-
-    string name = root.get("name", "NO_NAME").asString();
-    cout << "Analysing node : " << name << endl;
-
-    const Json::Value attributes = root["attributes"];
-    for ( int index = 0; index < attributes.size(); ++index ) { // Iterates over the sequence elements.
-        cout << endl << attributes[index]["name"].asString() << ":" << endl;
-        Json::Value values = attributes[index]["values"];
-
-        for ( int index = 0; index < values.size(); ++index ) { // Iterates over the sequence elements.
-            cout << "  - " << values[index]["name"].asString() << endl;
-        }
-    }
-
-    return 0;
-}
-*/

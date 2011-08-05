@@ -23,8 +23,9 @@
 
 #include <boost/thread/mutex.hpp>
 
-#include "oro.h"
-#include "socket_connector.h"
+#include <liboro/oro.h>
+#include <liboro/socket_connector.h>
+
 #include "constants.h"
 #include "graph.h"
 
@@ -33,9 +34,15 @@ class OroView;
 class OntologyConnector : public oro::OroEventObserver {
 
 public:
-    OntologyConnector(const std::string& host, const std::string& port);
+    OntologyConnector(const std::string& host, const std::string& port, bool only_labelled_nodes = false);
 
-    void addNode(const std::string& id, Graph& g);
+    /**
+      Adds a node to the graph, querying the ontology for its type and label.
+
+      @return true if the node has been added, false if not (for instance, if the
+      node has no label and only_labelled_node is true.
+    */
+    bool addNode(const std::string& id, Graph& g);
     void walkThroughOntology(const std::string& from_node, int depth, OroView* graph);
 
     const std::set<std::string> popActiveConceptsId();
@@ -43,6 +50,8 @@ public:
     // Callback for oro events
     void operator()(const oro::OroEvent& evt);
 private:
+
+    bool only_labelled_nodes;
 
     std::set<std::string> active_concepts_id;
     oro::Ontology *oro;

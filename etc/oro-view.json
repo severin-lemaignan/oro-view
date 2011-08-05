@@ -13,5 +13,7 @@
 	  "classes":   [92, 53, 102, 255], // Colours of 'class' nodes
 	  "instances":   [82, 102, 53, 255], // Colours of 'instance' nodes
 	  "literals":   [53, 102, 63, 255] // Colours of 'literal' nodes
-  }
+  },
+
+  "only_labelled_nodes": true // If true, only nodes that have a label are considered
 }

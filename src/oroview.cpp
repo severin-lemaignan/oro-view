@@ -36,8 +36,10 @@ using namespace std;
 
 OroView::OroView(const Json::Value& config):
     config(config),
+    only_labelled_nodes(config.get("only_labelled_nodes", "false").asBool()),
     oro(config.get("oro_host", "localhost").asString(),
-        config.get("oro_port", "6969").asString())
+        config.get("oro_port", "6969").asString(),
+        only_labelled_nodes)
 {
 
 
@@ -857,7 +859,7 @@ void OroView::addSelectedNode(Node* node) {
 }
 
 //Add node
-void OroView::addNodeConnectedTo(const string& id,
+bool OroView::addNodeConnectedTo(const string& id,
                                  const string& node_label,
                                  const string& to,
                                  relation_type type,
@@ -930,11 +932,20 @@ void OroView::addNodeConnectedTo(const string& id,
             ntype = INSTANCE_NODE;
         }
 
+        if (only_labelled_nodes &&
+            ntype == CLASS_NODE &&
+            label == id) { //no a very robust way to check if a node has a label, but it's fast
+
+            cout << "Node " << id << " has no label, discarding it." <<endl;
+            return false;
+        }
+
         n = &g.addNode(id, label, neighbour, ntype);
     }
 
     g.addEdge(*n, *neighbour, type, edge_label);
 
+    return true;
 }
 
 Node& OroView::getNode(const std::string &id) {
