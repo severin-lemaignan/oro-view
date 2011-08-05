@@ -202,6 +202,7 @@ public:
                             relation_type type,
                             const std::string& edge_label);
 
+    void addAlias(const std::string& alias, const std::string& id);
     Node& getNode(const std::string& id);
 };
 

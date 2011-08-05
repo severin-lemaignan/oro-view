@@ -66,23 +66,23 @@ const Graph::NodeMap& Graph::getNodes() const {
 
 Node& Graph::getNode(const string& id) {
 
-    NodeMap::iterator it = nodes.find(hash_value(id));
+    AliasMap::iterator it = aliases.find(hash_value(id));
 
-    if (it == nodes.end())
+    if (it == aliases.end())
         throw OroViewException("Node " + id + " not found");
 
-    return it->second;
+    return *(it->second);
 
 }
 
 const Node& Graph::getConstNode(const string& id) const {
 
-    NodeMap::const_iterator it = nodes.find(hash_value(id));
+    AliasMap::const_iterator it = aliases.find(hash_value(id));
 
-    if (it == nodes.end())
+    if (it == aliases.end())
         throw OroViewException("Node " + id + " not found");
 
-    return it->second;
+    return *(it->second);
 
 }
 
@@ -142,21 +142,28 @@ Node* Graph::getSelected() {
     return NULL;
 }
 
+void Graph::addAlias(const string& alias, const string& id) {
+
+    aliases.insert(make_pair(hash_value(alias),&(getNode(id))));
+}
+
 Node& Graph::addNode(const string& id, const string& label, const Node* neighbour, node_type type) {
 
     pair<NodeMap::iterator, bool> res;
 
     //TODO: I'm doing 2 !! copies of Node, here??
+
     res = nodes.insert(make_pair(hash_value(id),Node(id, label, neighbour, type)));
 
     if ( ! res.second )
         TRACE("Didn't add node " << id << " because it already exists.");
-    else
+    else {
         TRACE("Added node " << id);
+        aliases.insert(make_pair(hash_value(id),&res.first->second));
+        updateDistances();
+    }
 
-    updateDistances();
-
-    return getNode(id);
+    return res.first->second;
 }
 
 /**

@@ -858,6 +858,10 @@ void OroView::addSelectedNode(Node* node) {
     }
 }
 
+void OroView::addAlias(const string& alias, const string& id) {
+    g.addAlias(alias, id);
+}
+
 //Add node
 bool OroView::addNodeConnectedTo(const string& id,
                                  const string& node_label,

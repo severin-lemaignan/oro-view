@@ -145,6 +145,14 @@ void OntologyConnector::walkThroughOntology(const string& from_node, int depth, 
 
     string type = root.get("type", "NO_TYPE").asString();
 
+    const Json::Value sameAs = root["sameAs"]; // list of id of nodes that are aliases
+    for ( int index = 0; index < sameAs.size(); ++index ) {
+        if (sameAs[index].asString() != from_node) {
+            cout << "Adding " << sameAs[index].asString() << " as alias for " << from_node << endl;
+            graph->addAlias(sameAs[index].asString(), from_node);
+        }
+    }
+
     const Json::Value attributes = root["attributes"];
     for ( int index = 0; index < attributes.size(); ++index ) { // Iterates over the sequence elements.
 

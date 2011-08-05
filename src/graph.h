@@ -37,9 +37,15 @@ public:
      */
     typedef std::map<int, Node> NodeMap;
 
+    /**
+      map of all nodes + aliases.
+      */
+    typedef std::map<int, Node*> AliasMap;
+
 private:
 
     NodeMap nodes;
+    AliasMap aliases;
 
     typedef std::vector<Edge> EdgeVector;
     EdgeVector edges;
@@ -92,6 +98,8 @@ public:
     /** If and only if ONE node is selected, return it. Else, returns NULL
       */
     Node* getSelected();
+
+    void addAlias(const std::string& alias, const std::string& id);
 
     /**
       Adds a new node to the graph (if it doesn't exist yet) and returns a reference to the new node.
