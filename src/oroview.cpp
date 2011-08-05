@@ -107,7 +107,6 @@ void OroView::stylesSetup(const Json::Value& config) {
 
     cout << "Setting customs colors from config file." << endl;
     if (colors["selected"] != Json::nullValue) {
-        cout << "Setting selected color to " << colors["selected"] << endl;
         SELECTED_COLOUR = convertRGBA2Float(colors["selected"]);
     }
 
@@ -124,7 +123,6 @@ void OroView::stylesSetup(const Json::Value& config) {
         LITERALS_COLOUR = convertRGBA2Float(colors["literals"]);
 
     if (colors["background"] != Json::nullValue){
-        cout << "Setting background color to " << colors["background"] << endl;
         BACKGROUND_COLOUR = convertRGBA2Float(colors["background"]);
     }
 
@@ -869,8 +867,6 @@ void OroView::addNodeConnectedTo(const string& id,
     Node* neighbour;
 
     string label = node_label;
-
-    cout << "Edge label: " << edge_label << endl;
 
     try {
         neighbour = &g.getNode(to);

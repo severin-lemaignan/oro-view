@@ -114,7 +114,6 @@ void OntologyConnector::walkThroughOntology(const string& from_node, int depth, 
 
     try {
         oro->getResourceDetails(from_node, details);
-        cout << details << endl;
     }
     catch (ResourceNotFoundOntologyException& e) {
         cerr << "Node " + from_node + " not found in the ontology. Continuing." << endl;
@@ -127,13 +126,13 @@ void OntologyConnector::walkThroughOntology(const string& from_node, int depth, 
     if ( !parsingSuccessful )
     {
         // report to the user the failure and their locations in the document.
-        cout  << "Failed to parse configuration\n"
+        cerr  << "Failed to parse configuration\n"
                    << reader.getFormatedErrorMessages();
         return;
     }
 
     string name = root.get("name", "NO_NAME").asString();
-    cout << "Analysing node : " << name << endl;
+    //cout << "Analysing node : " << name << endl;
 
     string type = root.get("type", "NO_TYPE").asString();
 
@@ -141,7 +140,7 @@ void OntologyConnector::walkThroughOntology(const string& from_node, int depth, 
     for ( int index = 0; index < attributes.size(); ++index ) { // Iterates over the sequence elements.
 
         string oroType = attributes[index]["name"].asString();
-        cout << endl << oroType << ":" << endl;
+        //cout << endl << oroType << ":" << endl;
 
         Json::Value values = attributes[index]["values"];
 
@@ -158,7 +157,7 @@ void OntologyConnector::walkThroughOntology(const string& from_node, int depth, 
             string to_label = values[index]["name"].asString();
             string to_id = values[index]["id"].asString();
 
-            cout << "  - " << to_label << endl;
+            //cout << "  - " << to_label << endl;
 
             if (to_id == "literal") { //build a hash for each literal based on "full name": current node + predicate + literal value
                 string full_name = from_node + oroType + to_label;
