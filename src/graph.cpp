@@ -327,6 +327,22 @@ vec2f Graph::hookeAttractionFor(const Node& node) const {
     return force;
 }
 
+vec2f Graph::gravityFor(const Node& node) const {
+    //Gravity... well, it's actually more like anti-gravity, since it's in:
+    // f = g * m * d
+    vec2f force(0.0, 0.0);
+
+    float len = node.pos.length2();
+
+    if (len < 0.01) len = 0.01; //avoid dividing by zero
+
+    float f = GRAVITY_CONSTANT * node.mass * len * 0.01;
+
+    force += project(f, node.pos);
+
+    return force;
+}
+
 vec2f Graph::project(float force, const vec2f& d) const {
     //we need to project this force on x and y
     //-> Fx = F.cos(arctan(Dy/Dx)) = F/sqrt(1-(Dy/Dx)^2)

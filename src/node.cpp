@@ -154,21 +154,27 @@ void Node::updateKineticEnergy() {
 
 void Node::step(Graph& g, float dt){
 
-    if(!selected) {
-
     /** Compute here the new position of the node **/
 
-    // Algo from Wikipedia -- http://en.wikipedia.org/wiki/Force-based_layout
-
     TRACE("Stepping for node " << id);
-
     vec2f force = vec2f(0.0, 0.0);
 
-    coulombForce = g.coulombRepulsionFor(*this);
-    force +=coulombForce;
+    if(!selected) {
+        // Algo from Wikipedia -- http://en.wikipedia.org/wiki/Force-based_layout
 
-    hookeForce = g.hookeAttractionFor(*this);
-    force += hookeForce;
+        coulombForce = g.coulombRepulsionFor(*this);
+        force +=coulombForce;
+
+        hookeForce = g.hookeAttractionFor(*this);
+        force += hookeForce;
+    }
+    else { //selected node
+        vec2f gravityForce = g.gravityFor(*this);
+        force += gravityForce;
+
+        coulombForce = g.coulombRepulsionFor(*this);
+        force +=coulombForce;
+    }
 
     TRACE("** Total force applying: Fx=" << force.x << ", Fy= " << force.y);
 
@@ -192,7 +198,7 @@ void Node::step(Graph& g, float dt){
 
 
     //TRACE("Step computed for " << id << ". Speed is " << speed.x << ", " << speed.y << " (energy: " << kinetic_energy << ").");
-    }
+
 }
 
 void Node::render(rendering_mode mode, OroView& env, bool debug){

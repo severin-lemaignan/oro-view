@@ -123,6 +123,12 @@ public:
 
     vec2f hookeAttractionFor(const Node& node) const;
 
+    /** "Pseudo" gravity that attract nodes towards the center of the screen.
+
+      This force is only applied on selected nodes.
+      */
+    vec2f gravityFor(const Node& node) const;
+
     vec2f project(float force, const vec2f& d) const;
 
 };
