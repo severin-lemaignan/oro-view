@@ -31,6 +31,7 @@ class Edge
 {
     Node* node1;
     Node* node2;
+    relation_type rel_type;
 
     void updateLength();
 

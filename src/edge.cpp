@@ -35,12 +35,13 @@ using namespace boost;
 Edge::Edge(const NodeRelation& rel, const string& label) :
     node1(rel.from),
     node2(rel.to),
+    rel_type(rel.type),
     renderer(EdgeRenderer(
             hash_value(rel.from->getID() + rel.to->getID()),
-            label
+            label,
+            rel_type
             ))
 {
-
     //    addReferenceRelation(rel);
 
     spring_constant = INITIAL_SPRING_CONSTANT;
@@ -48,45 +49,6 @@ Edge::Edge(const NodeRelation& rel, const string& label) :
 
     length = 0.0;
 }
-
-//bool Edge::coversRelation(const NodeRelation& rel) {
-//    //TODO: BUG HERE!! this report incorrectly some relation to be covered...
-//    //return !(relations.end() == find(relations.begin(), relations.end(), &rel));
-//    return false;
-//}
-
-//void Edge::addReferenceRelation(const NodeRelation& rel) {
-//    relations.push_back(&rel);
-//
-//    if (node1 == NULL) {
-//	node1 = rel.from;
-//	node2 = rel.to;
-//    }
-//    else //check that the newly added relation is between the right nodes
-//	if (!(node1 == rel.from && node2 == rel.to) &&
-//	    !(node1 == rel.to && node2 == rel.from)) {
-//	    throw OroViewException("Trying to add a relation to an edge for the wrong nodes!");
-//	}
-//}
-
-//void Edge::removeReferenceRelation(const NodeRelation& rel) {
-//    remove(relations.begin(), relations.end(), &rel);
-//
-//    if (relations.size() == 0)
-//	throw OroViewException("Removed the last relation of an edge!");
-//}
-
-//int Edge:: countRelations() const {
-//    return relations.size();
-//}
-
-//bool Edge::hasOutboundConnectionFrom(const Node* node) const{
-//    BOOST_FOREACH(const NodeRelation* r, relations) {
-//	if (r->from == node)
-//	    return true;
-//    }
-//    return false;
-//}
 
 void Edge::step(Graph& g, float dt){
 
