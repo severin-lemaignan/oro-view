@@ -843,7 +843,9 @@ void OroView::selectNode(Node* node) {
     g.clearSelect();
     g.select(node);
 
+
     queueNodeInFooter(node->getID());
+    updateCurrentNode();
 }
 
 //select a node, keep currently selected node
