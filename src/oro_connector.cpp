@@ -51,7 +51,7 @@ const string OntologyConnector::getEdgeLabel(relation_type type, const string& o
             return "";
 
         default:
-            return original_label;
+            return oro->getLabel(original_label);
     }
 }
 

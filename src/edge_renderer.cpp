@@ -77,6 +77,9 @@ void EdgeRenderer::update(vec2f pos1, vec4f col1, vec2f pos2, vec4f col2, vec2f 
     switch (type){
         case SUBCLASS:
         case INSTANCE:
+        case PROPERTY:
+        case OBJ_PROPERTY:
+        case DATA_PROPERTY:
             arrow_tail = true;
             break;
         case SUPERCLASS:
