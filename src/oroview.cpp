@@ -726,9 +726,9 @@ void OroView::drawVector(vec2f vec, vec2f pos, vec4f col) {
 
     glTexCoord2f(0.0,0.0);
     glVertex2f(vec.length() - radius, -radius/2);
-    glTexCoord2f(1.0,1.0);
+    glTexCoord2f(0.5,1.0);
     glVertex2f(vec.length(), 0);
-    glTexCoord2f(0.0,0.0);
+    glTexCoord2f(1.0,0.0);
     glVertex2f(vec.length() - radius, radius/2);
 
     glEnd();

@@ -26,7 +26,10 @@
 SplineEdge::SplineEdge() {
 }
 
-SplineEdge::SplineEdge(vec2f pos1, vec4f col1, vec2f pos2, vec4f col2, vec2f spos) {
+SplineEdge::SplineEdge(vec2f pos1, vec4f col1, vec2f pos2, vec4f col2, vec2f spos, bool arrow_head, bool arrow_tail) :
+    arrow_head(arrow_head),
+    arrow_tail(arrow_tail)
+{
 
     vec2f pt_last;
     vec4f col_last;
@@ -64,25 +67,79 @@ SplineEdge::SplineEdge(vec2f pos1, vec4f col1, vec2f pos2, vec4f col2, vec2f spo
     }
 }
 
-void SplineEdge::drawBeam(vec2f pos1, vec4f col1, vec2f pos2, vec4f col2, float radius, bool first) {
+void SplineEdge::drawBeam(vec2f pos1, vec4f col1, vec2f pos2, vec4f col2, float radius, bool first, bool last) {
 
     vec2f perp = (pos1 - pos2).perpendicular().normal() * radius;
 
     if (first) {
-        // src point
-        glColor4fv(col1);
-        glTexCoord2f(1.0,0.0);
-        glVertex2f(pos1.x + perp.x, pos1.y + perp.y);
-        glTexCoord2f(0.0,0.0);
-        glVertex2f(pos1.x - perp.x, pos1.y - perp.y);
+
+        if (arrow_head) {
+
+            vec2f arrow = (pos2 - pos1).normal() * ARROW_SIZE;
+
+            vec2f newpos1 = pos1 + arrow;
+
+            glEnd();
+            glBegin(GL_TRIANGLES);
+
+            glColor4fv(col1);
+            glTexCoord2f(0.0,0.0);
+            glVertex2f(newpos1.x + perp.x * 2, newpos1.y + perp.y * 2);
+            glTexCoord2f(0.5,1.0);
+            glVertex2f(pos1.x, pos1.y);
+            glTexCoord2f(1.0,0.0);
+            glVertex2f(newpos1.x - perp.x * 2, newpos1.y - perp.y * 2);
+
+            glEnd();
+            glBegin(GL_QUAD_STRIP);
+            // src point
+            glTexCoord2f(1.0,0.0);
+            glVertex2f(newpos1.x + perp.x, newpos1.y + perp.y);
+            glTexCoord2f(0.0,0.0);
+            glVertex2f(newpos1.x - perp.x, newpos1.y - perp.y);
+
+        }
+        else {
+            // src point
+            glColor4fv(col1);
+            glTexCoord2f(1.0,0.0);
+            glVertex2f(pos1.x + perp.x, pos1.y + perp.y);
+            glTexCoord2f(0.0,0.0);
+            glVertex2f(pos1.x - perp.x, pos1.y - perp.y);
+        }
     }
+
 
     // dest point
     glColor4fv(col2);
-    glTexCoord2f(1.0,0.0);
-    glVertex2f(pos2.x + perp.x, pos2.y + perp.y);
-    glTexCoord2f(0.0,0.0);
-    glVertex2f(pos2.x - perp.x, pos2.y - perp.y);
+
+    if (last && arrow_tail) {
+
+        vec2f arrow = (pos2 - pos1).normal() * ARROW_SIZE;
+
+        vec2f newpos2 = pos2 - arrow;
+
+        glTexCoord2f(1.0,0.0);
+        glVertex2f(newpos2.x + perp.x, newpos2.y + perp.y);
+        glTexCoord2f(0.0,0.0);
+        glVertex2f(newpos2.x - perp.x, newpos2.y - perp.y);
+        //Arrow
+        glEnd();
+        glBegin(GL_TRIANGLES);
+
+        glTexCoord2f(0.0,0.0);
+        glVertex2f(newpos2.x + perp.x * 2, newpos2.y + perp.y * 2);
+        glTexCoord2f(0.5,1.0);
+        glVertex2f(pos2.x, pos2.y);
+        glTexCoord2f(1.0,0.0);
+        glVertex2f(newpos2.x - perp.x * 2, newpos2.y - perp.y * 2);
+    }
+    else {
+        glTexCoord2f(1.0,0.0);
+        glVertex2f(pos2.x + perp.x, pos2.y + perp.y);
+        glTexCoord2f(0.0,0.0);
+        glVertex2f(pos2.x - perp.x, pos2.y - perp.y);
+    }
 }
 
 void SplineEdge::drawShadow() {
@@ -92,10 +149,12 @@ void SplineEdge::drawShadow() {
     glBegin(GL_QUAD_STRIP);
 
     for(int i=0;i<edges_count;i++) {
-        drawBeam(spline_point[i] + SHADOW_OFFSET,
-                 vec4f(0.0, 0.0, 0.0, SHADOW_STRENGTH * spline_colour[i].w),
-                 spline_point[i+1] + SHADOW_OFFSET,
-                 vec4f(0.0, 0.0, 0.0, SHADOW_STRENGTH * spline_colour[i+1].w), 2.5, i==0);
+        drawBeam(spline_point[i] + SHADOW_OFFSET, vec4f(0.0, 0.0, 0.0, SHADOW_STRENGTH * spline_colour[i].w),
+                 spline_point[i+1] + SHADOW_OFFSET, vec4f(0.0, 0.0, 0.0, SHADOW_STRENGTH * spline_colour[i+1].w),
+                 2.5,
+                 i == 0, // first?
+                 i == edges_count - 1 // last?
+                 );
     }
 
     glEnd();
@@ -108,7 +167,12 @@ void SplineEdge::draw() {
     glBegin(GL_QUAD_STRIP);
 
     for(int i=0;i<edges_count;i++) {
-        drawBeam(spline_point[i], spline_colour[i], spline_point[i+1], spline_colour[i+1], 1.5, i==0);
+        drawBeam(spline_point[i], spline_colour[i],
+                 spline_point[i+1], spline_colour[i+1],
+                 1.5,
+                 i == 0, //first?
+                 i == edges_count - 1 //last?
+                 );
     }
 
     glEnd();

@@ -29,10 +29,19 @@ class SplineEdge {
     std::vector<vec2f> spline_point;
     std::vector<vec4f> spline_colour;
 
-    void drawBeam(vec2f pos1, vec4f col1, vec2f pos2, vec4f col2, float radius, bool first);
+    // if true, starts the spline with an arrow
+    bool arrow_head;
+    // if true, ends the spline with an arrow
+    bool arrow_tail;
+
+    void drawBeam(vec2f pos1, vec4f col1, vec2f pos2, vec4f col2, float radius, bool first, bool last);
 public:
     SplineEdge();
-    SplineEdge(vec2f pos1, vec4f col1, vec2f pos2, vec4f col2, vec2f spos);
+    SplineEdge(vec2f pos1, vec4f col1,
+               vec2f pos2, vec4f col2,
+               vec2f spos,
+               bool arrow_head = false,
+               bool arrow_tail = false);
 
     void drawShadow();
     void draw();

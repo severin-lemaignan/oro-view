@@ -23,6 +23,7 @@
 enum rendering_mode {NORMAL, SIMPLE, SHADOWS, BLOOM, NAMES};
 
 static const float NODE_SIZE = 15.0;
+static const float ARROW_SIZE = 5.0;
 static const float SELECT_SIZE_FACTOR = 1.5; //selected node will appear SELECT_SIZE_FACTOR bigger.
 
 static const int MAX_NODE_LEVELS = 6; //how many levels of nodes are displayed around the selected one?
