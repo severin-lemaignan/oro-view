@@ -158,6 +158,9 @@ class OroView : public SDLApp {
     void stylesSetup(const Json::Value& config);
     vec4f convertRGBA2Float(const Json::Value& color);
 
+    // If false, do not display labels of nodes
+    bool display_labels;
+    // If true, only display nodes that have a real label (ie, not only a node id)
     bool only_labelled_nodes;
 
 public:

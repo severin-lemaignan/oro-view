@@ -36,6 +36,7 @@ using namespace std;
 
 OroView::OroView(const Json::Value& config):
     config(config),
+    display_labels(config.get("display_labels", "true").asBool()),
     only_labelled_nodes(config.get("only_labelled_nodes", "false").asBool()),
     oro(config.get("oro_host", "localhost").asString(),
         config.get("oro_port", "6969").asString(),
@@ -522,7 +523,7 @@ void OroView::draw(float t, float dt) {
     glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
     //Draw names
-    g.render(NAMES, *this, advanced_debug);
+    if (display_labels) g.render(NAMES, *this, advanced_debug);
 
     //displayCoulombField(); //doesn't work?
 
