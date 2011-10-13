@@ -23,6 +23,9 @@
 enum rendering_mode {NORMAL, SIMPLE, SHADOWS, BLOOM, NAMES};
 
 static const float NODE_SIZE = 15.0;
+static const int BASE_FONT_SIZE = 14;
+static const int MEDIUM_FONT_SIZE = 16;
+static const int LARGE_FONT_SIZE = 42;
 static const float ARROW_SIZE = 5.0;
 static const float SELECT_SIZE_FACTOR = 1.5; //selected node will appear SELECT_SIZE_FACTOR bigger.
 

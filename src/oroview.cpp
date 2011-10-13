@@ -79,15 +79,15 @@ OroView::OroView(const Json::Value& config):
     advanced_debug = false;
     paused = false;
 
-    fontlarge = fontmanager.grab("Aller_Bd.ttf", 42);
+    fontlarge = fontmanager.grab("Aller_Bd.ttf", LARGE_FONT_SIZE);
     fontlarge.dropShadow(true);
     fontlarge.roundCoordinates(true);
 
-    fontmedium = fontmanager.grab("Aller_Lt.ttf", 16);
+    fontmedium = fontmanager.grab("Aller_Lt.ttf", MEDIUM_FONT_SIZE);
     fontmedium.dropShadow(true);
     fontmedium.roundCoordinates(false);
 
-    font = fontmanager.grab("Aller_Lt.ttf", 14);
+    font = fontmanager.grab("Aller_Lt.ttf", BASE_FONT_SIZE);
     font.dropShadow(true);
     font.roundCoordinates(true);
 

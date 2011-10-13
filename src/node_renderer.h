@@ -51,6 +51,7 @@ class NodeRenderer
 
     vec4f base_col;
     float base_size;
+    int base_fontsize;
 
     void computeColourSize();
     void decay();
@@ -68,6 +69,7 @@ public:
 
     vec4f col;
     float size;
+    float fontsize;
     float decayRatio;
 
 

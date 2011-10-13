@@ -32,10 +32,12 @@ NodeRenderer::NodeRenderer(int tagid, string label, node_type type) :
     hovered(false),
     selected(false),
     current_distance_to_selected(-1),
-    base_size(NODE_SIZE)
+    base_size(NODE_SIZE),
+    base_fontsize(BASE_FONT_SIZE)
 {
 
     size = base_size * 1.2;
+    fontsize = base_fontsize;
 
 #ifndef TEXT_ONLY
     if (type == CLASS_NODE) {
@@ -95,6 +97,7 @@ void NodeRenderer::decay() {
     if (decayRatio > 0.0) {
         col = base_col + ((col - base_col) * decayRatio);
         size = base_size + ((size - base_size) * decayRatio);
+        fontsize = base_fontsize + ((fontsize - base_fontsize) * decayRatio);
     }
 }
 
@@ -210,6 +213,7 @@ void NodeRenderer::drawName(const vec2f& pos, FXFont& font){
     glPushMatrix();
     glLoadIdentity();
 
+    font.setFontSize(fontsize);
     font.draw(screenpos.x, screenpos.y, label);
 
     glMatrixMode(GL_PROJECTION);
