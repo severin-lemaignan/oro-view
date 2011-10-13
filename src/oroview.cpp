@@ -37,6 +37,7 @@ using namespace std;
 OroView::OroView(const Json::Value& config):
     config(config),
     display_labels(config.get("display_labels", "true").asBool()),
+    display_footer(config.get("display_footer", "true").asBool()),
     only_labelled_nodes(config.get("only_labelled_nodes", "false").asBool()),
     oro(config.get("oro_host", "localhost").asString(),
         config.get("oro_port", "6969").asString(),
@@ -619,7 +620,7 @@ void OroView::draw(float t, float dt) {
 
     }
 
-    drawFooter();
+    if (display_footer) drawFooter();
 
     glDisable(GL_TEXTURE_2D);
 

@@ -160,6 +160,8 @@ class OroView : public SDLApp {
 
     // If false, do not display labels of nodes
     bool display_labels;
+    // If false, do not display footer with active nodes
+    bool display_footer;
     // If true, only display nodes that have a real label (ie, not only a node id)
     bool only_labelled_nodes;
 
