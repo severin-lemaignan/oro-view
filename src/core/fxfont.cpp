@@ -76,6 +76,10 @@ void FXFont::dropShadow(bool shadow) {
     this->shadow = shadow;
 }
 
+int FXFont::setFontSize(int pt) {
+    return ft->FaceSize(pt);
+}
+
 int FXFont::getFontSize() {
     return ft->FaceSize();
 }

@@ -74,6 +74,7 @@ public:
 
     void roundCoordinates(bool round);
 
+    int setFontSize(int pt);
     int getFontSize();
 
     float getHeight();
