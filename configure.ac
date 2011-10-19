@@ -3,7 +3,7 @@
 
 AC_PREREQ(2.61)
 
-AC_INIT(oro-view, 0.2, [severin.lemaignan@laas.fr])
+AC_INIT(oro-view, 1.0, [severin.lemaignan@laas.fr])
 AC_CONFIG_SRCDIR([src/main.cpp])
 
 AM_INIT_AUTOMAKE([dist-bzip2 foreign subdir-objects])
