@@ -1,5 +1,9 @@
 ACLOCAL_AMFLAGS = -I m4
 
+DISTCHECK_CONFIGURE_FLAGS=--with-jsoncpp-include-path=${jsoncpp_includedir}
+DISTCHECK_CONFIGURE_FLAGS+=--with-jsoncpp-lib-path=${jsoncpp_libdir}
+
+
 bin_PROGRAMS = oroview
 
 oroview_SOURCES = \
@@ -23,11 +27,14 @@ oroview_SOURCES = \
 	src/core/utf8/unchecked.h \
 	src/core/utf8/utf8.h \
 	src/core/vectors.h \
+	src/constants.h \
 	src/node.cpp src/node.h \
 	src/node_renderer.cpp src/node_renderer.h \
 	src/node_relation.cpp src/node_relation.h \
+	src/macros.h \
 	src/oro_connector.cpp src/oro_connector.h \
 	src/oroview.cpp src/oroview.h \
+	src/oroview_exceptions.h \
 	src/main.cpp \
 	src/edge.cpp src/edge.h \
 	src/edge_renderer.cpp src/edge_renderer.h \
