@@ -60,16 +60,18 @@ LIBS="$LIBS $LIBORO_LIBS"
 AC_ARG_WITH([jsoncpp-include-path],
 	[AS_HELP_STRING([--with-jsoncpp-include-path],
 	[location of the json-cpp headers, defaults to $prefix/include])],
-	[JSONCPP_CFLAGS="-I$withval"],
-    [JSONCPP_CFLAGS='-I${prefix}/include'])
+	[JSONCPP_CFLAGS="-I$withval"; jsoncpp_includedir="$withval"],
+    [JSONCPP_CFLAGS="-I${prefix}/include"; jsoncpp_includedir="$prefix/include"])
 AC_SUBST([JSONCPP_CFLAGS])
+AC_SUBST([jsoncpp_includedir])
 
 AC_ARG_WITH([jsoncpp-lib-path],
 	[AS_HELP_STRING([--with-jsoncpp-lib-path], 
 	[location of the json-cpp library])],
-	[JSONCPP_LIBS="-L$withval -ljson"],
-	[JSONCPP_LIBS='-ljson'])
+	[JSONCPP_LIBS="-L$withval -R$withval -ljson"; jsoncpp_libdir="$withval"],
+	[JSONCPP_LIBS='-ljson'; jsoncpp_libdir="$prefix/lib"])
 AC_SUBST([JSONCPP_LIBS])
+AC_SUBST([jsoncpp_libdir])
 
 CXXFLAGS="$CXXFLAGS $JSONCPP_CFLAGS"
 CPPFLAGS="$CPPFLAGS $JSONCPP_CFLAGS"
