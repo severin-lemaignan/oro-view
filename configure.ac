@@ -56,24 +56,33 @@ CXXFLAGS="$CXXFLAGS $LIBORO_CFLAGS"
 CPPFLAGS="$CPPFLAGS $LIBORO_CFLAGS"
 LIBS="$LIBS $LIBORO_LIBS"
 
-#We are using JsonCpp library which is not available in Linux distro
-#This uses a custom jsoncpp.pc files (can be adapted from the one found in oro-view root directory).
-#JSON
-PKG_CHECK_MODULES(JSON, jsoncpp >= 0.5, [], AC_MSG_ERROR(jsoncpp 0.5 or greater is required.))
-CXXFLAGS="$CXXFLAGS $JSON_CFLAGS"
-CPPFLAGS="$CPPFLAGS $JSON_CFLAGS"
-LIBS="$LIBS $JSON_LIBS"
+#JSONCPP
+AC_ARG_WITH([jsoncpp-include-path],
+	[AS_HELP_STRING([--with-jsoncpp-include-path],
+	[location of the json-cpp headers, defaults to $prefix/include])],
+	[JSONCPP_CFLAGS="-I$withval"],
+    [JSONCPP_CFLAGS='-I${prefix}/include'])
+AC_SUBST([JSONCPP_CFLAGS])
 
+AC_ARG_WITH([jsoncpp-lib-path],
+	[AS_HELP_STRING([--with-jsoncpp-lib-path], 
+	[location of the json-cpp library])],
+	[JSONCPP_LIBS="-L$withval -ljson"],
+	[JSONCPP_LIBS='-ljson'])
+AC_SUBST([JSONCPP_LIBS])
+
+CXXFLAGS="$CXXFLAGS $JSONCPP_CFLAGS"
+CPPFLAGS="$CPPFLAGS $JSONCPP_CFLAGS"
+LIBS="$LIBS $JSONCPP_LIBS"
 
 #PNG library
-AC_CHECK_LIB(png, png_read_info, , AC_MSG_ERROR([PNG library required. Please see README]))
+#AC_CHECK_LIB(png, png_read_info, , AC_MSG_ERROR([PNG library required. Please see README]))
 
 #JPEG library
-AC_CHECK_LIB(jpeg, jpeg_read_header, , AC_MSG_ERROR([JPEG library required. Please see README]))
+#AC_CHECK_LIB(jpeg, jpeg_read_header, , AC_MSG_ERROR([JPEG library required. Please see README]))
 
 #JSON library
-#AC_CHECK_LIB(json, , , AC_MSG_ERROR([JPEG library required. Please see README]))
-LIBS="$LIBS -ljson"
+#AC_CHECK_LIB(json, , , AC_MSG_ERROR([JSONCPP library required. Please see README]))
 
 #SDL_image library with PNG support
 #AC_CHECK_LIB(SDL_image, IMG_LoadPNG_RW, LIBS="$LIBS -lSDL_image", AC_MSG_ERROR([SDL_image required. Please see README]))
