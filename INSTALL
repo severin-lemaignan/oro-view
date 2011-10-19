@@ -1,6 +1,6 @@
 ===== ORO View =====
 
-If you've get the code from the GIT repository,
+If you've got the code from the GIT repository,
 
 autoreconf -vif
 
