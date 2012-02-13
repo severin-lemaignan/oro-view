@@ -100,7 +100,7 @@ int main(int argc, char *argv[]) {
         Json::Reader reader;
         bool parsingOk = reader.parse(readConfigurationFile(arguments[0].c_str()), config);
         if (!parsingOk) {
-            cout << "Error while parsing the configuration file!\n"
+            cerr << "Error while parsing the configuration file!\n"
                  << reader.getFormatedErrorMessages();
             exit(1);
         }

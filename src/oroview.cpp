@@ -148,7 +148,7 @@ void OroView::init(){
     string root = config.get("initial_concept", ROOT_CONCEPT).asString();
 
     oro.addNode(root, g);
-    cout << "Starting with concept " << root << endl;
+    TRACE("Starting with concept " << root);
 
     oro.walkThroughOntology(root, 2, this);
 
@@ -882,8 +882,8 @@ bool OroView::addNodeConnectedTo(const string& id,
         neighbour = &g.getNode(to);
     }
     catch(OroViewException& exception) {
-        cout << "Neighbour " << to << " not found. Creating it." << endl;
         //neighbour not found, create it.
+        TRACE("Neighbour " << to << " not found. Creating it.");
 
         addNodeConnectedTo(to, to, ROOT_CONCEPT, UNDEFINED, "");
         neighbour = &g.getNode(to);
@@ -896,11 +896,11 @@ bool OroView::addNodeConnectedTo(const string& id,
         n = &g.getNode(id);
     }
     catch(OroViewException& exception) {
-        cout << "Not existing myself (" << id << "). Creating myself." << endl;
         //if not, create it, create it.
-
+        TRACE("Not existing myself (" << id << "). Creating myself.");
+        
         node_type ntype;
-
+        
         //guess the type of the node we are adding
         switch (type) {
         case SUBCLASS:
@@ -936,7 +936,7 @@ bool OroView::addNodeConnectedTo(const string& id,
             break;
 
         default:
-            cout << "Default type of node? strange..." << endl;
+            TRACE("Default type of node? strange...");
             ntype = INSTANCE_NODE;
         }
 
@@ -944,7 +944,7 @@ bool OroView::addNodeConnectedTo(const string& id,
             ntype == CLASS_NODE &&
             label == id) { //no a very robust way to check if a node has a label, but it's fast
 
-            cout << "Node " << id << " has no label, discarding it." <<endl;
+            TRACE("Node " << id << " has no label, discarding it.");
             return false;
         }
 
@@ -964,10 +964,10 @@ void OroView::updateCurrentNode() {
     Node* selectedNode = g.getSelected();
 
     if (selectedNode != NULL) {
-        cout << "Updating node " << selectedNode->getID() << endl;
+        TRACE("Updating node " << selectedNode->getID());
         oro.walkThroughOntology(selectedNode->getID(), 1, this);
     }
-    else cout << "Select only one node to expand it." << endl;
+    else cerr << "Select only one node to expand it." << endl;
 }
 
 /** Testing */

@@ -59,8 +59,10 @@ void OntologyConnector::operator()(const OroEvent& evt)
 {
     set<Concept> evt_content = boost::get<set<Concept> >(evt.content);
 
-    cout << "New active concepts!" << endl;
+    TRACE("New active concepts!");
+    #ifdef DEBUG
     copy(evt_content.begin(), evt_content.end(), ostream_iterator<Concept>(cout, "\n"));
+    #endif
 
     lock_guard<mutex> l(active_concept_mutex);
 
@@ -98,11 +100,11 @@ bool OntologyConnector::addNode(const string& id, Graph& g) {
         ntype == CLASS_NODE &&
         label == id) { //no a very robust way to check if a node has a label, but it's fast
 
-        cout << "Node " << id << " has not label, discarding it." <<endl;
+        TRACE("Node " << id << " has not label, discarding it.");
         return false;
     }
 
-    cout << "Adding node " << id << " of type " << type << " with label " << label <<endl;
+    TRACE("Adding node " << id << " of type " << type << " with label " << label);
 
     g.addNode(id, label, NULL, ntype);
 
@@ -141,14 +143,13 @@ void OntologyConnector::walkThroughOntology(const string& from_node, int depth, 
     }
 
     string name = root.get("name", "NO_NAME").asString();
-    //cout << "Analysing node : " << name << endl;
 
     string type = root.get("type", "NO_TYPE").asString();
 
     const Json::Value sameAs = root["sameAs"]; // list of id of nodes that are aliases
     for ( int index = 0; index < sameAs.size(); ++index ) {
         if (sameAs[index].asString() != from_node) {
-            cout << "Adding " << sameAs[index].asString() << " as alias for " << from_node << endl;
+            TRACE("Adding " << sameAs[index].asString() << " as alias for " << from_node);
             graph->addAlias(sameAs[index].asString(), from_node);
         }
     }
@@ -157,7 +158,6 @@ void OntologyConnector::walkThroughOntology(const string& from_node, int depth, 
     for ( int index = 0; index < attributes.size(); ++index ) { // Iterates over the sequence elements.
 
         string oroType = attributes[index]["name"].asString();
-        //cout << endl << oroType << ":" << endl;
 
         Json::Value values = attributes[index]["values"];
 
@@ -173,10 +173,7 @@ void OntologyConnector::walkThroughOntology(const string& from_node, int depth, 
 
             string to_label = values[index]["name"].asString();
             string to_id = values[index]["id"].asString();
-
-
-            //cout << "  - " << to_label << endl;
-
+            
             if (to_id == "literal") { //build a hash for each literal based on "full name": current node + predicate + literal value
                 string full_name = from_node + oroType + to_label;
                 ostringstream o;
