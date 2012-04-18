@@ -28,6 +28,7 @@
 #include "edge.h"
 #include "node_relation.h"
 
+class OroView;
 
 class Graph
 {
@@ -138,6 +139,11 @@ public:
     vec2f gravityFor(const Node& node) const;
 
     vec2f project(float force, const vec2f& d) const;
+
+    /** Save the current configuration of (displayed) nodes to a file
+    (graph.dot)
+    **/
+    void saveToGraphViz(OroView& env);
 
 };
 

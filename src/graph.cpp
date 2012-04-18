@@ -20,7 +20,10 @@
 
 #include <iterator>
 #include <utility>
+#include <fstream>
+#include <iostream>
 
+#include "oroview.h"
 #include "macros.h"
 #include "graph.h"
 #include "edge.h"
@@ -381,4 +384,27 @@ vec2f Graph::project(float force, const vec2f& d) const {
     return res;
 }
 
+void Graph::saveToGraphViz(OroView& env) {
+
+    env.graphvizGraph << "strict digraph ontology {\n";
+
+    // Renders edges
+    BOOST_FOREACH(Edge& e, edges) {
+        e.render(GRAPHVIZ, env);
+    }
+
+    // Renders nodes
+    BOOST_FOREACH(NodeMap::value_type& n, nodes) {
+        n.second.render(GRAPHVIZ, env, false);
+    }
+
+    env.graphvizGraph << "}\n";
+
+    ofstream graphvizFile;
+    graphvizFile.open ("ontology.dot");
+    graphvizFile << env.graphvizGraph.str();
+    graphvizFile.close();
+
+    cout << "Model correctly exported to ontology.dot" << endl;
+}
 

@@ -23,6 +23,7 @@
 #include "edge_renderer.h"
 #include "styles.h"
 
+class OroView;
 class Graph;
 class Node;
 class NodeRelation;

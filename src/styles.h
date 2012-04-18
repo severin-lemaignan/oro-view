@@ -20,7 +20,7 @@
 
 #include "core/vectors.h"
 
-enum rendering_mode {NORMAL, SIMPLE, SHADOWS, BLOOM, NAMES};
+enum rendering_mode {NORMAL, SIMPLE, SHADOWS, BLOOM, NAMES, GRAPHVIZ};
 
 static const float NODE_SIZE = 15.0;
 static const int BASE_FONT_SIZE = 14;

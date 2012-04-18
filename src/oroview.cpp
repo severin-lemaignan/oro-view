@@ -198,6 +198,10 @@ void OroView::keyPress(SDL_KeyboardEvent *e) {
         if(e->keysym.sym == SDLK_DOWN) {
             zoom(false);
         }
+
+        if(e->keysym.sym == SDLK_s) {
+            g.saveToGraphViz(*this);
+        }
     }
 }
 
@@ -898,9 +902,9 @@ bool OroView::addNodeConnectedTo(const string& id,
     catch(OroViewException& exception) {
         //if not, create it, create it.
         TRACE("Not existing myself (" << id << "). Creating myself.");
-        
+
         node_type ntype;
-        
+
         //guess the type of the node we are adding
         switch (type) {
         case SUBCLASS:

@@ -24,6 +24,7 @@
 #include "macros.h"
 #include "oroview_exceptions.h"
 
+#include "oroview.h"
 #include "edge.h"
 #include "node_relation.h"
 #include "node.h"
@@ -102,6 +103,12 @@ void Edge::render(rendering_mode mode, OroView& env){
 #ifndef TEXT_ONLY
     int distance = std::min(node1->distance_to_selected, node2->distance_to_selected);
     if (distance >= MAX_NODE_LEVELS - 1) return;
+
+    if (mode == GRAPHVIZ) {
+        env.graphvizGraph << node1->getSafeID() << " -> " << node2->getSafeID() << ";\n";
+        return;
+    }
+
     renderer.draw(mode, env, distance);
 #endif
     //TRACE("Edge between " << node1->getID() << " and " << node2->getID() << " rendered.");

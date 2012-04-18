@@ -19,6 +19,7 @@
 #ifndef OROVIEW_H
 #define OROVIEW_H
 
+#include <sstream>
 #include <json/json.h>
 
 #include "core/display.h"
@@ -170,6 +171,10 @@ public:
 
     //Public resources
     FXFont font, fontlarge, fontmedium;
+
+    // Textual version of the graph, in dot format.
+    // Filled when calling render on node and/or edge in GRAPHVIZ mode
+    std::stringstream graphvizGraph;
 
     //Public camera
     ZoomCamera camera;

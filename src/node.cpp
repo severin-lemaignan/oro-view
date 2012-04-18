@@ -32,8 +32,17 @@
 using namespace std;
 using namespace boost;
 
+/** A simple boolean function that returns true for characters that are not
+  "safe" (currently in the sense of GraphViz names.
+**/
+bool safeIdFilter(char c) {
+    return c=='-' || c==':' || c=='_';
+}
+
 Node::Node(const string& id, const string& label, const Node* neighbour, node_type type) :
     id(id),
+    safeid(id),
+    label(label),
     renderer(NodeRenderer(hash_value(id), label, type)),
     selected(false),
     decayTime(0.0),
@@ -44,6 +53,8 @@ Node::Node(const string& id, const string& label, const Node* neighbour, node_ty
     base_charge(INITIAL_CHARGE),
     charge(INITIAL_CHARGE)
 {
+
+    safeid.resize(std::remove_if(safeid.begin(), safeid.end(), safeIdFilter) - safeid.begin());
 
     //If a neighbour is given, we set our initial position close to it.
     if (neighbour != NULL)
@@ -65,6 +76,10 @@ bool Node::operator< (const Node& node2) const {
 
 const string& Node::getID() const {
     return id;
+}
+
+const string& Node::getSafeID() const {
+    return safeid;
 }
 
 void Node::setColour(vec4f col) {
@@ -206,6 +221,9 @@ void Node::render(rendering_mode mode, OroView& env, bool debug){
 #ifndef TEXT_ONLY
         if (distance_to_selected >= MAX_NODE_LEVELS) return;
 
+        if (mode == GRAPHVIZ) {
+            env.graphvizGraph << safeid;
+        }
         renderer.draw(pos, mode, env, distance_to_selected);
 
         if (debug) {

@@ -28,6 +28,7 @@
 #include "node_relation.h"
 
 class Graph;
+class OroView;
 
 class Node
 {
@@ -42,6 +43,8 @@ class Node
     std::vector<NodeRelation> relations;
 
     std::string id;
+    std::string safeid; //same as ID, with special chars removed (cf safeIdFilter())
+    std::string label;
 
     void updateKineticEnergy();
 
@@ -70,7 +73,9 @@ public:
     vec2f hookeForce;
     vec2f coulombForce;
 
+
     const std::string& getID() const;
+    const std::string& getSafeID() const;
 
     /**
       Returns a vector of all nodes connected to myself.

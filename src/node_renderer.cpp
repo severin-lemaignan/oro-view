@@ -148,6 +148,15 @@ void NodeRenderer::draw(const vec2f& pos, rendering_mode mode, OroView& env, int
     case SHADOWS:
         drawShadow(pos);
         break;
+
+    case GRAPHVIZ:
+        float halfsize = size * 0.5f;
+        vec2f offsetpos = pos - vec2f(halfsize, halfsize);
+
+        env.graphvizGraph << " [label=\"" << label
+                          << "\", shape=box, "
+                          << "pos=\"" << offsetpos.x << "," << offsetpos.y << "\"];\n";
+        return;
     }
 
 
