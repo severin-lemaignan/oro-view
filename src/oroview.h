@@ -160,6 +160,8 @@ class OroView : public SDLApp {
     void physicsSetup(const Json::Value& config);
     vec4f convertRGBA2Float(const Json::Value& color);
 
+    // If false, do not display shadows
+    bool display_shadows;
     // If false, do not display labels of nodes
     bool display_labels;
     // If false, do not display footer with active nodes

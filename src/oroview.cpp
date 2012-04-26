@@ -36,6 +36,7 @@ using namespace std;
 
 OroView::OroView(const Json::Value& config):
     config(config),
+    display_shadows(config.get("shadows", "true").asBool()),
     display_labels(config.get("display_labels", "true").asBool()),
     display_footer(config.get("display_footer", "true").asBool()),
     only_labelled_nodes(config.get("only_labelled_nodes", "false").asBool()),
@@ -97,6 +98,8 @@ OroView::OroView(const Json::Value& config):
     bloomtex = texturemanager.grab("bloom.tga");
     beamtex  = texturemanager.grab("beam.png");
 #endif
+
+
 
     stylesSetup(config);
     physicsSetup(config);
@@ -538,7 +541,7 @@ void OroView::draw(float t, float dt) {
     glEnable(GL_BLEND);
 
     //Draw shadows for edges and then nodes
-    g.render(SHADOWS, *this, advanced_debug);
+    if (display_shadows) g.render(SHADOWS, *this, advanced_debug);
 
     //Draw edges and then nodes
     glBindTexture(GL_TEXTURE_2D, beamtex->textureid);
