@@ -30,10 +30,10 @@ static const std::string dateFormat("%A, %d %B, %Y %X");
 
 static const float GRAVITY = 9.81;
 
-static const float INITIAL_MASS = 1.0; //kg :)
-static const float INITIAL_DAMPING = 0.95; // 0<damping<1. 1 means no damping at all.
+static const float DEFAULT_INITIAL_MASS = 1.0; //kg :)
+static const float DEFAULT_INITIAL_DAMPING = 0.95; // 0<damping<1. 1 means no damping at all.
 
-static const float COULOMB_CONSTANT = 20000.0; // impact the strenght of repulsion between nodes.
+static const float DEFAULT_COULOMB_CONSTANT = 20000.0; // impact the strenght of repulsion between nodes.
 static const float INITIAL_CHARGE = 1.0; // the charges of each pair of nodes ae multiplied by the Coulomb constant to compute repulsion
 
 static const float GRAVITY_CONSTANT = 10.0;
@@ -42,9 +42,16 @@ static const float INITIAL_SPRING_CONSTANT = 20.0; // N.pixels^(-1)
 static const float NOMINAL_EDGE_LENGTH = 50.0; // pixels
 
 static const float MIN_KINETIC_ENERGY = 1.0; //Nodes with a lower energy won't move at all.
-static const float MAX_SPEED = 500.0; //Maximum allowed speed for a node.
+static const float DEFAULT_MAX_SPEED = 500.0; //Maximum allowed speed for a node.
 
 static const std::string ROOT_CONCEPT = "owl:Thing";
+
+
+/********** Those values can be set in the config file *************/
+extern float INITIAL_MASS;
+extern float INITIAL_DAMPING;
+extern float COULOMB_CONSTANT;
+extern float MAX_SPEED;
 
 #endif // CONSTANTS_H
 

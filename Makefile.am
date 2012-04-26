@@ -27,7 +27,7 @@ oroview_SOURCES = \
 	src/core/utf8/unchecked.h \
 	src/core/utf8/utf8.h \
 	src/core/vectors.h \
-	src/constants.h \
+	src/constants.cpp src/constants.h \
 	src/node.cpp src/node.h \
 	src/node_renderer.cpp src/node_renderer.h \
 	src/node_relation.cpp src/node_relation.h \

@@ -157,6 +157,7 @@ class OroView : public SDLApp {
 
 
     void stylesSetup(const Json::Value& config);
+    void physicsSetup(const Json::Value& config);
     vec4f convertRGBA2Float(const Json::Value& color);
 
     // If false, do not display labels of nodes

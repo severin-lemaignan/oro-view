@@ -15,5 +15,12 @@
 	  "literals":   [53, 102, 63, 255] // Colours of 'literal' nodes
   },
 
+  "physics": {
+        "mass": 1.0, //  0<damping<1. 1 means no damping at all.
+        "damping": 0.95, //  0<damping<1. 1 means no damping at all.
+        "repulsion": 20000.0, //  impact the strenght of repulsion between nodes.
+        "maxspeed": 500.0 // Maximum allowed speed for a node.
+  },
+
   "only_labelled_nodes": true // If true, only nodes that have a label are considered
 }

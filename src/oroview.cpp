@@ -99,6 +99,7 @@ OroView::OroView(const Json::Value& config):
 #endif
 
     stylesSetup(config);
+    physicsSetup(config);
 
     background_colour = BACKGROUND_COLOUR.truncate();
 }
@@ -128,6 +129,29 @@ void OroView::stylesSetup(const Json::Value& config) {
 
     if (colors["background"] != Json::nullValue){
         BACKGROUND_COLOUR = convertRGBA2Float(colors["background"]);
+    }
+
+
+}
+
+void OroView::physicsSetup(const Json::Value& config) {
+
+    Json::Value physics = config["physics"];
+
+    if (physics == Json::nullValue) return; // Uses defaults, as specified in constants.h
+
+    cout << "Setting customs physics parameters from config file." << endl;
+    if (physics["mass"] != Json::nullValue) {
+        INITIAL_MASS = physics["mass"].asDouble();
+    }
+    if (physics["damping"] != Json::nullValue) {
+        INITIAL_DAMPING = physics["damping"].asDouble();
+    }
+    if (physics["repulsion"] != Json::nullValue) {
+        COULOMB_CONSTANT = physics["repulsion"].asDouble();
+    }
+    if (physics["maxspeed"] != Json::nullValue) {
+        MAX_SPEED = physics["maxspeed"].asDouble();
     }
 
 
