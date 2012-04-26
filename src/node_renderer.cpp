@@ -154,7 +154,7 @@ void NodeRenderer::draw(const vec2f& pos, rendering_mode mode, OroView& env, int
         vec2f offsetpos = pos - vec2f(halfsize, halfsize);
 
         env.graphvizGraph << " [label=\"" << label
-                          << "\", shape=box, "
+                          << "\", shape=box, height=0.2, "
                           << "pos=\"" << offsetpos.x << "," << offsetpos.y << "\"];\n";
         return;
     }
