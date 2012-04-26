@@ -47,7 +47,7 @@ CPPFLAGS = -DSDLAPP_RESOURCE_DIR=\"$(pkgdatadir)\"
 
 dist_pkgdata_DATA = data/beam.png data/bloom.tga data/classes.png data/instances.png data/literals.png data/no_photo.png data/gource.style data/yes.png data/no.png data/comment.png
 
-dist_sysconf_DATA = etc/oro-view.json
+dist_sysconf_DATA = etc/oroview-work.json etc/oroview-demo.json
 
 if FONTDIR
 CPPFLAGS += -DSDLAPP_FONT_DIR=\"$(oroviewfontdir)\"
