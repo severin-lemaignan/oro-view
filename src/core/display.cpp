@@ -146,6 +146,7 @@ void SDLAppDisplay::mode3D(float fov, float znear, float zfar) {
 }
 
 void SDLAppDisplay::mode2D() {
+    glViewport(0, 0, width, height);
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
     glOrtho(0, width, height, 0, -1.0, 1.0);
