@@ -1,4 +1,4 @@
-#import "constants.h"
+#include "constants.h"
 
 // Default initialization of physics constants
 float INITIAL_MASS(DEFAULT_INITIAL_MASS);

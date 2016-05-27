@@ -53,8 +53,6 @@ void SDLAppInit(std::string apptitle, std::string execname);
 bool SDLAppDirExists(std::string dir);
 std::string SDLAppAddSlash(std::string path);
 
-void SDLAppParseArgs(int argc, char *argv[], std::string& file, int* xres, int* yres, bool* fullscreen, std::vector<std::string>* otherargs = 0);
-
 class SDLAppException : public std::exception {
 protected:
     std::string message;

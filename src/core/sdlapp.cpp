@@ -202,55 +202,6 @@ void SDLAppInit(std::string apptitle, std::string execname) {
     gSDLAppConfDir     = conf_dir;
 }
 
-void SDLAppParseArgs(int argc, char *argv[], std::string& file, int* xres, int* yres, bool* fullscreen, std::vector<std::string>* otherargs) {
-
-    for (int i=1; i<argc; i++) {
-        debugLog("argv[%d] = %s\n", i, argv[i]);
-
-        if (!strcmp(argv[i],"-f")) {
-            *fullscreen = 1;
-            continue;
-        }
-        else if (!strcmp(argv[i],"-w")) {
-            *fullscreen = 0;
-            continue;
-        }
-        else if (!strcmp(argv[i],"-i")) {
-			i++;
-            file = std::string(argv[i]);
-            continue;
-        }
-        
-        //get video mode
-        if(strchr(argv[i], '-') != 0 && strlen(argv[i])>1) {
-            std::string argstr(argv[i], 1, strlen(argv[i])-1);
-            debugLog("%s\n", argstr.c_str());
-            size_t x = argstr.rfind("x");
-
-            if(x != std::string::npos) {
-                std::string widthstr  = argstr.substr(0, x);
-                std::string heightstr = argstr.substr(x+1);
-
-                int width = atoi(widthstr.c_str());
-                int height = atoi(heightstr.c_str());
-
-                if(width!=0 && height!=0) {
-                    debugLog("w=%d, h=%d\n",width,height);
-
-                    *xres = width;
-                    *yres = height;
-                    continue;
-                }
-            }
-        }
-
-        // non display argument
-        if(otherargs != 0) {
-            otherargs->push_back(std::string(argv[i]));
-        }
-    }
-}
-
 SDLApp::SDLApp() {
     fps=0;
     return_code=0;

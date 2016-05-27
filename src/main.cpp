@@ -16,7 +16,11 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include <boost/program_options.hpp>
+
+#include <fstream>
 #include <json/json.h>
+
 #include "macros.h"
 
 #include "core/sdlapp.h"
@@ -25,59 +29,77 @@
 #include "oroview.h"
 
 using namespace std;
-
-/** Reads a file to a string. Borrowed from jsoncpp test suite
- */
-static std::string readConfigurationFile( const char *path )
-{
-    FILE *file = fopen( path, "rb" );
-    if ( !file )
-        return std::string("");
-    fseek( file, 0, SEEK_END );
-    long size = ftell( file );
-    fseek( file, 0, SEEK_SET );
-    std::string text;
-    char *buffer = new char[size+1];
-    buffer[size] = 0;
-    if ( fread( buffer, 1, size, file ) == (unsigned long)size )
-        text = buffer;
-    fclose( file );
-    delete[] buffer;
-    return text;
-}
+namespace po = boost::program_options;
 
 
-void usage() {
-    cout << "Usage: oro-view [OPTION...] [configuration]" << endl << endl;
-    cout << "  -h          display this message and exits" << endl;
-    cout << "  -i file     load an input file" << endl;
-    cout << "  -f          fullscreen mode" << endl;
-    cout << "  -LxH        windowed mode, LxH pixels window" << endl;
-    cout << "  configuration a configuration file, in JSON format" << endl;
-    cout << endl;
-    cout << "oro-view is an OpenGL-based visualization tool for RDF/OWL";
-    cout << " ontologies" << endl;
-    cout << "Séverin Lemaignan, LAAS-CNRS 2010, based on Gource by ";
-    cout << "Andrew Caudwell" << endl << endl;
-    cout << "Report bugs to openrobots@laas.fr" << endl;
-}
 
 int main(int argc, char *argv[]) {
 
     Json::Value config;
 
-    if (argc > 1 && !strcmp(argv[1],"-h")) {
-        usage();
-        exit(0);
-    }
-
-    string file_path  = "";
-    int width  = 1024;
-    int height = 768;
+    int width;
+    int height;
     bool fullscreen=false;
     bool multisample=false;
 
     int video_framerate = 60;
+
+    po::positional_options_description p;
+    p.add("configuration", 1);
+
+    po::options_description desc("Allowed options");
+    desc.add_options()
+            ("help,h", "produce help message")
+            ("fullscreen,f", "fullscreen")
+            ("g", po::value<string>()->default_value("1024x768"), "window geometry (LxH)")
+            ("configuration", po::value<string>(), "rendering configuration (JSON, optional)")
+            ;
+
+    po::variables_map vm;
+    po::store(po::command_line_parser(argc, argv)
+                        .options(desc)
+                        .positional(p)
+                        .run(), vm);
+    po::notify(vm);
+
+    if (vm.count("help")) {
+        cout << "memory-view -- A viewer for associative memory networks\n\n" << desc << "\n";
+        cout << "memory-view is an OpenGL-based visualization tool for" << endl;
+        cout << "associative memory networks." << endl << endl;
+        cout << "Séverin Lemaignan, Plymouth University 2016, " << endl;
+        cout << "initially based on Gource by Andrew Caudwell" << endl;
+        cout << "Report bugs to: " << endl;
+        cout << "https://www.github.com/severin-lemaignan/memory-view/issues" << endl;
+
+        return 1;
+    }
+
+    if (vm.count("fullscreen")) {
+        fullscreen = true;
+    }
+
+    if (vm.count("geometry")) {
+        
+        //get video mode
+        auto argstr = vm["geometry"].as<string>();
+        size_t x = argstr.rfind("x");
+
+        if(x != std::string::npos) {
+            std::string widthstr  = argstr.substr(0, x);
+            std::string heightstr = argstr.substr(x+1);
+
+            int w = atoi(widthstr.c_str());
+            int h = atoi(heightstr.c_str());
+
+            if(width!=0 && height!=0) {
+                debugLog("w=%d, h=%d\n",width,height);
+
+                width = w;
+                height = h;
+            }
+        }
+    }
+
 
     float start_position = 0.0;
     float stop_position  = 0.0;
@@ -86,25 +108,20 @@ int main(int argc, char *argv[]) {
 
     std::string camera_mode = "overview";
 
-    std::vector<std::string> arguments;
-
-    SDLAppInit("ORO View", "oroview");
-
-    SDLAppParseArgs(argc, argv, file_path, &width, &height, &fullscreen, &arguments);
-
-    if (file_path != "")
-        cout << "Using input file " << file_path << endl;
-
-    if (!arguments.empty()) {
-        cout << "Using configuration file " << arguments[0] << endl;
+    if (vm.count("configuration")) {
+        auto conf = vm["configuration"].as<string>();
+        cout << "Using configuration file " << conf << endl;
         Json::Reader reader;
-        bool parsingOk = reader.parse(readConfigurationFile(arguments[0].c_str()), config);
+        ifstream conf_file(conf, ifstream::binary);
+        bool parsingOk = reader.parse(conf_file, config);
         if (!parsingOk) {
             cerr << "Error while parsing the configuration file!\n"
-                 << reader.getFormatedErrorMessages();
+                 << reader.getFormattedErrorMessages();
             exit(1);
         }
     }
+
+    SDLAppInit("Memory View", "memory-view");
 
 #ifndef TEXT_ONLY
 
